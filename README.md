@@ -1,6 +1,7 @@
-# TDT4240 - ProgArk prosjekt: Gruppe 5
-## Git-kommandoer
-#### Skrevet med tanke på en linux-konsoll (bash).
+# TDT4240 Programvarearkitekturer
+## Prosjektoppgave - Gruppe 5
+### Git-kommandoer
+Skrevet med tanke på en linux-konsoll (bash).
 * Klone repository:
 	* Finn et directory der du vil opprette din lokale klone av prosjektet
 	* `git clone <adressen til repoen>`
@@ -33,7 +34,7 @@
 	* `git checkout <din-branch>` for å bytte tilbake til din branch
 	* `git rebase master` for å legge til de siste endringer i master "under" dine endringer
 
-## Konvensjoner
+### Konvensjoner
 * Git:
 	* Branch ALLTID fra master
 	* Aldri push direkte på master, push din egen branch til GitHub og lag et pull-request som forklart over
