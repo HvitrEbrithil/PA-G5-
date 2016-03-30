@@ -1,4 +1,6 @@
 package no.pag6.models;
 
-public class PlayerCharacter {
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
+public class PlayerCharacter extends Sprite {
 }
