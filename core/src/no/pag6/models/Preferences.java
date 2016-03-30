@@ -1,4 +1,6 @@
 package no.pag6.models;
 
-public class Preferences {
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
+public class Preferences extends Sprite {
 }
