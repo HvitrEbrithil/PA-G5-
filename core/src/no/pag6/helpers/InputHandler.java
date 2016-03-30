@@ -1,27 +1,27 @@
 package no.pag6.helpers;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import no.pag6.controllers.GameController;
+import no.pag6.controllers.MenuController;
 
 public class InputHandler implements InputProcessor {
 
-    private GameWorld world;
+    private MenuController menu_controller;
+    private GameController game_controller;
 
     private float scale_factor_x;
     private float scale_factor_y;
 
-    public InputHandler(GameWorld world, float scale_factor_x, float scale_factor_y) {
-        this.world = world;
+    public InputHandler(MenuController menu_controller, GameController game_controller,
+                        float scale_factor_x, float scale_factor_y) {
+        this.menu_controller = menu_controller;
+        this.game_controller = game_controller;
         this.scale_factor_x = scale_factor_x;
         this.scale_factor_y = scale_factor_y;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE) {
-            return true;
-        }
-
         return false;
     }
 
