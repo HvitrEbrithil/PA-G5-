@@ -1,7 +1,22 @@
-# TDT4240 Programvarearkitekturer
-## Prosjektoppgave - Gruppe 5
+﻿# TDT4240 Programvarearkitekturer
+## Prosjektoppgave - Gruppe 6
+
+### Sette opp prosjektet med LibGDX
+Med forbehold om at det er andre dependencies som må være på plass for at det skal fungere. Si ifra så skal jeg legge de til her.
+
+1. Last ned og installer Java JDK: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+* Last ned og installer Android SDK: http://developer.android.com/sdk/index.html#Other
+* Mulig du må laste ned og installere gradle også: http://gradle.org/gradle-download/
+* Last ned og installer en IDE, hvis du ikke har: F.eks. IntelliJ/Android Studio eller Eclipse
+* Installer Android plugin til IDE-en
+* Klon kildekoden til prosjektet med git (forklart under)
+* Åpen opp prosjektet med IDE-en du vil bruke
+* Importer Gradle-prosjektet
+* Kod i vei!
+
 ### Git-kommandoer
 Skrevet med tanke på en linux-konsoll (bash).
+
 * Klone repository:
 	* Finn et directory der du vil opprette din lokale klone av prosjektet
 	* `git clone <adressen til repoen>`
@@ -35,6 +50,7 @@ Skrevet med tanke på en linux-konsoll (bash).
 	* `git rebase master` for å legge til de siste endringer i master "under" dine endringer
 
 ### Konvensjoner
+
 * Git:
 	* Branch ALLTID fra master
 	* Aldri push direkte på master, push din egen branch til GitHub og lag et pull-request som forklart over
