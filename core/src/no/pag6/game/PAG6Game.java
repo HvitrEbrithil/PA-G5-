@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PAG6Game extends ApplicationAdapter {
+
 	SpriteBatch batch;
 	Texture img;
 	
@@ -24,4 +25,5 @@ public class PAG6Game extends ApplicationAdapter {
 		batch.draw(img, 0, 0);
 		batch.end();
 	}
+
 }

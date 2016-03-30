@@ -16,7 +16,7 @@ android {
     }
     defaultConfig {
         applicationId "no.pag6.game"
-        minSdkVersion 8
+        minSdkVersion 13
         targetSdkVersion 23
     }
 }
