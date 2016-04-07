@@ -2,7 +2,7 @@ package no.pag6.models.states;
 
 import com.badlogic.gdx.Screen;
 
-public class State extends Screen {
+public class State implements Screen {
 
     @Override
     public void show() {
