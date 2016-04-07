@@ -8,8 +8,8 @@ public class Player {
         gameCharacter = character;
     }
 
-    public void setScore(int newScore){
-        score = newScore;
+    public void setScore(int points){
+        score += points;
     }
 
     public int getScore() {
