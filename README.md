@@ -65,5 +65,7 @@ Skrevet med tanke på en linux-konsoll (bash).
 				* `Har endret readme-en for å reflektere de endringer vi har gjort i prosjektet."`
 * Java:
 	* Skriv klasser med stor forbokstav, ex "MyClass.java"
-	* Skriv funksjoner med liten forbokstav, og stor bokstav for hvert nytt ord, ex "myFunction()"
-	* Skriv variabelnavn med små bokstaver og understretk, ex. "my_variable"
+	* Skriv funksjoner med liten forbokstav, og stor bokstav for hvert nytt ord (camelCase), ex "myFunction()"
+	* Skriv variabelnavn i camelCase, ex. "myVariable"
+	* Alltid mellomrom og ikke linjeskift før { i klasser, metoder og kontrollsekvenser
+	* Allid else og else if på samme linje som } i tilhørende if-løkke, ex "} else {"
