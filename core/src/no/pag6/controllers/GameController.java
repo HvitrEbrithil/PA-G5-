@@ -6,7 +6,7 @@ public class GameController {
         RUNNING, PAUSED, GAME_OVER
     }
 
-    private GameState currentState;
+    private GameState currentGameState;
 
     private float runTime = 0;
 
@@ -17,13 +17,13 @@ public class GameController {
     public GameController(int nofPlayers) {
         this.nofPlayers = nofPlayers;
 
-        currentState = GameState.RUNNING;
+        currentGameState = GameState.RUNNING;
     }
 
     public void update(float delta) {
         runTime += delta;
 
-        switch (currentState) {
+        switch (currentGameState) {
             case RUNNING:
                 updateRunning(delta);
                 break;
@@ -39,15 +39,15 @@ public class GameController {
     }
 
     public void run() {
-        currentState = GameState.RUNNING;
+        currentGameState = GameState.RUNNING;
     }
 
     public void pause() {
-        currentState = GameState.PAUSED;
+        currentGameState = GameState.PAUSED;
     }
 
     public void end() {
-        currentState = GameState.GAME_OVER;
+        currentGameState = GameState.GAME_OVER;
     }
 
     public int getNofPlayers() {
@@ -68,16 +68,8 @@ public class GameController {
         p2Score += increment;
     }
 
-    public boolean isRunning() {
-        return currentState == GameState.RUNNING;
-    }
-
-    public boolean isPaused() {
-        return currentState == GameState.PAUSED;
-    }
-
-    public boolean isGameOver() {
-        return currentState == GameState.GAME_OVER;
+    public GameState getCurrentGameState() {
+        return currentGameState;
     }
 
     private void updateRunning(float delta) {

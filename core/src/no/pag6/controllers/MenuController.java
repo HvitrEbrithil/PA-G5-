@@ -6,18 +6,18 @@ public class MenuController {
         MAIN_MENU, OPTIONS_MENU, HIGHSCORE_MENU
     }
 
-    private MenuState currentState;
+    private MenuState currentMenuState;
 
     private float runTime = 0;
 
     public MenuController() {
-        currentState = MenuState.MAIN_MENU;
+        currentMenuState = MenuState.MAIN_MENU;
     }
 
     public void update(float delta) {
         runTime += delta;
 
-        switch (currentState) {
+        switch (currentMenuState) {
             case MAIN_MENU:
                 updateMainMenu(delta);
                 break;
@@ -33,27 +33,19 @@ public class MenuController {
     }
 
     public void goToMainMenu() {
-        currentState = MenuState.MAIN_MENU;
+        currentMenuState = MenuState.MAIN_MENU;
     }
 
     public void goToOptionsMenu() {
-        currentState = MenuState.OPTIONS_MENU;
+        currentMenuState = MenuState.OPTIONS_MENU;
     }
 
     public void goToHighscoreMenu() {
-        currentState = MenuState.HIGHSCORE_MENU;
+        currentMenuState = MenuState.HIGHSCORE_MENU;
     }
 
-    public boolean isMainMenu() {
-        return currentState == MenuState.MAIN_MENU;
-    }
-
-    public boolean isOptionsMenu() {
-        return currentState == MenuState.OPTIONS_MENU;
-    }
-
-    public boolean isHighscoreMenu() {
-        return currentState == MenuState.HIGHSCORE_MENU;
+    public MenuState getCurrentMenuState() {
+        return currentMenuState;
     }
 
     private void updateMainMenu(float delta) {

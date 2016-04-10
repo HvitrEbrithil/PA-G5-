@@ -34,27 +34,53 @@ public class GameRenderer {
         drawer.setProjectionMatrix(cam.combined);
         batcher = new SpriteBatch();
         batcher.setProjectionMatrix(cam.combined);
-        setupTweenAssets();
 
+        initTweenAssets();
         initGameObjects();
         initGameAssets();
     }
 
+    // TODO: Test-code, to be removed
+    float x = 10;
+    float y = 150;
+    // TODO: Test-code, to be removed
+
     public void render(float delta) {
-        // Set color of background to black
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        // Set color of background to light blue
+        Gdx.gl.glClearColor(0, 0, 0.4f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render shapes
-        drawer.begin();
+        drawer.begin(ShapeRenderer.ShapeType.Filled);
+        // TODO: Test-code, to be removed
+        drawer.setColor(1, 0, 0, 1);
+        drawer.rect(x++, ++y, 200, 150);
+        drawer.setColor(0.2f, 0.6f, 0, 1);
+        drawer.rect(x++, 500 + 2*y, 50, 50);
+        drawer.setColor(0.2f, 0.2f, 0.8f, 1);
+        drawer.rect(x, 100 + 5*y, 350, 250);
+        // TODO: Test-code, to be removed
         drawer.end();
 
         // Render sprites
         batcher.begin();
+        batcher.enableBlending();
+
+        switch (gameController.getCurrentGameState()) {
+            case RUNNING:
+                break;
+            case PAUSED:
+                break;
+            case GAME_OVER:
+                break;
+            default:
+                break;
+        }
+
         batcher.end();
     }
 
-    private void setupTweenAssets() {
+    private void initTweenAssets() {
         // Register Tween Assets
 
         tweener = new TweenManager();

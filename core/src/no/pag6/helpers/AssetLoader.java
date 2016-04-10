@@ -2,14 +2,16 @@ package no.pag6.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetLoader {
 
     public static Preferences prefs;
 
     // Textures and TextureRegions
-//    public static Texture ;
-//    public static TextureRegion ;
+    public static Texture logoTexture, playButtonTexture;
+    public static TextureRegion logo, playButtonUp, playButtonDown;
 
     // Animations
 //    public static Animation ;
@@ -28,11 +30,16 @@ public class AssetLoader {
         }
 
         // Textures and TextureRegions
-//         = new Texture(Gdx.files.internal("textures/.png"));
-//        .setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        logoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
+        logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        logo = new TextureRegion(logoTexture, 0, 0, 512, 512);
 
-//         = new TextureRegion(, 0, 0);
-//        .flip(false, true);
+        playButtonTexture = new Texture(Gdx.files.internal("textures/play_button.png"));
+        playButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        playButtonUp = new TextureRegion(playButtonTexture, 0, 0, 256, 128);
+        playButtonUp.flip(false, true);
+        playButtonDown = new TextureRegion(playButtonTexture, 0, 129, 256, 128);
+        playButtonDown.flip(false, true);
 
         // Animations
 //        TextureRegion[]  = {};
@@ -48,7 +55,8 @@ public class AssetLoader {
     }
 
     public static void dispose() {
-//        .dispose();
+        logoTexture.dispose();
+        playButtonTexture.dispose();
     }
 
     public static int getHighScore() {
