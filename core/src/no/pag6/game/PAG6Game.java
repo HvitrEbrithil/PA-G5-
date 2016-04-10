@@ -11,11 +11,11 @@ public class PAG6Game extends Game {
 
 	@Override
 	public void create () {
-        Gdx.app.log(TAG, "created.");
+        Gdx.app.log(TAG, "created");
 
         AssetLoader.load();
 
-        setScreen(new SplashScreen());
+        setScreen(new SplashScreen(this));
     }
 
 	@Override
