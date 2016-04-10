@@ -9,6 +9,7 @@ public class GameMap {
         this.inactiveLayer = inactiveLayer;
     }
 
+
     // Set and get active layer
 
     public void setActiveLayer(GameLayer activeLayer){
