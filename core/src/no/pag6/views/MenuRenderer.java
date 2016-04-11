@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.controllers.MenuController;
-import no.pag6.helpers.MenuInputHandler;
+import no.pag6.game.PAG6Game;
 import no.pag6.helpers.tweenaccessors.Value;
 import no.pag6.helpers.tweenaccessors.ValueAccessor;
 import no.pag6.models.ui.SimpleButton;
@@ -17,6 +17,8 @@ import no.pag6.models.ui.SimpleButton;
 import java.util.List;
 
 public class MenuRenderer {
+
+    private PAG6Game game;
 
     private MenuController menuController;
 
@@ -34,10 +36,14 @@ public class MenuRenderer {
     private Value alpha = new Value();
 
     // Menu UI
-    private List<SimpleButton> menuButtons;
+    private List<SimpleButton> mainMenuButtons;
+    private List<SimpleButton> highscoreMenuButtons;
+    private List<SimpleButton> optionsMenuButtons;
 
-    public MenuRenderer(MenuController menuController) {
-        this.menuController = menuController;
+    public MenuRenderer(PAG6Game game) {
+        this.game = game;
+
+        menuController = game.getMenuController();
 
         cam = new OrthographicCamera();
         cam.setToOrtho(true, 2560, 1440); // TODO: Must most likely be changed to take height or width as input
@@ -48,9 +54,11 @@ public class MenuRenderer {
         batcher.setProjectionMatrix(cam.combined);
 
         initTweenAssets();
+
         initGameObjects();
         initGameAssets();
-        initMenuUI();
+
+        initUI();
     }
 
     public void render(float delta) {
@@ -69,10 +77,15 @@ public class MenuRenderer {
         switch (menuController.getCurrentMenuState()) {
             case MAIN_MENU:
                 drawMenuUI();
-                break;
-            case OPTIONS_MENU:
+
                 break;
             case HIGHSCORE_MENU:
+                drawHighscoreMenuUI();
+
+                break;
+            case OPTIONS_MENU:
+                drawOptionsMenuUI();
+
                 break;
             default:
                 break;
@@ -102,8 +115,10 @@ public class MenuRenderer {
     private void initGameAssets() {
     }
 
-    private void initMenuUI() {
-        menuButtons = ((MenuInputHandler) Gdx.input.getInputProcessor()).getMenuButtons();
+    private void initUI() {
+        mainMenuButtons = game.getMenuInputHandler().getMainMenuButtons();
+        highscoreMenuButtons = game.getMenuInputHandler().getHighscoreMenuButtons();
+        optionsMenuButtons = game.getMenuInputHandler().getOptionsMenuButtons();
     }
 
     private void drawTransition(float delta) {
@@ -123,7 +138,19 @@ public class MenuRenderer {
     }
 
     private void drawMenuUI() {
-        for (SimpleButton button : menuButtons) {
+        for (SimpleButton button : mainMenuButtons) {
+            button.draw(batcher);
+        }
+    }
+
+    private void drawHighscoreMenuUI() {
+        for (SimpleButton button : highscoreMenuButtons) {
+            button.draw(batcher);
+        }
+    }
+
+    private void drawOptionsMenuUI() {
+        for (SimpleButton button : optionsMenuButtons) {
             button.draw(batcher);
         }
     }

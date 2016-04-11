@@ -14,9 +14,7 @@ public class GameController {
     private int p1Score = 0;
     private int p2Score = 0;
 
-    public GameController(int nofPlayers) {
-        this.nofPlayers = nofPlayers;
-
+    public GameController() {
         currentGameState = GameState.RUNNING;
     }
 
@@ -53,6 +51,9 @@ public class GameController {
     public int getNofPlayers() {
         return nofPlayers;
     }
+    public void setNofPlayers(int nofPlayers) {
+        this.nofPlayers = nofPlayers;
+    }
 
     public int getP1Score() {
         return p1Score;
@@ -70,6 +71,9 @@ public class GameController {
 
     public GameState getCurrentGameState() {
         return currentGameState;
+    }
+    public void setCurrentGameState(GameState newState) {
+        currentGameState = newState;
     }
 
     private void updateRunning(float delta) {

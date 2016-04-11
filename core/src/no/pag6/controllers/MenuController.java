@@ -20,12 +20,15 @@ public class MenuController {
         switch (currentMenuState) {
             case MAIN_MENU:
                 updateMainMenu(delta);
+
                 break;
             case OPTIONS_MENU:
                 updateOptionsMenu(delta);
+
                 break;
             case HIGHSCORE_MENU:
                 updateHighscoreMenu(delta);
+
                 break;
             default:
                 break;
@@ -46,6 +49,9 @@ public class MenuController {
 
     public MenuState getCurrentMenuState() {
         return currentMenuState;
+    }
+    public void setCurrentMenuState(MenuState newState) {
+        currentMenuState = newState;
     }
 
     private void updateMainMenu(float delta) {
