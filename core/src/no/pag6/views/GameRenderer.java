@@ -7,8 +7,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.controllers.GameController;
+import no.pag6.game.PAG6Game;
+import no.pag6.models.ui.SimpleButton;
+
+import java.util.List;
 
 public class GameRenderer {
+
+    private PAG6Game game;
 
     private GameController gameController;
 
@@ -24,8 +30,14 @@ public class GameRenderer {
 
     // Tween assets
 
-    public GameRenderer(GameController gameController) {
-        this.gameController = gameController;
+    // Game UI
+    private List<SimpleButton> playButtons;
+    private List<SimpleButton> pauseButtons;
+
+    public GameRenderer(PAG6Game game) {
+        this.game = game;
+
+        gameController = game.getGameController();
 
         cam = new OrthographicCamera();
         cam.setToOrtho(true, 2560, 1440); // TODO: Must most likely be changed to take height or width as input
@@ -36,8 +48,11 @@ public class GameRenderer {
         batcher.setProjectionMatrix(cam.combined);
 
         initTweenAssets();
+
         initGameObjects();
         initGameAssets();
+
+        initUI();
     }
 
     // TODO: Test-code, to be removed
@@ -68,8 +83,12 @@ public class GameRenderer {
 
         switch (gameController.getCurrentGameState()) {
             case RUNNING:
+                drawPlayUI();
+
                 break;
             case PAUSED:
+                drawPauseUI();
+
                 break;
             case GAME_OVER:
                 break;
@@ -92,6 +111,23 @@ public class GameRenderer {
     }
 
     private void initGameAssets() {
+    }
+
+    private void initUI() {
+        playButtons = game.getGameInputHandler().getPlayButtons();
+        pauseButtons = game.getGameInputHandler().getPauseButtons();
+    }
+
+    private void drawPlayUI() {
+        for (SimpleButton button : playButtons) {
+            button.draw(batcher);
+        }
+    }
+
+    private void drawPauseUI() {
+        for (SimpleButton button : pauseButtons) {
+            button.draw(batcher);
+        }
     }
 
 }
