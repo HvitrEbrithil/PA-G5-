@@ -48,8 +48,9 @@ public class PlayState extends State {
     final static Vector2 gravity = new Vector2(0, -10);
 
     // constants
-    final static String MAP_FILE_NAME = "test_lvl.tmx", FIRST_LAYER_NAME = "jau",
-            SECOND_LAYER_NAME = "hau", FIRST_GFX_LAYER_NAME = "sau", SECOND_GFX_LAYER_NAME = "mjau";
+    final static String MAP_FILE_NAME = "test_lvl.tmx", FIRST_LAYER_NAME = "obj_first",
+            SECOND_LAYER_NAME = "obj_second", FIRST_GFX_LAYER_NAME = "gfx_first",
+            SECOND_GFX_LAYER_NAME = "gfx_second";
     final static String[] LAYERS = {FIRST_LAYER_NAME, SECOND_LAYER_NAME};
 
     final static short FIRST_LAYER_BITS = 2, SECOND_LAYER_BITS = 4;
@@ -74,7 +75,7 @@ public class PlayState extends State {
         viewPort = new FitViewport(V_WIDTH / PPM, V_HEIGHT / PPM, gameCamera);
 
         // load the map
-        map = new TmxMapLoader().load(MAP_FILE_NAME);
+        map = new TmxMapLoader().load("maps/" + MAP_FILE_NAME);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
         // set up box2d
