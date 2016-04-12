@@ -137,6 +137,7 @@ public class PlayState extends State {
         fixtureDef.shape = shape;
         fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the player starts in lane 1
         playerBody.createFixture(fixtureDef);
+
         shape.dispose();
     }
 
@@ -144,7 +145,7 @@ public class PlayState extends State {
         handleInput(delta);
         world.step(TIME_STEP, 6, 2);
 
-        gameCamera.position.x = playerBody.getPosition().x;
+        gameCamera.position.x = playerBody.getPosition().x; // center the camera around the player
         gameCamera.update();
 
         mapRenderer.setView(gameCamera);
@@ -172,7 +173,7 @@ public class PlayState extends State {
         // scale the player
         playerBody.getFixtureList().first().getShape().setRadius(5 / PPM);
 
-        // change the layer opacities
+        // change the map layer opacities
         map.getLayers().get(FIRST_GFX_LAYER_NAME).setOpacity(1);
         map.getLayers().get(SECOND_GFX_LAYER_NAME).setOpacity(0.5f);
     }
