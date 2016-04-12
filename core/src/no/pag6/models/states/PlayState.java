@@ -1,6 +1,7 @@
 package no.pag6.models.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -43,11 +45,11 @@ public class PlayState extends State {
     World world;
     Box2DDebugRenderer b2dr;
     Body playerBody;
-    Vector2 gravity = new Vector2(0, -10);
+    final static Vector2 gravity = new Vector2(0, -10);
 
     // constants
     final static String MAP_FILE_NAME = "duude", FIRST_LAYER_NAME = "jau",
-            SECOND_LAYER_NAME = "hau";
+            SECOND_LAYER_NAME = "hau", FIRST_GFX_LAYER_NAME = "sau", SECOND_GFX_LAYER_NAME = "mjau";
     final static String[] LAYERS = {FIRST_LAYER_NAME, SECOND_LAYER_NAME};
 
     final static short FIRST_LAYER_BITS = 2, SECOND_LAYER_BITS = 4;
@@ -56,7 +58,10 @@ public class PlayState extends State {
     final static int INIT_PLAYER_POS_X = 20, INIT_PLAYER_POS_Y = 200,
                     PLAYER_BODY_RADIUS = 10;
 
-    final static float TIME_STEP = 1/60f;
+    final static float TIME_STEP = 1/60f, PLAYER_MAX_VELOCITY = 2;
+
+    final static Vector2 MOVEMENT_IMPULSE = new Vector2(0.1f, 0),
+            JUMP_IMPULSE = new Vector2(0, 6f);
 
     public PlayState(PAG6Game game, int nofPlayers) {
         gameController = game.getGameController();
@@ -132,6 +137,7 @@ public class PlayState extends State {
         fixtureDef.shape = shape;
         fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the player starts in lane 1
         playerBody.createFixture(fixtureDef);
+        shape.dispose();
     }
 
     private void update(float delta) {
@@ -145,7 +151,30 @@ public class PlayState extends State {
     }
 
     private void handleInput(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) &&
+                playerBody.getLinearVelocity().x <= PLAYER_MAX_VELOCITY) {
+            playerBody.applyLinearImpulse(MOVEMENT_IMPULSE, playerBody.getWorldCenter(), true);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            switchLanes();
+        }
+    }
 
+    private void switchLanes() {
+        // make the player jump
+        playerBody.applyLinearImpulse(JUMP_IMPULSE, playerBody.getWorldCenter(), true);
+
+        // change the collision bits
+        Filter filter = playerBody.getFixtureList().first().getFilterData();
+        filter.maskBits = SECOND_LAYER_BITS;
+        playerBody.getFixtureList().first().setFilterData(filter);
+
+        // scale the player
+        playerBody.getFixtureList().first().getShape().setRadius(5 / PPM);
+
+        // change the layer opacities
+        map.getLayers().get(FIRST_GFX_LAYER_NAME).setOpacity(1);
+        map.getLayers().get(SECOND_GFX_LAYER_NAME).setOpacity(0.5f);
     }
 
 }
