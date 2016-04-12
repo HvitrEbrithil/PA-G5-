@@ -93,9 +93,8 @@ public class PlayState extends State {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         mapRenderer.render();
-
-        gameController.update(delta);
-        gameRenderer.render(delta);
+        //gameController.update(delta);
+        //gameRenderer.render(delta);
     }
 
     private void addMapBodies() {
