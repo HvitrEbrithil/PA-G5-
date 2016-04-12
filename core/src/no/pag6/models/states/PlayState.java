@@ -48,7 +48,7 @@ public class PlayState extends State {
     final static Vector2 gravity = new Vector2(0, -10);
 
     // constants
-    final static String MAP_FILE_NAME = "duude", FIRST_LAYER_NAME = "jau",
+    final static String MAP_FILE_NAME = "test_lvl.tmx", FIRST_LAYER_NAME = "jau",
             SECOND_LAYER_NAME = "hau", FIRST_GFX_LAYER_NAME = "sau", SECOND_GFX_LAYER_NAME = "mjau";
     final static String[] LAYERS = {FIRST_LAYER_NAME, SECOND_LAYER_NAME};
 
