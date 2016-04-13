@@ -27,9 +27,13 @@ public class GameInputHandler implements InputProcessor {
 
     private List<SimpleButton> pauseButtons;
     private SimpleButton resumeButton;
-    private SimpleButton highscoreButton;
+    private SimpleButton highscoreButtonPause;
     private SimpleButton optionsButton;
-    private SimpleButton menuButton;
+    private SimpleButton menuButtonPause;
+
+    private List<SimpleButton> gameOverButtons;
+    private SimpleButton highscoreButtonGameOver;
+    private SimpleButton menuButtonGameOver;
 
     public GameInputHandler(PAG6Game game, float scaleFactorX, float scaleFactorY) {
         this.game = game;
@@ -50,18 +54,29 @@ public class GameInputHandler implements InputProcessor {
                 AssetLoader.exitCrossButton.getRegionWidth(), AssetLoader.exitCrossButton.getRegionHeight(),
                 AssetLoader.exitCrossButton, AssetLoader.exitCrossButton);
         pauseButtons.add(resumeButton);
-        highscoreButton = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
+        highscoreButtonPause = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
                 AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
                 AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
-        pauseButtons.add(highscoreButton);
+        pauseButtons.add(highscoreButtonPause);
         optionsButton = new SimpleButton(2560/2 - AssetLoader.optionsButtonUp.getRegionWidth()/2 - 500, 1200,
                 AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
                 AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
         pauseButtons.add(optionsButton);
-        menuButton = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
+        menuButtonPause = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
                 AssetLoader.mainMenuButtonUp.getRegionWidth(), AssetLoader.mainMenuButtonUp.getRegionHeight(),
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown);
-        pauseButtons.add(menuButton);
+        pauseButtons.add(menuButtonPause);
+
+        gameOverButtons = new ArrayList<SimpleButton>();
+        highscoreButtonGameOver = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
+                AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
+                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
+        gameOverButtons.add(highscoreButtonGameOver);
+        menuButtonGameOver = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
+                AssetLoader.mainMenuButtonUp.getRegionWidth(), AssetLoader.mainMenuButtonUp.getRegionHeight(),
+                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown);
+        gameOverButtons.add(menuButtonGameOver);
+
     }
 
     @Override
@@ -92,12 +107,15 @@ public class GameInputHandler implements InputProcessor {
                 break;
             case PAUSED:
                 resumeButton.isTouchDown(screenX, screenY);
-                highscoreButton.isTouchDown(screenX, screenY);
+                highscoreButtonPause.isTouchDown(screenX, screenY);
                 optionsButton.isTouchDown(screenX, screenY);
-                menuButton.isTouchDown(screenX, screenY);
+                menuButtonPause.isTouchDown(screenX, screenY);
 
                 break;
             case GAME_OVER:
+                highscoreButtonGameOver.isTouchDown(screenX, screenY);
+                menuButtonGameOver.isTouchDown(screenX, screenY);
+
                 break;
             default:
                 return false;
@@ -131,7 +149,7 @@ public class GameInputHandler implements InputProcessor {
                     game.setScreen(previousState);
 
                     gameController.setCurrentGameState(GameController.GameState.RUNNING);
-                } else if (highscoreButton.isTouchUp(screenX, screenY)) {
+                } else if (highscoreButtonPause.isTouchUp(screenX, screenY)) {
                     HighscoreMenu highscoreMenu = new HighscoreMenu(game);
                     game.gameStack.push(highscoreMenu);
                     game.setScreen(highscoreMenu);
@@ -143,7 +161,28 @@ public class GameInputHandler implements InputProcessor {
                     game.setScreen(optionsMenu);
 
                     menuController.setCurrentMenuState(MenuController.MenuState.OPTIONS_MENU);
-                } else if (menuButton.isTouchUp(screenX, screenY)) {
+                } else if (menuButtonPause.isTouchUp(screenX, screenY)) {
+                    game.gameStack.pop();
+                    game.gameStack.pop();
+                    State previousState = game.gameStack.pop();
+                    game.gameStack.push(previousState);
+                    game.setScreen(previousState);
+
+                    menuController.setCurrentMenuState(MenuController.MenuState.MAIN_MENU);
+
+                break;
+                }
+
+            case GAME_OVER:
+                if (highscoreButtonGameOver.isTouchUp(screenX, screenY)) {
+                    game.gameStack.pop();
+                    game.gameStack.pop();
+                    HighscoreMenu highscoreMenu = new HighscoreMenu(game);
+                    game.gameStack.push(highscoreMenu);
+                    game.setScreen(highscoreMenu);
+
+                    menuController.setCurrentMenuState(MenuController.MenuState.HIGHSCORE_MENU);
+                } else if (menuButtonGameOver.isTouchUp(screenX, screenY)) {
                     game.gameStack.pop();
                     game.gameStack.pop();
                     State previousState = game.gameStack.pop();
@@ -152,9 +191,6 @@ public class GameInputHandler implements InputProcessor {
 
                     menuController.setCurrentMenuState(MenuController.MenuState.MAIN_MENU);
                 }
-
-                break;
-            case GAME_OVER:
                 break;
             default:
                 return false;
