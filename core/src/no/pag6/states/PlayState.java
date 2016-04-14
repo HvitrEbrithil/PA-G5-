@@ -1,9 +1,11 @@
-package no.pag6.models.states;
+package no.pag6.states;
 
+import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -11,31 +13,33 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
-import no.pag6.controllers.GameController;
 import no.pag6.game.PAG6Game;
-import no.pag6.views.GameRenderer;
+import no.pag6.helpers.AssetLoader;
+import no.pag6.ui.SimpleButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayState extends State {
 
-    private GameController gameController;
-    private GameRenderer gameRenderer;
+    private PAG6Game game;
 
-    // camera stuff
-    OrthographicCamera gameCamera;
-    Viewport viewPort;
-    int V_WIDTH = 800, V_HEIGHT = 480;
-    float PPM = 100;
+    // Camera and viewport
+    private OrthographicCamera cam;
+    private Viewport viewPort;
+    //    private int V_WIDTH = 800, V_HEIGHT = 480;
+    private int V_WIDTH = 2560, V_HEIGHT = 1440;
+    private float PPM = 100;
+
+    // Renderers
+    private ShapeRenderer drawer;
+    private SpriteBatch batcher;
+    private TweenManager tweener;
+
+    // Player stats
+    private int nofPlayers;
 
     // map stuff
     TiledMap map;
@@ -64,15 +68,33 @@ public class PlayState extends State {
     final static Vector2 MOVEMENT_IMPULSE = new Vector2(0.1f, 0),
             JUMP_IMPULSE = new Vector2(0, 6f);
 
+    // Game objects
+
+    // Game assets
+
+    // Tween assets
+
+    // Game UI
+    private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
+    private SimpleButton pauseButton;
+
     public PlayState(PAG6Game game, int nofPlayers) {
-        gameController = game.getGameController();
-        gameController.setNofPlayers(nofPlayers);
-        gameRenderer = game.getGameRenderer();
-        Gdx.input.setInputProcessor(game.getGameInputHandler());
+        this.game = game;
+        this.nofPlayers = nofPlayers;
+
+        Gdx.input.setInputProcessor(this);
 
         // set up the camera
-        gameCamera = new OrthographicCamera();
-        viewPort = new FitViewport(V_WIDTH / PPM, V_HEIGHT / PPM, gameCamera);
+        cam = new OrthographicCamera();
+//        viewPort = new FitViewport(V_WIDTH / PPM, V_HEIGHT / PPM, cam);
+//        cam.setToOrtho(true, viewPort.getScreenWidth(), viewPort.getScreenHeight());
+        cam.setToOrtho(true, V_WIDTH, V_HEIGHT);
+
+        // Set up drawer and batcher
+        drawer = new ShapeRenderer();
+        drawer.setProjectionMatrix(cam.combined);
+        batcher = new SpriteBatch();
+        batcher.setProjectionMatrix(cam.combined);
 
         // load the map
         map = new TmxMapLoader().load("maps/" + MAP_FILE_NAME);
@@ -83,20 +105,103 @@ public class PlayState extends State {
         b2dr = new Box2DDebugRenderer();
         addMapBodies();
         addPlayerBody();
+
+        // Init objects and assets
+        initTweenAssets();
+
+        initGameObjects();
+        initGameAssets();
+
+        initUI();
     }
 
     @Override
     public void render(float delta) {
-        update(delta);
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        b2dr.render(world, gameCamera.combined);
+        update(delta);
+
+        // Render sprites
+        batcher.begin();
+        batcher.enableBlending();
+
+        drawTiled();
+        drawUI();
+
+        batcher.end();
+    }
+
+    @Override
+    public void update(float delta) {
+        world.step(TIME_STEP, 6, 2);
+
+        cam.position.x = playerBody.getPosition().x; // center the camera around the player
+        cam.update();
+
+        mapRenderer.setView(cam);
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        screenX = scaleX(screenX);
+        screenY = scaleY(screenY);
+        pauseButton.isTouchDown(screenX, screenY);
+
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        screenX = scaleX(screenX);
+        screenY = scaleY(screenY);
+
+        if (pauseButton.isTouchUp(screenX, screenY)) {
+            PauseState pauseState = new PauseState(game);
+            game.gameStack.push(pauseState);
+            game.setScreen(pauseState);
+        } else if (playerBody.getLinearVelocity().x <= PLAYER_MAX_VELOCITY) {
+            playerBody.applyLinearImpulse(MOVEMENT_IMPULSE, playerBody.getWorldCenter(), true);
+        }
+        // TODO: Handle laneswitching
+//        if (true) {
+//            switchLanes();
+//        }
+
+        return true;
+    }
+
+    private void initTweenAssets() {
+        // Register Tween Assets
+
+        tweener = new TweenManager();
+
+        // Tween animations
+    }
+
+    private void initGameObjects() {
+    }
+
+    private void initGameAssets() {
+    }
+
+    private void initUI() {
+        pauseButton = new SimpleButton(2560 - AssetLoader.optionsButtonUp.getRegionWidth() - 64, 64,
+                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
+                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+        playButtons.add(pauseButton);
+    }
+
+    private void drawTiled() {
+        b2dr.render(world, cam.combined);
 
         mapRenderer.render();
-        //gameController.update(delta);
-        //gameRenderer.render(delta);
+    }
+
+    private void drawUI() {
+        for (SimpleButton button : playButtons) {
+            button.draw(batcher);
+        }
     }
 
     private void addMapBodies() {
@@ -141,26 +246,6 @@ public class PlayState extends State {
         playerBody.createFixture(fixtureDef);
 
         shape.dispose();
-    }
-
-    private void update(float delta) {
-        handleInput(delta);
-        world.step(TIME_STEP, 6, 2);
-
-        gameCamera.position.x = playerBody.getPosition().x; // center the camera around the player
-        gameCamera.update();
-
-        mapRenderer.setView(gameCamera);
-    }
-
-    private void handleInput(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) &&
-                playerBody.getLinearVelocity().x <= PLAYER_MAX_VELOCITY) {
-            playerBody.applyLinearImpulse(MOVEMENT_IMPULSE, playerBody.getWorldCenter(), true);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            switchLanes();
-        }
     }
 
     private void switchLanes() {

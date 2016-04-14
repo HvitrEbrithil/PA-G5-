@@ -1,4 +1,4 @@
-package no.pag6.models.ui;
+package no.pag6.ui;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
