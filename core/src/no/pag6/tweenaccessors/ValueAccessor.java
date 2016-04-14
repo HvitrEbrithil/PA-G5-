@@ -1,4 +1,4 @@
-package no.pag6.helpers.tweenaccessors;
+package no.pag6.tweenaccessors;
 
 import aurelienribon.tweenengine.TweenAccessor;
 

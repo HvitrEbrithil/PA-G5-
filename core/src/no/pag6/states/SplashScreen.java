@@ -1,4 +1,4 @@
-package no.pag6.models.states;
+package no.pag6.states;
 
 import aurelienribon.tweenengine.*;
 import com.badlogic.gdx.Gdx;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
-import no.pag6.helpers.tweenaccessors.SpriteAccessor;
+import no.pag6.tweenaccessors.SpriteAccessor;
 
 public class SplashScreen extends State {
 
