@@ -4,22 +4,18 @@ import aurelienribon.tweenengine.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.tweenaccessors.SpriteAccessor;
 
 public class SplashScreen extends State {
 
-    private PAG6Game game;
-
-    private SpriteBatch batcher;
     private TweenManager tweener;
 
     private Sprite logo;
 
     public SplashScreen(PAG6Game game) {
-        this.game = game;
+        super(game);
     }
 
     @Override
@@ -36,7 +32,6 @@ public class SplashScreen extends State {
         logo.setPosition(width/2 - logo.getWidth()/2, height/2 - logo.getHeight()/2);
 
         setupTween();
-        batcher = new SpriteBatch();
     }
 
     @Override
@@ -46,9 +41,9 @@ public class SplashScreen extends State {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batcher.begin();
-        logo.draw(batcher);
-        batcher.end();
+        game.spriteBatch.begin();
+        logo.draw(game.spriteBatch);
+        game.spriteBatch.end();
     }
 
     private void setupTween() {
