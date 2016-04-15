@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
@@ -36,6 +37,7 @@ public class MainMenu extends State {
     private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
     private SimpleButton quitButton;
+    private Sprite logo;
 
     public MainMenu(PAG6Game game) {
         super(game);
@@ -143,9 +145,12 @@ public class MainMenu extends State {
     }
 
     private void initUI() {
-        float uiScale = 0.4f;
+        float uiScale;
         TextureRegion region;
         float regionWidth, regionHeight;
+
+        // Buttons
+        uiScale = 0.4f;
 
         region = AssetLoader.playSPButtonUp;
         regionWidth = region.getRegionWidth()*uiScale;
@@ -196,12 +201,26 @@ public class MainMenu extends State {
                 AssetLoader.exitButtonUp, AssetLoader.exitButtonDown
         );
         mainMenuButtons.add(quitButton);
+
+        // Logo and copyright
+        uiScale = 0.05f;
+
+        region = AssetLoader.logo;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        logo = new Sprite(region);
+        logo.setSize(regionWidth, regionHeight);
+        logo.setPosition(0, 0);
     }
 
     private void drawUI() {
         for (SimpleButton button : mainMenuButtons) {
             button.draw(game.spriteBatch);
         }
+
+        logo.draw(game.spriteBatch);
+        AssetLoader.font.draw(game.spriteBatch, "Copyright 2016, Svartr Dras Inc.",
+                V_WIDTH/24, V_HEIGHT/28);
     }
 
     private void drawTransition(float delta) {
@@ -213,7 +232,7 @@ public class MainMenu extends State {
         drawer.setProjectionMatrix(cam.combined);
         drawer.begin(ShapeRenderer.ShapeType.Filled);
         drawer.setColor(1, 1, 1, alpha.getValue());
-        drawer.rect(0, 0, A_WIDTH, A_HEIGHT);
+        drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
         drawer.end();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
