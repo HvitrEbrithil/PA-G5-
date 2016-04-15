@@ -3,20 +3,28 @@ package no.pag6.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
 import no.pag6.game.PAG6Game;
 
 public class State implements Screen, InputProcessor {
 
     public static final String TAG = "State";
 
-    // TODO: Scaling
-    private float screenWidth = Gdx.graphics.getWidth();
-    private float screenHeight = Gdx.graphics.getHeight();
-    private float gameWidth = 2560;
-    private float gameHeight = screenHeight/(screenWidth/gameWidth);
+    protected PAG6Game game;
+    protected OrthographicCamera cam;
+    protected Viewport viewPort;
+    protected Vector3 projected, touchPoint = new Vector3(0, 0, 0);
 
-    private float scaleFactorX = screenWidth/gameWidth;
-    private float scaleFactorY = screenHeight/gameHeight;
+    public State(PAG6Game game) {
+        this.game = game;
+        cam = new OrthographicCamera();
+        viewPort = new FitViewport(game.V_WIDTH / game.PPM, game.V_HEIGHT / game.PPM, cam);
+        Gdx.input.setInputProcessor(this);
+    }
 
     @Override
     public void show() {
@@ -31,6 +39,7 @@ public class State implements Screen, InputProcessor {
     @Override
     public void resize(int width, int height) {
         Gdx.app.log(TAG, "resize called");
+        viewPort.update(width, height);
     }
 
     @Override
@@ -107,15 +116,6 @@ public class State implements Screen, InputProcessor {
     public void goBackToPreviousPreviousState(PAG6Game game) {
         game.gameStack.pop();
         goBackToPreviousState(game);
-    }
-
-    // TODO: Implement when we get a scale-factor for views
-    public int scaleX(int screenX) {
-        return (int) (screenX/scaleFactorX);
-    }
-
-    public int scaleY(int screenY) {
-        return (int) (screenY/scaleFactorY);
     }
 
 }
