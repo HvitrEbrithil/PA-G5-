@@ -5,11 +5,7 @@ import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.tweenaccessors.Value;
@@ -182,7 +178,7 @@ public class MainMenu extends State {
 
             drawer.begin(ShapeRenderer.ShapeType.Filled);
             drawer.setColor(1, 1, 1, alpha.getValue());
-            drawer.rect(0, 0, game.V_WIDTH, game.V_HEIGHT);
+            drawer.rect(0, 0, A_WIDTH, A_HEIGHT);
             drawer.end();
 
             Gdx.gl.glDisable(GL20.GL_BLEND);

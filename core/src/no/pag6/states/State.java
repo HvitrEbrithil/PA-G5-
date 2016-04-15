@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
 import no.pag6.game.PAG6Game;
+import no.pag6.helpers.Constants;
 
-public class State implements Screen, InputProcessor {
+public class State implements Screen, InputProcessor, Constants {
 
     public static final String TAG = "State";
 
@@ -22,7 +22,7 @@ public class State implements Screen, InputProcessor {
     public State(PAG6Game game) {
         this.game = game;
         cam = new OrthographicCamera();
-        viewPort = new FitViewport(game.V_WIDTH / game.PPM, game.V_HEIGHT / game.PPM, cam);
+        viewPort = new FitViewport(A_WIDTH, A_HEIGHT, cam);
         Gdx.input.setInputProcessor(this);
     }
 
