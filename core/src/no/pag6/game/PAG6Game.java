@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import no.pag6.helpers.AssetLoader;
+import no.pag6.states.PlayState;
 import no.pag6.states.SplashScreen;
 import no.pag6.states.State;
 
@@ -31,7 +32,7 @@ public class PAG6Game extends Game {
 		gameStack = new Stack<State>();
 		SplashScreen splashScreen = new SplashScreen(this);
 		gameStack.push(splashScreen);
-        setScreen(splashScreen);
+        setScreen(new PlayState(this, 2, "test_lvl.tmx"));
     }
 
 	@Override
