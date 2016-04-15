@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -39,9 +40,8 @@ public class MainMenu extends State {
     public MainMenu(PAG6Game game) {
         super(game);
 
-        // Set up drawer and batcher
+        // Set up drawer
         drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
 
         // Init objects and assets
         initTweenAssets();
@@ -56,7 +56,7 @@ public class MainMenu extends State {
     public void render(float delta) {
         update(delta);
 
-        Gdx.gl.glClearColor(1.0f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(1.0f, 0.4f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render sprites
@@ -68,7 +68,9 @@ public class MainMenu extends State {
 
         game.spriteBatch.end();
 
-        drawTransition(delta);
+        if (alpha.getValue() > 0) {
+            drawTransition(delta);
+        }
     }
 
     @Override
@@ -141,25 +143,58 @@ public class MainMenu extends State {
     }
 
     private void initUI() {
-        playSPButton = new SimpleButton(2560/2 - AssetLoader.playSPButtonUp.getRegionWidth()/2, 300,
-                AssetLoader.playSPButtonUp.getRegionWidth(), AssetLoader.playSPButtonUp.getRegionHeight(),
-                AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown);
+        float uiScale = 0.4f;
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        region = AssetLoader.playSPButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        playSPButton = new SimpleButton(
+                V_WIDTH/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown
+        );
         mainMenuButtons.add(playSPButton);
-        play2PButton = new SimpleButton(2560/2 - AssetLoader.play2PButtonUp.getRegionWidth()/2, 500,
-                AssetLoader.play2PButtonUp.getRegionWidth(), AssetLoader.play2PButtonUp.getRegionHeight(),
-                AssetLoader.play2PButtonUp, AssetLoader.play2PButtonDown);
+
+        region = AssetLoader.play2PButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        play2PButton = new SimpleButton(
+                V_WIDTH*2/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.play2PButtonUp, AssetLoader.play2PButtonDown
+        );
         mainMenuButtons.add(play2PButton);
-        highscoreButton = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 - 400, 700,
-                AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
+
+        region = AssetLoader.highscoreButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        highscoreButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
+        );
         mainMenuButtons.add(highscoreButton);
-        optionsButton = new SimpleButton(2560/2 - AssetLoader.optionsButtonUp.getRegionWidth()/2 + 400, 700,
-                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+
+        region = AssetLoader.optionsButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        optionsButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
+        );
         mainMenuButtons.add(optionsButton);
-        quitButton = new SimpleButton(2560/2 - AssetLoader.exitButtonUp.getRegionWidth()/2, 1000,
-                AssetLoader.exitButtonUp.getRegionWidth(), AssetLoader.exitButtonUp.getRegionHeight(),
-                AssetLoader.exitButtonUp, AssetLoader.exitButtonDown);
+
+        region = AssetLoader.exitButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        quitButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.exitButtonUp, AssetLoader.exitButtonDown
+        );
         mainMenuButtons.add(quitButton);
     }
 
@@ -170,19 +205,18 @@ public class MainMenu extends State {
     }
 
     private void drawTransition(float delta) {
-        if (alpha.getValue() > 0) {
-            tweener.update(delta);
+        tweener.update(delta);
 
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-            drawer.begin(ShapeRenderer.ShapeType.Filled);
-            drawer.setColor(1, 1, 1, alpha.getValue());
-            drawer.rect(0, 0, A_WIDTH, A_HEIGHT);
-            drawer.end();
+        drawer.setProjectionMatrix(cam.combined);
+        drawer.begin(ShapeRenderer.ShapeType.Filled);
+        drawer.setColor(1, 1, 1, alpha.getValue());
+        drawer.rect(0, 0, A_WIDTH, A_HEIGHT);
+        drawer.end();
 
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
 }

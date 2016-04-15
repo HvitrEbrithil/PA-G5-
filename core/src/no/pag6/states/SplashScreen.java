@@ -23,11 +23,11 @@ public class SplashScreen extends State {
         logo = new Sprite(AssetLoader.logo);
         logo.setColor(1, 1, 1, 0);
 
-        float desiredWidth = A_WIDTH*0.3f;
+        float desiredWidth = V_WIDTH*0.3f;
         float desiredHeight = logo.getHeight()*(desiredWidth/logo.getWidth());
 
         logo.setSize(desiredWidth, desiredHeight);
-        logo.setPosition(A_WIDTH/2 - logo.getWidth()/2, A_HEIGHT/2 - logo.getHeight()/2);
+        logo.setPosition(V_WIDTH/2 - logo.getWidth()/2, V_HEIGHT/2 - logo.getHeight()/2);
 
         setupTween();
     }
