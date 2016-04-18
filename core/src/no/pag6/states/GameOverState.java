@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -15,18 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameOverState extends State {
-    private PAG6Game game;
-
-    // Camera and viewport
-    private OrthographicCamera cam;
-    private Viewport viewPort;
-    //    private int V_WIDTH = 800, V_HEIGHT = 480;
-    private int V_WIDTH = 2560, V_HEIGHT = 1440;
-    private float PPM = 100;
 
     // Renderers
     private ShapeRenderer drawer;
-    private SpriteBatch batcher;
     private TweenManager tweener;
 
     // Game objects
@@ -41,20 +33,11 @@ public class GameOverState extends State {
     private SimpleButton menuButtonGameOver;
 
     public GameOverState(PAG6Game game) {
-        this.game = game;
-        Gdx.input.setInputProcessor(this);
-
-        // Set up camera
-        cam = new OrthographicCamera();
-//        viewPort = new FitViewport(V_WIDTH / PPM, V_HEIGHT / PPM, cam);
-//        cam.setToOrtho(true, viewPort.getScreenWidth(), viewPort.getScreenHeight());
-        cam.setToOrtho(true, V_WIDTH, V_HEIGHT);
+        super(game);
 
         // Set up drawer and batcher
         drawer = new ShapeRenderer();
         drawer.setProjectionMatrix(cam.combined);
-        batcher = new SpriteBatch();
-        batcher.setProjectionMatrix(cam.combined);
 
         // Init objects and assets
         initTweenAssets();
@@ -67,18 +50,19 @@ public class GameOverState extends State {
 
     @Override
     public void render(float delta) {
+        update(delta);
+
         Gdx.gl.glClearColor(0, 0.5f, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        update(delta);
-
         // Render sprites
-        batcher.begin();
-        batcher.enableBlending();
+        game.spriteBatch.setProjectionMatrix(cam.combined);
+        game.spriteBatch.begin();
+        game.spriteBatch.enableBlending();
 
         drawUI();
 
-        batcher.end();
+        game.spriteBatch.end();
     }
 
     @Override
@@ -87,8 +71,10 @@ public class GameOverState extends State {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
+        touchPoint.set(screenX, screenY, 0);
+        projected = cam.unproject(touchPoint);
+        screenX = (int) touchPoint.x;
+        screenY = (int) touchPoint.y;
 
         highscoreButtonGameOver.isTouchDown(screenX, screenY);
         menuButtonGameOver.isTouchDown(screenX, screenY);
@@ -98,8 +84,10 @@ public class GameOverState extends State {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
+        touchPoint.set(screenX, screenY, 0);
+        projected = cam.unproject(touchPoint);
+        screenX = (int) touchPoint.x;
+        screenY = (int) touchPoint.y;
 
         if (highscoreButtonGameOver.isTouchUp(screenX, screenY)) {
             game.gameStack.pop();
@@ -142,7 +130,7 @@ public class GameOverState extends State {
 
     private void drawUI() {
         for (SimpleButton button : gameOverButtons) {
-            button.draw(batcher);
+            button.draw(game.spriteBatch);
         }
     }
 

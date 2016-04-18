@@ -5,10 +5,7 @@ import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.tweenaccessors.Value;
@@ -20,18 +17,8 @@ import java.util.List;
 
 public class MainMenu extends State {
 
-    private PAG6Game game;
-
-    // Camera and viewport
-    private OrthographicCamera cam;
-    private Viewport viewPort;
-//    private int V_WIDTH = 800, V_HEIGHT = 480;
-    private int V_WIDTH = 2560, V_HEIGHT = 1440;
-    private float PPM = 100;
-
     // Renderers
     private ShapeRenderer drawer;
-    private SpriteBatch batcher;
     private TweenManager tweener;
 
     // Game objects
@@ -50,20 +37,11 @@ public class MainMenu extends State {
     private SimpleButton quitButton;
 
     public MainMenu(PAG6Game game) {
-        this.game = game;
-        Gdx.input.setInputProcessor(this);
-
-        // Set up camera
-        cam = new OrthographicCamera();
-//        viewPort = new FitViewport(V_WIDTH / PPM, V_HEIGHT / PPM, cam);
-//        cam.setToOrtho(true, viewPort.getScreenWidth(), viewPort.getScreenHeight());
-        cam.setToOrtho(true, V_WIDTH, V_HEIGHT);
+        super(game);
 
         // Set up drawer and batcher
         drawer = new ShapeRenderer();
         drawer.setProjectionMatrix(cam.combined);
-        batcher = new SpriteBatch();
-        batcher.setProjectionMatrix(cam.combined);
 
         // Init objects and assets
         initTweenAssets();
@@ -76,18 +54,19 @@ public class MainMenu extends State {
 
     @Override
     public void render(float delta) {
+        update(delta);
+
         Gdx.gl.glClearColor(1.0f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        update(delta);
-
         // Render sprites
-        batcher.begin();
-        batcher.enableBlending();
+        game.spriteBatch.setProjectionMatrix(cam.combined);
+        game.spriteBatch.begin();
+        game.spriteBatch.enableBlending();
 
         drawUI();
 
-        batcher.end();
+        game.spriteBatch.end();
 
         drawTransition(delta);
     }
@@ -98,8 +77,10 @@ public class MainMenu extends State {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
+        touchPoint.set(screenX, screenY, 0);
+        projected = cam.unproject(touchPoint);
+        screenX = (int) touchPoint.x;
+        screenY = (int) touchPoint.y;
 
         playSPButton.isTouchDown(screenX, screenY);
         play2PButton.isTouchDown(screenX, screenY);
@@ -112,15 +93,17 @@ public class MainMenu extends State {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
+        touchPoint.set(screenX, screenY, 0);
+        projected = cam.unproject(touchPoint);
+        screenX = (int) touchPoint.x;
+        screenY = (int) touchPoint.y;
 
         if (playSPButton.isTouchUp(screenX, screenY)) {
-            PlayState playState = new PlayState(game, 1);
+            PlayState playState = new PlayState(game, 1, "test_lvl.tmx");
             game.gameStack.push(playState);
             game.setScreen(playState);
         } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            PlayState playState = new PlayState(game, 2);
+            PlayState playState = new PlayState(game, 2, "test_lvl.tmx");
             game.gameStack.push(playState);
             game.setScreen(playState);
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
@@ -182,7 +165,7 @@ public class MainMenu extends State {
 
     private void drawUI() {
         for (SimpleButton button : mainMenuButtons) {
-            button.draw(batcher);
+            button.draw(game.spriteBatch);
         }
     }
 
@@ -195,7 +178,7 @@ public class MainMenu extends State {
 
             drawer.begin(ShapeRenderer.ShapeType.Filled);
             drawer.setColor(1, 1, 1, alpha.getValue());
-            drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
+            drawer.rect(0, 0, A_WIDTH, A_HEIGHT);
             drawer.end();
 
             Gdx.gl.glDisable(GL20.GL_BLEND);
