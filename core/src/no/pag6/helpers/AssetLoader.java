@@ -3,6 +3,7 @@ package no.pag6.helpers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetLoader {
@@ -24,6 +25,7 @@ public class AssetLoader {
 
     // Fonts
 //    public static BitmapFont ;
+    public static BitmapFont font;
 
     public static void load() {
         // Preferences
@@ -40,16 +42,12 @@ public class AssetLoader {
         playSPButtonTexture = new Texture(Gdx.files.internal("textures/play_sp_button.png"));
         playSPButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         playSPButtonUp = new TextureRegion(playSPButtonTexture, 0, 0, 512, 128);
-        playSPButtonUp.flip(false, true);
         playSPButtonDown = new TextureRegion(playSPButtonTexture, 0, 129, 512, 128);
-        playSPButtonDown.flip(false, true);
 
         play2PButtonTexture = new Texture(Gdx.files.internal("textures/play_2p_button.png"));
         play2PButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         play2PButtonUp = new TextureRegion(play2PButtonTexture, 0, 0, 512, 128);
-        play2PButtonUp.flip(false, true);
         play2PButtonDown = new TextureRegion(play2PButtonTexture, 0, 129, 512, 128);
-        play2PButtonDown.flip(false, true);
 
         highscoreButtonTexture = new Texture(Gdx.files.internal("textures/highscore_button.png"));
         highscoreButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -109,8 +107,8 @@ public class AssetLoader {
 //         = Gdx.audio.newSound(Gdx.files.internal("sounds/.wav"));
 
         // Fonts
-//         = new BitmapFont(Gdx.files.internal("fonts/.fnt"));
-//        .getData().setScale(.25f, -.25f);
+        font = new BitmapFont();
+        font.getData().setScale(.5f, .5f);
     }
 
     public static void dispose() {

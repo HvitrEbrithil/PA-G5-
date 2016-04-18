@@ -22,13 +22,15 @@ public class State implements Screen, InputProcessor, Constants {
     public State(PAG6Game game) {
         this.game = game;
         cam = new OrthographicCamera();
-        viewPort = new FitViewport(A_WIDTH, A_HEIGHT, cam);
-        Gdx.input.setInputProcessor(this);
+        viewPort = new FitViewport(V_WIDTH, V_HEIGHT, cam);
+        cam.position.set(V_WIDTH/2, V_HEIGHT/2, 0);
     }
 
     @Override
     public void show() {
         Gdx.app.log(TAG, "show called");
+
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
