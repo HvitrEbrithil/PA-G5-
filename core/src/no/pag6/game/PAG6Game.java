@@ -1,14 +1,14 @@
-    package no.pag6.game;
+package no.pag6.game;
 
-    import com.badlogic.gdx.Game;
-    import com.badlogic.gdx.Gdx;
-    import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-    import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-    import no.pag6.helpers.AssetLoader;
-    import no.pag6.helpers.GameStateManager;
-    import no.pag6.states.MainMenu;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.GameStateManager;
+import no.pag6.states.MainMenu;
 
-    public class PAG6Game extends Game {
+public class PAG6Game extends Game {
 
     public static final String TAG = "PAG6Game";
 

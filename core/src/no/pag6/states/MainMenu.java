@@ -108,8 +108,6 @@ public class MainMenu extends State {
             game.getGameStateManager().pushScreen(new CharacterMenu(game, 1));
         } else if (play2PButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new CharacterMenu(game, 2));
-        } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().pushScreen(new PlayState(game, 2, "test_lvl.tmx"));
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
@@ -142,16 +140,13 @@ public class MainMenu extends State {
     }
 
     private void initUI() {
-        float uiScale;
         TextureRegion region;
         float regionWidth, regionHeight;
 
         // Buttons
-        uiScale = 0.4f;
-
         region = AssetLoader.playSPButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         playSPButton = new SimpleButton(
                 V_WIDTH/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -160,8 +155,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(playSPButton);
 
         region = AssetLoader.play2PButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         play2PButton = new SimpleButton(
                 V_WIDTH*2/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -170,8 +165,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(play2PButton);
 
         region = AssetLoader.highscoreButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         highscoreButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -180,8 +175,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(highscoreButton);
 
         region = AssetLoader.optionsButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         optionsButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -190,8 +185,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(optionsButton);
 
         region = AssetLoader.quitButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         quitButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -200,11 +195,11 @@ public class MainMenu extends State {
         mainMenuButtons.add(quitButton);
 
         // Logo and copyright
-        uiScale = 0.05f;
+        float tempUIScale = 0.05f;
 
         region = AssetLoader.logo;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
         logo = new Sprite(region);
         logo.setSize(regionWidth, regionHeight);
         logo.setPosition(8, 2);

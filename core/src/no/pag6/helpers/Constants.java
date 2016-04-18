@@ -10,6 +10,9 @@ public interface Constants {
     int A_WIDTH = (int) (V_WIDTH/PPM), A_HEIGHT = (int) (V_HEIGHT/PPM);
     float TIME_STEP = 1/60f;
 
+    // UI
+    float UI_SCALE = 0.4f;
+
     // Play state
     Vector2 GRAVITY = new Vector2(0, -10),
             MOVEMENT_IMPULSE = new Vector2(0.1f, 0),
