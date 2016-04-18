@@ -1,24 +1,26 @@
 package no.pag6.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class CharacterMenu extends State {
 
+    public static final String TAG = "CharacterMenu";
+
     private int nofPlayers;
+    private String playerNameRegex = "^[a-zA-Z .'-]+$";
+    private String player1Name;
+    private String player2Name;
 
     // Renderers
 
@@ -29,11 +31,12 @@ public class CharacterMenu extends State {
     // Tween assets
 
     // Game UI
+    private boolean backButtonEnabled = true;
+    private boolean playButtonEnabled = false;
+
     private List<SimpleButton> characterMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton playButton;
     private SimpleButton backButton;
-    private TextField player1Name;
-    private TextField player2Name;
 
     public CharacterMenu(PAG6Game game, int nofPlayers) {
         super(game);
@@ -46,6 +49,8 @@ public class CharacterMenu extends State {
         initGameAssets();
 
         initUI();
+
+        takePlayer1Name();
     }
 
     @Override
@@ -82,8 +87,12 @@ public class CharacterMenu extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        playButton.isTouchDown(screenX, screenY);
-        backButton.isTouchDown(screenX, screenY);
+        if (backButtonEnabled) {
+            backButton.isTouchDown(screenX, screenY);
+        }
+        if (playButtonEnabled) {
+            playButton.isTouchDown(screenX, screenY);
+        }
 
         return true;
     }
@@ -95,16 +104,21 @@ public class CharacterMenu extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        if (nofPlayers == 1) {
-            if (playButton.isTouchUp(screenX, screenY)) {
-                game.getGameStateManager().pushScreen(new PlayState(game, 1, "maptest2.tmx"));
+        if (backButtonEnabled) {
+            if (backButton.isTouchUp(screenX, screenY)) {
+                game.getGameStateManager().popScreen();
             }
-        } else if (nofPlayers == 2) {
-            if (playButton.isTouchUp(screenX, screenY)) {
-                game.getGameStateManager().pushScreen(new PlayState(game, 2, "maptest2.tmx"));
+        }
+        if (playButtonEnabled) {
+            if (nofPlayers == 1) {
+                if (playButton.isTouchUp(screenX, screenY)) {
+                    game.getGameStateManager().pushScreen(new PlayState(game, 1, "maptest2.tmx"));
+                }
+            } else if (nofPlayers == 2) {
+                if (playButton.isTouchUp(screenX, screenY)) {
+                    game.getGameStateManager().pushScreen(new PlayState(game, 2, "maptest2.tmx"));
+                }
             }
-        } else if (backButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().popScreen();
         }
 
         return true;
@@ -143,35 +157,78 @@ public class CharacterMenu extends State {
                 AssetLoader.backButtonUp, AssetLoader.backButtonDown
         );
         characterMenuButtons.add(backButton);
+    }
 
-        Skin skin = new Skin();
-        skin.add(
-                "background",
-                new NinePatch(new Texture(Gdx.files.internal("textures/play_sp_button.png")), 32, 32, 32, 32));
-        skin.add("cursor", new Texture(Gdx.files.internal("textures/pause_button.png")));
+    private void takePlayer1Name() {
+        disableBackButton();
+        disablePlayButton();
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+            @Override
+            public void input(String text) {
+                if (Pattern.matches(playerNameRegex, text)) {
+                    player1Name = text;
+                    enableBackButton();
+                    enablePlayButton();
 
-        TextField.TextFieldStyle tStyle = new TextField.TextFieldStyle();
-        tStyle.font = AssetLoader.font;
-        tStyle.fontColor = Color.BLACK;
-        tStyle.background = skin.getDrawable("background");
-        tStyle.cursor = skin.newDrawable("cursor", Color.GREEN);
-        tStyle.cursor.setMinWidth(2f);
-        tStyle.selection = skin.newDrawable("background", 0.5f, 0.5f, 0.5f, 0.5f);
-        player1Name = new TextField("test", tStyle);
-        if (nofPlayers == 2) {
-            player2Name = new TextField("test2", tStyle);
-        }
+                    if (nofPlayers == 2) {
+                        takePlayer2Name();
+                    }
+                } else {
+                    takePlayer1Name();
+                }
+            }
+
+            @Override
+            public void canceled() {
+                enableBackButton();
+            }
+        }, "Enter name of Player 1", "", "eg. Morlock");
+    }
+
+    private void takePlayer2Name() {
+        disableBackButton();
+        disablePlayButton();
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+            @Override
+            public void input(String text) {
+                if (Pattern.matches(playerNameRegex, text)) {
+                    player2Name = text;
+                    enableBackButton();
+                    enablePlayButton();
+                } else {
+                    takePlayer2Name();
+                }
+            }
+
+            @Override
+            public void canceled() {
+                enableBackButton();
+            }
+        }, "Enter name of Player 2", "", "eg. Melkor");
     }
 
     private void drawUI() {
         for (SimpleButton button : characterMenuButtons) {
             button.draw(game.spriteBatch);
         }
+    }
 
-        player1Name.draw(game.spriteBatch, 1);
-        if (nofPlayers == 2) {
-            player2Name.draw(game.spriteBatch, 1);
-        }
+    private void enableBackButton() {
+        Gdx.app.log(TAG, "buttons enabled");
+        backButtonEnabled = true;
+    }
+    private void disableBackButton() {
+        Gdx.app.log(TAG, "buttons disabled");
+        backButtonEnabled = false;
+    }
+
+    private void enablePlayButton() {
+        Gdx.app.log(TAG, "buttons enabled");
+        playButtonEnabled = true;
+    }
+    private void disablePlayButton() {
+        Gdx.app.log(TAG, "buttons disabled");
+        playButtonEnabled = false;
     }
 
 }
