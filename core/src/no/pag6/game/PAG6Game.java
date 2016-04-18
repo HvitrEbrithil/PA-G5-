@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.states.MainMenu;
+import no.pag6.states.PauseState;
 import no.pag6.states.SplashScreen;
 import no.pag6.states.State;
 

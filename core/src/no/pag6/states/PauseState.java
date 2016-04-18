@@ -29,9 +29,9 @@ public class PauseState extends State {
     // Game UI
     private List<SimpleButton> pauseButtons = new ArrayList<SimpleButton>();
     private SimpleButton resumeButton;
-    private SimpleButton highscoreButtonPause;
+    private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
-    private SimpleButton menuButtonPause;
+    private SimpleButton menuButton;
 
     public PauseState(PAG6Game game) {
         super(game);
@@ -78,9 +78,9 @@ public class PauseState extends State {
         screenY = (int) touchPoint.y;
 
         resumeButton.isTouchDown(screenX, screenY);
-        highscoreButtonPause.isTouchDown(screenX, screenY);
+        highscoreButton.isTouchDown(screenX, screenY);
         optionsButton.isTouchDown(screenX, screenY);
-        menuButtonPause.isTouchDown(screenX, screenY);
+        menuButton.isTouchDown(screenX, screenY);
 
         return true;
     }
@@ -97,7 +97,7 @@ public class PauseState extends State {
             State previousState = game.gameStack.pop();
             game.gameStack.push(previousState);
             game.setScreen(previousState);
-        } else if (highscoreButtonPause.isTouchUp(screenX, screenY)) {
+        } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             HighscoreMenu highscoreMenu = new HighscoreMenu(game);
             game.gameStack.push(highscoreMenu);
             game.setScreen(highscoreMenu);
@@ -105,7 +105,7 @@ public class PauseState extends State {
             OptionsMenu optionsMenu = new OptionsMenu(game);
             game.gameStack.push(optionsMenu);
             game.setScreen(optionsMenu);
-        } else if (menuButtonPause.isTouchUp(screenX, screenY)) {
+        } else if (menuButton.isTouchUp(screenX, screenY)) {
             goBackToPreviousPreviousState(game);
         }
 
@@ -131,18 +131,18 @@ public class PauseState extends State {
                 AssetLoader.resumeButtonUp.getRegionWidth(), AssetLoader.resumeButtonUp.getRegionHeight(),
                 AssetLoader.resumeButtonUp, AssetLoader.resumeButtonDown);
         pauseButtons.add(resumeButton);
-        highscoreButtonPause = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
+        highscoreButton = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
                 AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
                 AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
-        pauseButtons.add(highscoreButtonPause);
+        pauseButtons.add(highscoreButton);
         optionsButton = new SimpleButton(2560/2 - AssetLoader.optionsButtonUp.getRegionWidth()/2 - 500, 1200,
                 AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
                 AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
         pauseButtons.add(optionsButton);
-        menuButtonPause = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
+        menuButton = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
                 AssetLoader.mainMenuButtonUp.getRegionWidth(), AssetLoader.mainMenuButtonUp.getRegionHeight(),
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown);
-        pauseButtons.add(menuButtonPause);
+        pauseButtons.add(menuButton);
     }
 
     private void drawUI() {
