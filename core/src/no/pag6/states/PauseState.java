@@ -74,8 +74,8 @@ public class PauseState extends State {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         resumeButton.isTouchDown(screenX, screenY);
         highscoreButtonPause.isTouchDown(screenX, screenY);
@@ -89,24 +89,17 @@ public class PauseState extends State {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         if (resumeButton.isTouchUp(screenX, screenY)) {
-            game.gameStack.pop();
-            State previousState = game.gameStack.pop();
-            game.gameStack.push(previousState);
-            game.setScreen(previousState);
+            game.getGameStateManager().popScreen();
         } else if (highscoreButtonPause.isTouchUp(screenX, screenY)) {
-            HighscoreMenu highscoreMenu = new HighscoreMenu(game);
-            game.gameStack.push(highscoreMenu);
-            game.setScreen(highscoreMenu);
+            game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
-            OptionsMenu optionsMenu = new OptionsMenu(game);
-            game.gameStack.push(optionsMenu);
-            game.setScreen(optionsMenu);
+            game.getGameStateManager().pushScreen(new OptionsMenu(game));
         } else if (menuButtonPause.isTouchUp(screenX, screenY)) {
-            goBackToPreviousPreviousState(game);
+            game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
         return true;

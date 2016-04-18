@@ -73,8 +73,8 @@ public class GameOverState extends State {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         highscoreButtonGameOver.isTouchDown(screenX, screenY);
         menuButtonGameOver.isTouchDown(screenX, screenY);
@@ -86,17 +86,13 @@ public class GameOverState extends State {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         if (highscoreButtonGameOver.isTouchUp(screenX, screenY)) {
-            game.gameStack.pop();
-            game.gameStack.pop();
-            HighscoreMenu highscoreMenu = new HighscoreMenu(game);
-            game.gameStack.push(highscoreMenu);
-            game.setScreen(highscoreMenu);
+            game.getGameStateManager().setScreen(new HighscoreMenu(game));
         } else if (menuButtonGameOver.isTouchUp(screenX, screenY)) {
-            goBackToPreviousPreviousState(game);
+            game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
         return true;

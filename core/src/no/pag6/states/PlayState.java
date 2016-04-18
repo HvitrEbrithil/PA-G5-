@@ -2,17 +2,23 @@ package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.MyContactListener;
+import no.pag6.models.Player;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
@@ -34,9 +40,10 @@ public class PlayState extends State {
     // box2d stuff
     private World world;
     private Box2DDebugRenderer b2dr;
-    private Body playerBody;
+    private MyContactListener cl;
 
     // Game objects
+    private Player player;
 
     // Game assets
 
@@ -50,7 +57,7 @@ public class PlayState extends State {
         super(game);
         this.nofPlayers = nofPlayers;
 
-        // Set up drawer and batcher
+        // Set up drawer
         drawer = new ShapeRenderer();
         drawer.setProjectionMatrix(cam.combined);
 
@@ -61,8 +68,12 @@ public class PlayState extends State {
         // set up box2d
         world = new World(GRAVITY, true);
         b2dr = new Box2DDebugRenderer();
+        cl = new MyContactListener();
+        world.setContactListener(cl);
         addMapBodies();
         addPlayerBody();
+
+        cam.position.set(A_WIDTH, 500 / PPM, 0);
 
         // Init objects and assets
         initTweenAssets();
@@ -100,11 +111,16 @@ public class PlayState extends State {
 
     @Override
     public void update(float delta) {
-        world.step(TIME_STEP, 6, 2);
+        world.step(TIME_STEP, 6, 2); // update physics
 
-        cam.position.x = playerBody.getPosition().x; // center the camera around the player
+        // update camera
+        cam.position.x = player.getB2dBody().getPosition().x; // center the camera around the player
         cam.update();
 
+        // update the player
+        player.update(delta);
+
+        // update the Tiled map renderer
         mapRenderer.setView(cam);
     }
 
@@ -112,8 +128,8 @@ public class PlayState extends State {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
         pauseButton.isTouchDown(screenX, screenY);
 
         return true;
@@ -123,15 +139,11 @@ public class PlayState extends State {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         if (pauseButton.isTouchUp(screenX, screenY)) {
-            PauseState pauseState = new PauseState(game);
-            game.gameStack.push(pauseState);
-            game.setScreen(pauseState);
-        } else if (playerBody.getLinearVelocity().x <= PLAYER_MAX_VELOCITY) {
-            playerBody.applyLinearImpulse(MOVEMENT_IMPULSE, playerBody.getWorldCenter(), true);
+            game.getGameStateManager().pushScreen(new PauseState(game));
         }
         // TODO: Handle laneswitching
 //        if (true) {
@@ -181,21 +193,30 @@ public class PlayState extends State {
         Body body;
 
         // loop through the layers in the map and add box2d bodies to the box2d world
-        for (int i = 0; i < LAYERS.length; i++) {
-            for (MapObject mapObject : map.getLayers().get(LAYERS[i]).getObjects()
-                                                .getByType(RectangleMapObject.class)) {
+        for (MapObject mapObject : map.getLayers().get("collision").getObjects()
+                .getByType(PolylineMapObject.class)) {
+            Polyline line = ((PolylineMapObject) mapObject).getPolyline();
 
-                Rectangle rect = ((RectangleMapObject) mapObject).getRectangle();
-                bodyDef.position.set(
-                        (rect.getX() + rect.getWidth() / 2) / PPM,
-                        (rect.getY() + rect.getHeight() / 2) / PPM);
-                body = world.createBody(bodyDef);
-                shape.setAsBox(rect.getWidth() / (2*PPM), rect.getHeight() / (2*PPM));
-                fixtureDef.shape = shape;
-                fixtureDef.filter.categoryBits = FILTER_BITS[i];
-                body.createFixture(fixtureDef);
+            float[] vertices = line.getTransformedVertices();
+            Vector2[] worldVertices = new Vector2[vertices.length / 2];
+
+            for (int i = 0; i < worldVertices.length; i++) {
+                worldVertices[i] = new Vector2(vertices[i*2] / PPM, vertices[i*2+1] / PPM);
             }
+
+            ChainShape chainShape = new ChainShape();
+            chainShape.createChain(worldVertices);
+
+            bodyDef.position.set(
+                    line.getOriginX() / PPM,
+                    line.getOriginY() / PPM);
+
+            body = world.createBody(bodyDef);
+            fixtureDef.shape = chainShape;
+            fixtureDef.filter.categoryBits = FIRST_LAYER_BITS;
+            body.createFixture(fixtureDef);
         }
+
         shape.dispose();
     }
 
@@ -203,8 +224,9 @@ public class PlayState extends State {
         BodyDef bodyDef = new BodyDef();
         bodyDef.position.set(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        playerBody = world.createBody(bodyDef);
+        Body playerBody = world.createBody(bodyDef);
 
+        // body fixture
         CircleShape shape = new CircleShape();
         shape.setRadius(PLAYER_BODY_RADIUS / PPM);
 
@@ -212,25 +234,34 @@ public class PlayState extends State {
         fixtureDef.shape = shape;
         fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the player starts in lane 1
         playerBody.createFixture(fixtureDef);
-
         shape.dispose();
+
+        // add foot fixture
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
+        fixtureDef.shape = polygonShape;
+        fixtureDef.isSensor = true;
+        playerBody.createFixture(fixtureDef).setUserData("foot");
+        polygonShape.dispose();
+
+        player = new Player(playerBody);
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.SPACE && cl.isPlayerOnGround()) {
+            switchLanes();
+        }
+        return true;
     }
 
     private void switchLanes() {
-        // make the player jump
-        playerBody.applyLinearImpulse(JUMP_IMPULSE, playerBody.getWorldCenter(), true);
-
-        // change the collision bits
-        Filter filter = playerBody.getFixtureList().first().getFilterData();
-        filter.maskBits = SECOND_LAYER_BITS;
-        playerBody.getFixtureList().first().setFilterData(filter);
-
-        // scale the player
-        playerBody.getFixtureList().first().getShape().setRadius(5 / PPM);
+        boolean isOnFirstLane = player.isOnFirstLane();
+        player.switchLanes();
 
         // change the map layer opacities
-        map.getLayers().get(FIRST_GFX_LAYER_NAME).setOpacity(1);
-        map.getLayers().get(SECOND_GFX_LAYER_NAME).setOpacity(0.5f);
+        map.getLayers().get(FIRST_GFX_LAYER_NAME).setOpacity(isOnFirstLane ? 0.5f : 1);
+        map.getLayers().get(SECOND_GFX_LAYER_NAME).setOpacity(isOnFirstLane ? 1 : 0.5f);
     }
 
 }

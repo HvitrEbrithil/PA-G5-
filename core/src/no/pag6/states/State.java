@@ -108,16 +108,4 @@ public class State implements Screen, InputProcessor, Constants {
         Gdx.app.log(TAG, "update called");
     }
 
-    public void goBackToPreviousState(PAG6Game game) {
-        game.gameStack.pop();
-        State previousState = game.gameStack.pop();
-        game.gameStack.push(previousState);
-        game.setScreen(previousState);
-    }
-
-    public void goBackToPreviousPreviousState(PAG6Game game) {
-        game.gameStack.pop();
-        goBackToPreviousState(game);
-    }
-
 }

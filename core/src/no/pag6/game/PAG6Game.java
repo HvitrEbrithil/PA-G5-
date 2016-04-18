@@ -5,11 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.GameStateManager;
 import no.pag6.states.MainMenu;
-import no.pag6.states.SplashScreen;
-import no.pag6.states.State;
-
-import java.util.Stack;
 
 public class PAG6Game extends Game {
 
@@ -17,27 +14,28 @@ public class PAG6Game extends Game {
 
 	public ShapeRenderer drawer;
 	public SpriteBatch spriteBatch;
-	public Stack<State> gameStack;
+	private GameStateManager gameStateManager;
 
 	@Override
 	public void create () {
 		spriteBatch = new SpriteBatch();
+		gameStateManager = new GameStateManager(this);
 
         Gdx.app.log(TAG, "created");
 
         AssetLoader.load();
 
-		gameStack = new Stack<State>();
-		SplashScreen splashScreen = new SplashScreen(this);
-		gameStack.push(splashScreen);
-//        setScreen(splashScreen);
-        setScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
+		gameStateManager.pushScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
     }
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		AssetLoader.dispose();
+	}
+
+	public GameStateManager getGameStateManager() {
+		return gameStateManager;
 	}
 
 	@Override

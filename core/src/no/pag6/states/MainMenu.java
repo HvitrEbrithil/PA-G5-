@@ -85,8 +85,8 @@ public class MainMenu extends State {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         playSPButton.isTouchDown(screenX, screenY);
         play2PButton.isTouchDown(screenX, screenY);
@@ -101,25 +101,19 @@ public class MainMenu extends State {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
         if (playSPButton.isTouchUp(screenX, screenY)) {
-            CharacterMenu characterMenu = new CharacterMenu(game, 1);
-            game.gameStack.push(characterMenu);
-            game.setScreen(characterMenu);
+            game.getGameStateManager().pushScreen(new CharacterMenu(game, 1));
         } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            CharacterMenu characterMenu = new CharacterMenu(game, 2);
-            game.gameStack.push(characterMenu);
-            game.setScreen(characterMenu);
+            game.getGameStateManager().pushScreen(new CharacterMenu(game, 2));
+        } else if (play2PButton.isTouchUp(screenX, screenY)) {
+            game.getGameStateManager().pushScreen(new PlayState(game, 2, "test_lvl.tmx"));
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
-            HighscoreMenu highscoreMenu = new HighscoreMenu(game);
-            game.gameStack.push(highscoreMenu);
-            game.setScreen(highscoreMenu);
+            game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
-            OptionsMenu optionsMenu = new OptionsMenu(game);
-            game.gameStack.push(optionsMenu);
-            game.setScreen(optionsMenu);
+            game.getGameStateManager().pushScreen(new OptionsMenu(game));
         } else if (quitButton.isTouchUp(screenX, screenY)) {
             game.dispose();
             System.exit(0);
