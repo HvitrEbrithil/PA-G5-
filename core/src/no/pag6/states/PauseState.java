@@ -3,10 +3,7 @@ package no.pag6.states;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
@@ -29,9 +26,9 @@ public class PauseState extends State {
     // Game UI
     private List<SimpleButton> pauseButtons = new ArrayList<SimpleButton>();
     private SimpleButton resumeButton;
-    private SimpleButton highscoreButtonPause;
+    private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
-    private SimpleButton menuButtonPause;
+    private SimpleButton menuButton;
 
     public PauseState(PAG6Game game) {
         super(game);
@@ -78,9 +75,9 @@ public class PauseState extends State {
         screenY = (int) projected.y;
 
         resumeButton.isTouchDown(screenX, screenY);
-        highscoreButtonPause.isTouchDown(screenX, screenY);
+        highscoreButton.isTouchDown(screenX, screenY);
         optionsButton.isTouchDown(screenX, screenY);
-        menuButtonPause.isTouchDown(screenX, screenY);
+        menuButton.isTouchDown(screenX, screenY);
 
         return true;
     }
@@ -94,11 +91,11 @@ public class PauseState extends State {
 
         if (resumeButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().popScreen();
-        } else if (highscoreButtonPause.isTouchUp(screenX, screenY)) {
+        } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
-        } else if (menuButtonPause.isTouchUp(screenX, screenY)) {
+        } else if (menuButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
@@ -120,22 +117,22 @@ public class PauseState extends State {
     }
 
     private void initUI() {
-        resumeButton = new SimpleButton(2560 - AssetLoader.exitCrossButton.getRegionWidth() - 64, 64,
-                AssetLoader.exitCrossButton.getRegionWidth(), AssetLoader.exitCrossButton.getRegionHeight(),
-                AssetLoader.exitCrossButton, AssetLoader.exitCrossButton);
+        resumeButton = new SimpleButton(2560 - AssetLoader.resumeButtonUp.getRegionWidth() - 64, 64,
+                AssetLoader.resumeButtonUp.getRegionWidth(), AssetLoader.resumeButtonUp.getRegionHeight(),
+                AssetLoader.resumeButtonUp, AssetLoader.resumeButtonDown);
         pauseButtons.add(resumeButton);
-        highscoreButtonPause = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
+        highscoreButton = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
                 AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
                 AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
-        pauseButtons.add(highscoreButtonPause);
+        pauseButtons.add(highscoreButton);
         optionsButton = new SimpleButton(2560/2 - AssetLoader.optionsButtonUp.getRegionWidth()/2 - 500, 1200,
                 AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
                 AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
         pauseButtons.add(optionsButton);
-        menuButtonPause = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
+        menuButton = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
                 AssetLoader.mainMenuButtonUp.getRegionWidth(), AssetLoader.mainMenuButtonUp.getRegionHeight(),
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown);
-        pauseButtons.add(menuButtonPause);
+        pauseButtons.add(menuButton);
     }
 
     private void drawUI() {

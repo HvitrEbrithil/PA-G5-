@@ -3,10 +3,7 @@ package no.pag6.states;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
@@ -28,7 +25,7 @@ public class HighscoreMenu extends State {
 
     // Game UI
     private List<SimpleButton> highscoreMenuButtons = new ArrayList<SimpleButton>();
-    private SimpleButton backButtonHighscore;
+    private SimpleButton backButton;
 
     public HighscoreMenu(PAG6Game game) {
         super(game);
@@ -74,7 +71,7 @@ public class HighscoreMenu extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        backButtonHighscore.isTouchDown(screenX, screenY);
+        backButton.isTouchDown(screenX, screenY);
 
         return true;
     }
@@ -86,7 +83,7 @@ public class HighscoreMenu extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        if (backButtonHighscore.isTouchUp(screenX, screenY)) {
+        if (backButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().popScreen();
         }
 
@@ -108,10 +105,10 @@ public class HighscoreMenu extends State {
     }
 
     private void initUI() {
-        backButtonHighscore = new SimpleButton(64, 64,
-                AssetLoader.backArrowButton.getRegionWidth(), AssetLoader.backArrowButton.getRegionHeight(),
-                AssetLoader.backArrowButton, AssetLoader.backArrowButton);
-        highscoreMenuButtons.add(backButtonHighscore);
+        backButton = new SimpleButton(64, 64,
+                AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonDown.getRegionHeight(),
+                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
+        highscoreMenuButtons.add(backButton);
     }
 
     private void drawUI() {
