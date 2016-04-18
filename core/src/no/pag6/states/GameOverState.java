@@ -3,11 +3,7 @@ package no.pag6.states;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
@@ -29,8 +25,8 @@ public class GameOverState extends State {
 
     // Game UI
     private List<SimpleButton> gameOverButtons = new ArrayList<SimpleButton>();
-    private SimpleButton highscoreButtonGameOver;
-    private SimpleButton menuButtonGameOver;
+    private SimpleButton highscoreButton;
+    private SimpleButton menuButton;
 
     public GameOverState(PAG6Game game) {
         super(game);
@@ -76,8 +72,8 @@ public class GameOverState extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        highscoreButtonGameOver.isTouchDown(screenX, screenY);
-        menuButtonGameOver.isTouchDown(screenX, screenY);
+        highscoreButton.isTouchDown(screenX, screenY);
+        menuButton.isTouchDown(screenX, screenY);
 
         return true;
     }
@@ -89,9 +85,9 @@ public class GameOverState extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        if (highscoreButtonGameOver.isTouchUp(screenX, screenY)) {
+        if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().setScreen(new HighscoreMenu(game));
-        } else if (menuButtonGameOver.isTouchUp(screenX, screenY)) {
+        } else if (menuButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
@@ -114,14 +110,14 @@ public class GameOverState extends State {
 
     private void initUI() {
         gameOverButtons = new ArrayList<SimpleButton>();
-        highscoreButtonGameOver = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
+        highscoreButton = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
                 AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
                 AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
-        gameOverButtons.add(highscoreButtonGameOver);
-        menuButtonGameOver = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
+        gameOverButtons.add(highscoreButton);
+        menuButton = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
                 AssetLoader.mainMenuButtonUp.getRegionWidth(), AssetLoader.mainMenuButtonUp.getRegionHeight(),
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown);
-        gameOverButtons.add(menuButtonGameOver);
+        gameOverButtons.add(menuButton);
     }
 
     private void drawUI() {

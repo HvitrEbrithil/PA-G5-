@@ -189,13 +189,13 @@ public class MainMenu extends State {
         );
         mainMenuButtons.add(optionsButton);
 
-        region = AssetLoader.exitButtonUp;
+        region = AssetLoader.quitButtonUp;
         regionWidth = region.getRegionWidth()*uiScale;
         regionHeight = region.getRegionHeight()*uiScale;
         quitButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.exitButtonUp, AssetLoader.exitButtonDown
+                AssetLoader.quitButtonUp, AssetLoader.quitButtonDown
         );
         mainMenuButtons.add(quitButton);
 
