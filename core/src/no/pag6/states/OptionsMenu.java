@@ -109,8 +109,8 @@ public class OptionsMenu extends State {
 
     private void initUI() {
         backButtonOptions = new SimpleButton(64, 64,
-                AssetLoader.backArrowButton.getRegionWidth(), AssetLoader.backArrowButton.getRegionHeight(),
-                AssetLoader.backArrowButton, AssetLoader.backArrowButton);
+                AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonUp.getRegionHeight(),
+                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
         optionsMenuButtons.add(backButtonOptions);
     }
 

@@ -127,9 +127,9 @@ public class PauseState extends State {
     }
 
     private void initUI() {
-        resumeButton = new SimpleButton(2560 - AssetLoader.exitCrossButton.getRegionWidth() - 64, 64,
-                AssetLoader.exitCrossButton.getRegionWidth(), AssetLoader.exitCrossButton.getRegionHeight(),
-                AssetLoader.exitCrossButton, AssetLoader.exitCrossButton);
+        resumeButton = new SimpleButton(2560 - AssetLoader.resumeButtonUp.getRegionWidth() - 64, 64,
+                AssetLoader.resumeButtonUp.getRegionWidth(), AssetLoader.resumeButtonUp.getRegionHeight(),
+                AssetLoader.resumeButtonUp, AssetLoader.resumeButtonDown);
         pauseButtons.add(resumeButton);
         highscoreButtonPause = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
                 AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),

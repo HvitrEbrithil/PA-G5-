@@ -28,7 +28,7 @@ public class HighscoreMenu extends State {
 
     // Game UI
     private List<SimpleButton> highscoreMenuButtons = new ArrayList<SimpleButton>();
-    private SimpleButton backButtonHighscore;
+    private SimpleButton backButton;
 
     public HighscoreMenu(PAG6Game game) {
         super(game);
@@ -74,7 +74,7 @@ public class HighscoreMenu extends State {
         screenX = (int) touchPoint.x;
         screenY = (int) touchPoint.y;
 
-        backButtonHighscore.isTouchDown(screenX, screenY);
+        backButton.isTouchDown(screenX, screenY);
 
         return true;
     }
@@ -86,7 +86,7 @@ public class HighscoreMenu extends State {
         screenX = (int) touchPoint.x;
         screenY = (int) touchPoint.y;
 
-        if (backButtonHighscore.isTouchUp(screenX, screenY)) {
+        if (backButton.isTouchUp(screenX, screenY)) {
             goBackToPreviousState(game);
         }
 
@@ -108,10 +108,10 @@ public class HighscoreMenu extends State {
     }
 
     private void initUI() {
-        backButtonHighscore = new SimpleButton(64, 64,
-                AssetLoader.backArrowButton.getRegionWidth(), AssetLoader.backArrowButton.getRegionHeight(),
-                AssetLoader.backArrowButton, AssetLoader.backArrowButton);
-        highscoreMenuButtons.add(backButtonHighscore);
+        backButton = new SimpleButton(64, 64,
+                AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonDown.getRegionHeight(),
+                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
+        highscoreMenuButtons.add(backButton);
     }
 
     private void drawUI() {

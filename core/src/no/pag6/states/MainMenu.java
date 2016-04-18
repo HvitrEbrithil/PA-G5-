@@ -157,9 +157,9 @@ public class MainMenu extends State {
                 AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
                 AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
         mainMenuButtons.add(optionsButton);
-        quitButton = new SimpleButton(2560/2 - AssetLoader.exitButtonUp.getRegionWidth()/2, 1000,
-                AssetLoader.exitButtonUp.getRegionWidth(), AssetLoader.exitButtonUp.getRegionHeight(),
-                AssetLoader.exitButtonUp, AssetLoader.exitButtonDown);
+        quitButton = new SimpleButton(2560/2 - AssetLoader.quitButtonUp.getRegionWidth()/2, 1000,
+                AssetLoader.quitButtonUp.getRegionWidth(), AssetLoader.quitButtonUp.getRegionHeight(),
+                AssetLoader.quitButtonUp, AssetLoader.quitButtonDown);
         mainMenuButtons.add(quitButton);
     }
 
