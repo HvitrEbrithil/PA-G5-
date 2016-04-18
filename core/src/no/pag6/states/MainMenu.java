@@ -58,8 +58,14 @@ public class MainMenu extends State {
     public void render(float delta) {
         update(delta);
 
-        Gdx.gl.glClearColor(1.0f, 0.4f, 0.3f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Render shapes
+        drawer.begin(ShapeRenderer.ShapeType.Filled);
+        drawer.setColor(1.0f, 0.4f, 0.3f, 1);
+        drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
+        drawer.end();
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
