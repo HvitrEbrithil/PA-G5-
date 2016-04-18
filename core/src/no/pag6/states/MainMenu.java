@@ -20,7 +20,6 @@ import java.util.List;
 public class MainMenu extends State {
 
     // Renderers
-    private ShapeRenderer drawer;
     private TweenManager tweener;
 
     // Game objects
@@ -42,9 +41,6 @@ public class MainMenu extends State {
     public MainMenu(PAG6Game game) {
         super(game);
 
-        // Set up drawer
-        drawer = new ShapeRenderer();
-
         // Init objects and assets
         initTweenAssets();
 
@@ -62,10 +58,10 @@ public class MainMenu extends State {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render shapes
-        drawer.begin(ShapeRenderer.ShapeType.Filled);
-        drawer.setColor(1.0f, 0.4f, 0.3f, 1);
-        drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
-        drawer.end();
+        game.drawer.begin(ShapeRenderer.ShapeType.Filled);
+        game.drawer.setColor(1.0f, 0.4f, 0.3f, 1);
+        game.drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
+        game.drawer.end();
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -109,13 +105,13 @@ public class MainMenu extends State {
         screenY = (int) touchPoint.y;
 
         if (playSPButton.isTouchUp(screenX, screenY)) {
-            PlayState playState = new PlayState(game, 1, "test_lvl.tmx");
-            game.gameStack.push(playState);
-            game.setScreen(playState);
+            CharacterMenu characterMenu = new CharacterMenu(game, 1);
+            game.gameStack.push(characterMenu);
+            game.setScreen(characterMenu);
         } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            PlayState playState = new PlayState(game, 2, "test_lvl.tmx");
-            game.gameStack.push(playState);
-            game.setScreen(playState);
+            CharacterMenu characterMenu = new CharacterMenu(game, 2);
+            game.gameStack.push(characterMenu);
+            game.setScreen(characterMenu);
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             HighscoreMenu highscoreMenu = new HighscoreMenu(game);
             game.gameStack.push(highscoreMenu);
@@ -126,6 +122,7 @@ public class MainMenu extends State {
             game.setScreen(optionsMenu);
         } else if (quitButton.isTouchUp(screenX, screenY)) {
             game.dispose();
+            System.exit(0);
         }
 
         return true;
@@ -216,7 +213,7 @@ public class MainMenu extends State {
         regionHeight = region.getRegionHeight()*uiScale;
         logo = new Sprite(region);
         logo.setSize(regionWidth, regionHeight);
-        logo.setPosition(0, 0);
+        logo.setPosition(8, 2);
     }
 
     private void drawUI() {
@@ -226,7 +223,7 @@ public class MainMenu extends State {
 
         logo.draw(game.spriteBatch);
         AssetLoader.font.draw(game.spriteBatch, "Copyright 2016, Svartr Dras Inc.",
-                V_WIDTH/24, V_HEIGHT/28);
+                V_WIDTH/20, V_HEIGHT/25);
     }
 
     private void drawTransition(float delta) {
@@ -235,11 +232,11 @@ public class MainMenu extends State {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawer.setProjectionMatrix(cam.combined);
-        drawer.begin(ShapeRenderer.ShapeType.Filled);
-        drawer.setColor(1, 1, 1, alpha.getValue());
-        drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
-        drawer.end();
+        game.drawer.setProjectionMatrix(cam.combined);
+        game.drawer.begin(ShapeRenderer.ShapeType.Filled);
+        game.drawer.setColor(1, 1, 1, alpha.getValue());
+        game.drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
+        game.drawer.end();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
