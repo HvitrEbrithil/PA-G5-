@@ -89,15 +89,11 @@ public class CharacterMenu extends State {
         screenY = (int) touchPoint.y;
 
         if (playButton.isTouchUp(screenX, screenY) && nofPlayers == 1) {
-            PlayState playState = new PlayState(game, 1, "test_lvl.tmx");
-            game.gameStack.push(playState);
-            game.setScreen(playState);
+            game.getGameStateManager().pushScreen(new PlayState(game, 1, "test_lvl.tmx"));
         } else if (playButton.isTouchUp(screenX, screenY) && nofPlayers == 2) {
-            PlayState playState = new PlayState(game, 2, "test_lvl.tmx");
-            game.gameStack.push(playState);
-            game.setScreen(playState);
+            game.getGameStateManager().pushScreen(new PlayState(game, 2, "test_lvl.tmx"));
         } else if (backButton.isTouchUp(screenX, screenY)) {
-            goBackToPreviousState(game);
+            game.getGameStateManager().popScreen();
         }
 
         return true;
@@ -120,13 +116,13 @@ public class CharacterMenu extends State {
         // Buttons
         uiScale = 0.4f;
 
-        region = AssetLoader.playButtonUp;
+        region = AssetLoader.playSPButtonUp;
         regionWidth = region.getRegionWidth()*uiScale;
         regionHeight = region.getRegionHeight()*uiScale;
         playButton = new SimpleButton(
                 V_WIDTH/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.playButtonUp, AssetLoader.playButtonDown
+                AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown
         );
         characterMenuButtons.add(playButton);
 
