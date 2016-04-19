@@ -2,8 +2,12 @@ package no.pag6.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -15,14 +19,13 @@ import java.util.regex.Pattern;
 
 public class CharacterMenu extends State {
 
-    public static final String TAG = "CharacterMenu";
-
     private int nofPlayers;
-    private String playerNameRegex = "^[a-zA-Z .'-]+$";
+    private String playerNameRegex = "^[a-zA-Z .'-]{1,20}$";
     private String player1Name;
     private String player2Name;
 
     // Renderers
+    private GlyphLayout gl = new GlyphLayout();
 
     // Game objects
 
@@ -165,8 +168,8 @@ public class CharacterMenu extends State {
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
-                if (Pattern.matches(playerNameRegex, text)) {
-                    player1Name = text;
+                if (Pattern.matches(playerNameRegex, text.trim())) {
+                    player1Name = text.trim();
                     enableBackButton();
                     enablePlayButton();
 
@@ -182,7 +185,7 @@ public class CharacterMenu extends State {
             public void canceled() {
                 enableBackButton();
             }
-        }, "Enter name of Player 1", "", "eg. Morlock");
+        }, "Enter name of Player 1", "", "name, eg. Aüwe");
     }
 
     private void takePlayer2Name() {
@@ -191,8 +194,8 @@ public class CharacterMenu extends State {
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
-                if (Pattern.matches(playerNameRegex, text)) {
-                    player2Name = text;
+                if (Pattern.matches(playerNameRegex, text.trim())) {
+                    player2Name = text.trim();
                     enableBackButton();
                     enablePlayButton();
                 } else {
@@ -202,32 +205,47 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
+                player1Name = null;
                 enableBackButton();
             }
-        }, "Enter name of Player 2", "", "eg. Melkor");
+        }, "Enter name of Player 2", "", "name, eg. Melkor");
     }
 
     private void drawUI() {
         for (SimpleButton button : characterMenuButtons) {
             button.draw(game.spriteBatch);
         }
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/droid_serif.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 36;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 2;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+        if (player1Name != null) {
+            String player1NameString = "Player 1: " + player1Name;
+            gl.setText(font, player1NameString);
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+        }
+        if (player2Name != null) {
+            String player1NameString = "Player 2: " + player2Name;
+            gl.setText(font, player1NameString);
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*4/6);
+        }
     }
 
     private void enableBackButton() {
-        Gdx.app.log(TAG, "buttons enabled");
         backButtonEnabled = true;
     }
     private void disableBackButton() {
-        Gdx.app.log(TAG, "buttons disabled");
         backButtonEnabled = false;
     }
 
     private void enablePlayButton() {
-        Gdx.app.log(TAG, "buttons enabled");
         playButtonEnabled = true;
     }
     private void disablePlayButton() {
-        Gdx.app.log(TAG, "buttons disabled");
         playButtonEnabled = false;
     }
 

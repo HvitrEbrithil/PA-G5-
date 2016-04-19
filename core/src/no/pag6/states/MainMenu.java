@@ -4,9 +4,12 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -195,7 +198,7 @@ public class MainMenu extends State {
         mainMenuButtons.add(quitButton);
 
         // Logo and copyright
-        float tempUIScale = 0.05f;
+        float tempUIScale = 0.04f;
 
         region = AssetLoader.logo;
         regionWidth = region.getRegionWidth()*tempUIScale;
@@ -211,8 +214,15 @@ public class MainMenu extends State {
         }
 
         logo.draw(game.spriteBatch);
-        AssetLoader.font.draw(game.spriteBatch, "Copyright 2016, Svartr Dras Inc.",
-                V_WIDTH/20, V_HEIGHT/25);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/droid_serif.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 9;
+        parameter.color = Color.BLACK;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+
+        font.draw(game.spriteBatch, "Copyright 2016, Svartr Dras Inc.", V_WIDTH/22, V_HEIGHT/26);
     }
 
     private void drawTransition(float delta) {

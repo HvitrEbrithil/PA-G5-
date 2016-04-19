@@ -52,7 +52,7 @@ public class SplashScreen extends State {
         TweenCallback cb = new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                game.setScreen(new MainMenu(game));
+                game.getGameStateManager().setScreen(new MainMenu(game));
             }
         };
 

@@ -61,10 +61,6 @@ public class PlayState extends State {
         super(game);
         this.nofPlayers = nofPlayers;
 
-        // Set up drawer
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
-
         // load the map
         map = new TmxMapLoader().load("maps/" + mapFileName);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
