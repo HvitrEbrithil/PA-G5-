@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.GameStateManager;
-import no.pag6.states.SplashScreen;
+import no.pag6.states.MainMenu;
 
 public class PAG6Game extends Game {
 
@@ -26,8 +26,8 @@ public class PAG6Game extends Game {
 
         AssetLoader.load();
 
-        gameStateManager.pushScreen(new SplashScreen(this)); // TODO: Set to SS when done debugging
-//        gameStateManager.pushScreen(new MainMenu(this));
+//        gameStateManager.pushScreen(new SplashScreen(this)); // TODO: Set to SS when done debugging
+        gameStateManager.pushScreen(new MainMenu(this));
     }
 
     @Override

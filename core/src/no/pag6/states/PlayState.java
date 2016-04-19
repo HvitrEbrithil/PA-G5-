@@ -57,7 +57,7 @@ public class PlayState extends State {
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
-    public PlayState(PAG6Game game, int nofPlayers, String mapFileName) {
+    public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
 

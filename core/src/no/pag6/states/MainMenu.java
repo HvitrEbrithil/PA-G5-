@@ -34,8 +34,7 @@ public class MainMenu extends State {
 
     // Game UI
     private List<SimpleButton> mainMenuButtons = new ArrayList<SimpleButton>();
-    private SimpleButton playSPButton;
-    private SimpleButton play2PButton;
+    private SimpleButton playButton;
     private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
     private SimpleButton quitButton;
@@ -91,8 +90,7 @@ public class MainMenu extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        playSPButton.isTouchDown(screenX, screenY);
-        play2PButton.isTouchDown(screenX, screenY);
+        playButton.isTouchDown(screenX, screenY);
         highscoreButton.isTouchDown(screenX, screenY);
         optionsButton.isTouchDown(screenX, screenY);
         quitButton.isTouchDown(screenX, screenY);
@@ -107,10 +105,8 @@ public class MainMenu extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        if (playSPButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().pushScreen(new CharacterMenu(game, 1));
-        } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().pushScreen(new CharacterMenu(game, 2));
+        if (playButton.isTouchUp(screenX, screenY)) {
+            game.getGameStateManager().pushScreen(new CharacterMenu(game));
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
@@ -148,24 +144,14 @@ public class MainMenu extends State {
 
         // Buttons
         region = AssetLoader.playSPButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
-        playSPButton = new SimpleButton(
-                V_WIDTH/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.5f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.5f;
+        playButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown
         );
-        mainMenuButtons.add(playSPButton);
-
-        region = AssetLoader.play2PButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
-        play2PButton = new SimpleButton(
-                V_WIDTH*2/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
-                regionWidth, regionHeight,
-                AssetLoader.play2PButtonUp, AssetLoader.play2PButtonDown
-        );
-        mainMenuButtons.add(play2PButton);
+        mainMenuButtons.add(playButton);
 
         region = AssetLoader.highscoreButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;
@@ -215,14 +201,14 @@ public class MainMenu extends State {
 
         logo.draw(game.spriteBatch);
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/droid_serif.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 9;
         parameter.color = Color.BLACK;
         BitmapFont font = generator.generateFont(parameter);
         generator.dispose();
 
-        font.draw(game.spriteBatch, "Copyright 2016, Svartr Dras Inc.", V_WIDTH/22, V_HEIGHT/26);
+        font.draw(game.spriteBatch, "COPYRIGHT 2016, PROG ARK GRUPPE 6", V_WIDTH/22, V_HEIGHT/26);
     }
 
     private void drawTransition(float delta) {
