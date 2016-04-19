@@ -112,13 +112,13 @@ public class CharacterMenu extends State {
         // Buttons
         uiScale = 0.4f;
 
-        region = AssetLoader.playSPButtonUp;
+        region = AssetLoader.playButtonUp;
         regionWidth = region.getRegionWidth()*uiScale;
         regionHeight = region.getRegionHeight()*uiScale;
         playButton = new SimpleButton(
                 V_WIDTH/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown
+                AssetLoader.playButtonUp, AssetLoader.playButtonDown
         );
         characterMenuButtons.add(playButton);
 

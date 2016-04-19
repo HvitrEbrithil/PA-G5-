@@ -11,11 +11,10 @@ public class AssetLoader {
     public static Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture backgroundTexture, logoTexture, playSPButtonTexture, play2PButtonTexture, highscoreButtonTexture, optionsButtonTexture,
+    public static Texture backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
             quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture, mainMenuButtonTexture;
-    public static TextureRegion background, logo, playSPButtonUp, playSPButtonDown, play2PButtonUp, play2PButtonDown,
-            highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown, quitButtonUp, quitButtonDown,
-            pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
+    public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
+            quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
 
     // Animations
 //    public static Animation ;
@@ -43,15 +42,10 @@ public class AssetLoader {
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new TextureRegion(logoTexture, 0, 0, 512, 512);
 
-        playSPButtonTexture = new Texture(Gdx.files.internal("textures/play_sp_button.png"));
-        playSPButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        playSPButtonUp = new TextureRegion(playSPButtonTexture, 0, 0, 512, 128);
-        playSPButtonDown = new TextureRegion(playSPButtonTexture, 0, 129, 512, 128);
-
-        play2PButtonTexture = new Texture(Gdx.files.internal("textures/play_2p_button.png"));
-        play2PButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        play2PButtonUp = new TextureRegion(play2PButtonTexture, 0, 0, 512, 128);
-        play2PButtonDown = new TextureRegion(play2PButtonTexture, 0, 129, 512, 128);
+        playButtonTexture = new Texture(Gdx.files.internal("textures/play_button.png"));
+        playButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        playButtonUp = new TextureRegion(playButtonTexture, 0, 0, 512, 128);
+        playButtonDown = new TextureRegion(playButtonTexture, 0, 129, 512, 128);
 
         highscoreButtonTexture = new Texture(Gdx.files.internal("textures/highscore_button.png"));
         highscoreButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -104,8 +98,7 @@ public class AssetLoader {
     public static void dispose() {
         backgroundTexture.dispose();
         logoTexture.dispose();
-        playSPButtonTexture.dispose();
-        play2PButtonTexture.dispose();
+        playButtonTexture.dispose();
         highscoreButtonTexture.dispose();
         optionsButtonTexture.dispose();
         quitButtonTexture.dispose();
