@@ -46,7 +46,13 @@ public class State implements Screen, InputProcessor, Constants {
         Gdx.app.log(TAG, "render called");
 
         // Render background
+        game.spriteBatch.setProjectionMatrix(cam.combined);
+        game.spriteBatch.begin();
+        game.spriteBatch.enableBlending();
+
         drawBackground();
+
+        game.spriteBatch.end();
     }
 
     @Override

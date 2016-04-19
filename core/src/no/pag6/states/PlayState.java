@@ -94,6 +94,8 @@ public class PlayState extends State {
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+
         update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);

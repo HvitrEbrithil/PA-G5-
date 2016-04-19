@@ -46,25 +46,22 @@ public class MainMenu extends State {
         // Init objects and assets
         initTweenAssets();
 
-        initGameObjects();
-        initGameAssets();
-
         initUI();
     }
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+
         update(delta);
 
-        Gdx.gl.glClearColor(196, 229, 234, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
-
-        super.render(delta);
 
         drawUI();
 
@@ -73,10 +70,6 @@ public class MainMenu extends State {
         if (alpha.getValue() > 0) {
             drawTransition(delta);
         }
-    }
-
-    @Override
-    public void update(float delta) {
     }
 
     @Override
@@ -126,12 +119,6 @@ public class MainMenu extends State {
                 .target(0)
                 .ease(TweenEquations.easeOutQuad)
                 .start(tweener);
-    }
-
-    private void initGameObjects() {
-    }
-
-    private void initGameAssets() {
     }
 
     private void initUI() {

@@ -47,6 +47,8 @@ public class GameOverState extends State {
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+
         update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -56,8 +58,6 @@ public class GameOverState extends State {
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
-
-        super.render(delta);
 
         drawUI();
 

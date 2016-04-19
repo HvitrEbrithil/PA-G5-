@@ -3,10 +3,7 @@ package no.pag6.states;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
@@ -48,6 +45,8 @@ public class OptionsMenu extends State {
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+
         update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -57,8 +56,6 @@ public class OptionsMenu extends State {
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
-
-        super.render(delta);
 
         drawUI();
 
