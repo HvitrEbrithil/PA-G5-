@@ -12,7 +12,7 @@ public class SplashScreen extends State {
 
     private TweenManager tweener;
 
-    private Sprite logo;
+    private Sprite splash;
 
     public SplashScreen(PAG6Game game) {
         super(game);
@@ -20,14 +20,14 @@ public class SplashScreen extends State {
 
     @Override
     public void show() {
-        logo = new Sprite(AssetLoader.logo);
-        logo.setColor(1, 1, 1, 0);
+        splash = new Sprite(AssetLoader.splash);
+        splash.setColor(1, 1, 1, 0);
 
         float desiredWidth = V_WIDTH*0.3f;
-        float desiredHeight = logo.getHeight()*(desiredWidth/logo.getWidth());
+        float desiredHeight = splash.getHeight()*(desiredWidth/splash.getWidth());
 
-        logo.setSize(desiredWidth, desiredHeight);
-        logo.setPosition(V_WIDTH/2 - logo.getWidth()/2, V_HEIGHT/2 - logo.getHeight()/2);
+        splash.setSize(desiredWidth, desiredHeight);
+        splash.setPosition(V_WIDTH/2 - splash.getWidth()/2, V_HEIGHT/2 - splash.getHeight()/2);
 
         setupTween();
     }
@@ -41,7 +41,7 @@ public class SplashScreen extends State {
 
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
-        logo.draw(game.spriteBatch);
+        splash.draw(game.spriteBatch);
         game.spriteBatch.end();
     }
 
@@ -56,7 +56,7 @@ public class SplashScreen extends State {
             }
         };
 
-        Tween.to(logo, SpriteAccessor.ALPHA, .8f).target(1)
+        Tween.to(splash, SpriteAccessor.ALPHA, .8f).target(1)
                 .ease(TweenEquations.easeInOutQuad).repeatYoyo(1, .4f)
                 .setCallback(cb).setCallbackTriggers(TweenCallback.COMPLETE)
                 .start(tweener);

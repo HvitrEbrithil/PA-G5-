@@ -10,9 +10,9 @@ public class AssetLoader {
     public static Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
+    public static Texture splashTexture, backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
             quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture, mainMenuButtonTexture;
-    public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
+    public static TextureRegion splash, background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
             quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
 
     // Animations
@@ -34,6 +34,10 @@ public class AssetLoader {
         }
 
         // Textures and TextureRegions
+        splashTexture = new Texture(Gdx.files.internal("textures/splash_screen.gif"));
+        splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        splash = new TextureRegion(splashTexture, 0, 0, 2560, 1440);
+
         backgroundTexture = new Texture(Gdx.files.internal("textures/menu_background.png"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         background = new TextureRegion(backgroundTexture, 0, 0, 2560, 1440);
