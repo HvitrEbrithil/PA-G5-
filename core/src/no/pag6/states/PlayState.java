@@ -1,18 +1,13 @@
 package no.pag6.states;
 
-import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polyline;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
@@ -22,16 +17,16 @@ import no.pag6.models.Player;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class PlayState extends State {
 
-    // Renderers
-    private ShapeRenderer drawer;
-    private TweenManager tweener;
-
     // Player stats
     private int nofPlayers;
+
+    private Player[] players;
+    private int activePlayerIdx;
 
     // map stuff
     private TiledMap map;
@@ -43,11 +38,8 @@ public class PlayState extends State {
     private MyContactListener cl;
 
     // Game objects
-    private Player player;
 
     // Game assets
-
-    // Tween assets
 
     // Game UI
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
@@ -56,10 +48,10 @@ public class PlayState extends State {
     public PlayState(PAG6Game game, int nofPlayers, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
+        players = new Player[nofPlayers];
+        activePlayerIdx = 0;
 
-        // Set up drawer
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
+        viewPort.setWorldSize(A_WIDTH, A_HEIGHT);
 
         // load the map
         map = new TmxMapLoader().load("maps/" + mapFileName);
@@ -71,12 +63,12 @@ public class PlayState extends State {
         cl = new MyContactListener();
         world.setContactListener(cl);
         addMapBodies();
-        addPlayerBody();
+        addPlayerBodies();
+
+        players[activePlayerIdx].active = true;
+        cl.setPlayer(players[activePlayerIdx]);
 
         cam.position.set(A_WIDTH, 500 / PPM, 0);
-
-        // Init objects and assets
-        initTweenAssets();
 
         initGameObjects();
         initGameAssets();
@@ -98,14 +90,16 @@ public class PlayState extends State {
 
         b2dr.render(world, cam.combined);
 
+        drawTiled();
+
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
-
-        drawTiled();
         drawUI();
-
+        for (Player player : players) {
+            player.draw(game.spriteBatch);
+        }
         game.spriteBatch.end();
     }
 
@@ -114,14 +108,32 @@ public class PlayState extends State {
         world.step(TIME_STEP, 6, 2); // update physics
 
         // update camera
-        cam.position.x = player.getB2dBody().getPosition().x; // center the camera around the player
+        cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
         cam.update();
+        // update the players
+        for (Player player : players) {
+            player.update(delta);
+        }
 
-        // update the player
-        player.update(delta);
+        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+
+        map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 1 : 0.5f);
+        map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 1 : 0.5f);
+
+        map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 0.5f : 1);
+        map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 0.5f : 1);
 
         // update the Tiled map renderer
         mapRenderer.setView(cam);
+
+        if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
+            System.out.println("died");
+            players[activePlayerIdx].active = false;
+            activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
+            players[activePlayerIdx].active = true;
+            players[activePlayerIdx].incrementFootContactCount();
+            cl.setPlayer(players[activePlayerIdx]);
+        }
     }
 
     @Override
@@ -145,20 +157,8 @@ public class PlayState extends State {
         if (pauseButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
-        // TODO: Handle laneswitching
-//        if (true) {
-//            switchLanes();
-//        }
 
         return true;
-    }
-
-    private void initTweenAssets() {
-        // Register Tween Assets
-
-        tweener = new TweenManager();
-
-        // Tween animations
     }
 
     private void initGameObjects() {
@@ -193,75 +193,71 @@ public class PlayState extends State {
         Body body;
 
         // loop through the layers in the map and add box2d bodies to the box2d world
-        for (MapObject mapObject : map.getLayers().get("collision").getObjects()
-                .getByType(PolylineMapObject.class)) {
-            Polyline line = ((PolylineMapObject) mapObject).getPolyline();
+        for (int i = 0; i < LAYERS.length; i++) {
+            for (PolylineMapObject polylineMapObject : map.getLayers().get(LAYERS[i]).getObjects().
+                    getByType(PolylineMapObject.class)) {
+                Polyline line = polylineMapObject.getPolyline();
 
-            float[] vertices = line.getTransformedVertices();
-            Vector2[] worldVertices = new Vector2[vertices.length / 2];
+                float[] vertices = line.getTransformedVertices();
+                Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
-            for (int i = 0; i < worldVertices.length; i++) {
-                worldVertices[i] = new Vector2(vertices[i*2] / PPM, vertices[i*2+1] / PPM);
+                for (int j = 0; j < worldVertices.length; j++) {
+                    worldVertices[j] = new Vector2(vertices[j*2] / PPM, vertices[j*2+1] / PPM);
+                }
+
+                ChainShape chainShape = new ChainShape();
+                chainShape.createChain(worldVertices);
+
+                bodyDef.position.set(
+                        line.getOriginX() / PPM,
+                        line.getOriginY() / PPM);
+
+                body = world.createBody(bodyDef);
+                fixtureDef.shape = chainShape;
+                fixtureDef.filter.categoryBits = FILTER_BITS[i];
+                body.createFixture(fixtureDef);
             }
-
-            ChainShape chainShape = new ChainShape();
-            chainShape.createChain(worldVertices);
-
-            bodyDef.position.set(
-                    line.getOriginX() / PPM,
-                    line.getOriginY() / PPM);
-
-            body = world.createBody(bodyDef);
-            fixtureDef.shape = chainShape;
-            fixtureDef.filter.categoryBits = FIRST_LAYER_BITS;
-            body.createFixture(fixtureDef);
         }
 
         shape.dispose();
     }
 
-    private void addPlayerBody() {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Body playerBody = world.createBody(bodyDef);
+    private void addPlayerBodies() {
+        for (int i = 0; i < nofPlayers; i++) {
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.position.set(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            Body playerBody = world.createBody(bodyDef);
 
-        // body fixture
-        CircleShape shape = new CircleShape();
-        shape.setRadius(PLAYER_BODY_RADIUS / PPM);
+            // body fixture
+            CircleShape shape = new CircleShape();
+            shape.setRadius(PLAYER_BODY_RADIUS / PPM);
 
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the player starts in lane 1
-        playerBody.createFixture(fixtureDef);
-        shape.dispose();
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the activePlayer starts in lane 1
+            playerBody.createFixture(fixtureDef);
+            shape.dispose();
 
-        // add foot fixture
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
-        fixtureDef.shape = polygonShape;
-        fixtureDef.isSensor = true;
-        playerBody.createFixture(fixtureDef).setUserData("foot");
-        polygonShape.dispose();
+            // add foot fixture
+            PolygonShape polygonShape = new PolygonShape();
+            polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
+            fixtureDef.shape = polygonShape;
+            fixtureDef.isSensor = true;
+            playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
+            polygonShape.dispose();
 
-        player = new Player(playerBody);
+            players[i] = new Player(playerBody, i);
+        }
+
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.SPACE && cl.isPlayerOnGround()) {
-            switchLanes();
+            players[activePlayerIdx].switchLanes();
         }
         return true;
-    }
-
-    private void switchLanes() {
-        boolean isOnFirstLane = player.isOnFirstLane();
-        player.switchLanes();
-
-        // change the map layer opacities
-        map.getLayers().get(FIRST_GFX_LAYER_NAME).setOpacity(isOnFirstLane ? 0.5f : 1);
-        map.getLayers().get(SECOND_GFX_LAYER_NAME).setOpacity(isOnFirstLane ? 1 : 0.5f);
     }
 
 }

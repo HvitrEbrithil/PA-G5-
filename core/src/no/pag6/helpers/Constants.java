@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 public interface Constants {
 
     // Screen and viewport
-    int V_WIDTH = 800, V_HEIGHT = 480;
+    int V_WIDTH = 1280, V_HEIGHT = 720;
     float PPM = 100;
     int A_WIDTH = (int) (V_WIDTH/PPM), A_HEIGHT = (int) (V_HEIGHT/PPM);
     float TIME_STEP = 1/60f;
@@ -15,8 +15,12 @@ public interface Constants {
             MOVEMENT_IMPULSE = new Vector2(0.1f, 0),
             JUMP_IMPULSE = new Vector2(0, 6f);
 
-    String FIRST_LAYER_NAME = "obj_first", SECOND_LAYER_NAME = "obj_second",
-            FIRST_GFX_LAYER_NAME = "gfx_first", SECOND_GFX_LAYER_NAME = "gfx_second";
+    String FIRST_LAYER_NAME = "lane1_collision", SECOND_LAYER_NAME = "lane2_collision",
+            FIRST_FIRST_GFX_LAYER_NAME = "lane1_ground1",
+            FIRST_SECOND_GFX_LAYER_NAME = "lane1_ground2",
+            SECOND_FIRST_GFX_LAYER_NAME = "lane2_ground1",
+            SECOND_SECOND_GFX_LAYER_NAME = "lane2_ground2";
+
     String[] LAYERS = {FIRST_LAYER_NAME, SECOND_LAYER_NAME};
 
     short FIRST_LAYER_BITS = 2, SECOND_LAYER_BITS = 4;

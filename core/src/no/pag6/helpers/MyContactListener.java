@@ -6,11 +6,17 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import no.pag6.models.Player;
+
 /**
  * Created by Tobias on 18.04.2016.
  */
 public class MyContactListener implements ContactListener {
-    private int numFootContacts;
+    private Player player;
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
     @Override
     public void beginContact(Contact contact) {
@@ -26,16 +32,26 @@ public class MyContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if (fixtureA.getUserData() != null && fixtureA.getUserData().equals("foot")) {
-            numFootContacts += begin ? 1 : -1;
+        String id = "player" + player.getId() + "foot";
+
+        if (fixtureA.getUserData() != null && fixtureA.getUserData().equals(id)) {
+            if (begin) {
+                player.incrementFootContactCount();
+            } else {
+                player.decrementFootContactCount();
+            }
         }
-        if (fixtureB.getUserData() != null && fixtureB.getUserData().equals("foot")) {
-            numFootContacts += begin ? 1 : -1;
+        if (fixtureB.getUserData() != null && fixtureB.getUserData().equals(id)) {
+            if (begin) {
+                player.incrementFootContactCount();
+            } else {
+                player.decrementFootContactCount();
+            }
         }
     }
 
     public boolean isPlayerOnGround() {
-        return numFootContacts > 0;
+        return player.getFootContactCount() > 0;
     }
 
     @Override

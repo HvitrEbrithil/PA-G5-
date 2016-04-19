@@ -89,9 +89,9 @@ public class CharacterMenu extends State {
         screenY = (int) touchPoint.y;
 
         if (playButton.isTouchUp(screenX, screenY) && nofPlayers == 1) {
-            game.getGameStateManager().pushScreen(new PlayState(game, 1, "test_lvl.tmx"));
+            game.getGameStateManager().pushScreen(new PlayState(game, 1, "maptest2.tmx"));
         } else if (playButton.isTouchUp(screenX, screenY) && nofPlayers == 2) {
-            game.getGameStateManager().pushScreen(new PlayState(game, 2, "test_lvl.tmx"));
+            game.getGameStateManager().pushScreen(new PlayState(game, 2, "maptest2.tmx"));
         } else if (backButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().popScreen();
         }

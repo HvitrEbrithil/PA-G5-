@@ -109,7 +109,7 @@ public class MainMenu extends State {
         } else if (play2PButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new CharacterMenu(game, 2));
         } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().pushScreen(new PlayState(game, 2, "test_lvl.tmx"));
+            game.getGameStateManager().pushScreen(new PlayState(game, 2, "maptest2.tmx"));
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
