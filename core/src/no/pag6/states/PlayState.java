@@ -3,6 +3,7 @@ package no.pag6.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -17,7 +18,6 @@ import no.pag6.models.Player;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class PlayState extends State {
@@ -45,13 +45,13 @@ public class PlayState extends State {
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
-    public PlayState(PAG6Game game, int nofPlayers, String mapFileName) {
+    public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
         players = new Player[nofPlayers];
         activePlayerIdx = 0;
 
-        viewPort.setWorldSize(A_WIDTH, A_HEIGHT);
+        viewport.setWorldSize(A_WIDTH, A_HEIGHT);
 
         // load the map
         map = new TmxMapLoader().load("maps/" + mapFileName);
@@ -77,15 +77,12 @@ public class PlayState extends State {
     }
 
     @Override
-    public void resize(int width, int height) {
-        viewPort.update(width, height);
-    }
-
-    @Override
     public void render(float delta) {
+        super.render(delta);
+
         update(delta);
 
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         b2dr.render(world, cam.combined);
@@ -142,6 +139,7 @@ public class PlayState extends State {
         projected = cam.unproject(touchPoint);
         screenX = (int) projected.x;
         screenY = (int) projected.y;
+
         pauseButton.isTouchDown(screenX, screenY);
 
         return true;
@@ -168,9 +166,18 @@ public class PlayState extends State {
     }
 
     private void initUI() {
-        pauseButton = new SimpleButton(2560 - AssetLoader.optionsButtonUp.getRegionWidth() - 64, 64,
-                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
+        region = AssetLoader.pauseButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE/PPM;
+        regionHeight = region.getRegionHeight()*UI_SCALE/PPM;
+        pauseButton = new SimpleButton(
+                A_WIDTH/2 - regionWidth/2, A_HEIGHT*4/12 - regionHeight/2 + 500/PPM,
+                regionWidth, regionHeight,
+                AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
+        );
         playButtons.add(pauseButton);
     }
 

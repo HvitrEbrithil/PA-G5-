@@ -36,7 +36,7 @@ public class SplashScreen extends State {
     public void render(float delta) {
         tweener.update(delta);
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -52,7 +52,7 @@ public class SplashScreen extends State {
         TweenCallback cb = new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                game.setScreen(new MainMenu(game));
+                game.getGameStateManager().setScreen(new MainMenu(game));
             }
         };
 

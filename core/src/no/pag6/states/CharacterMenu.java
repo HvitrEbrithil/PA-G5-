@@ -1,21 +1,31 @@
 package no.pag6.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class CharacterMenu extends State {
 
     private int nofPlayers;
+    private String nofPlayersPattern = "^[1-8]$";
+    private String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
+    private List<String> playerNames;
+    private int currentPlayer = 0;
 
     // Renderers
+    private GlyphLayout gl = new GlyphLayout();
 
     // Game objects
 
@@ -24,35 +34,29 @@ public class CharacterMenu extends State {
     // Tween assets
 
     // Game UI
+    private boolean buttonsEnabled = false;
+
     private List<SimpleButton> characterMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton playButton;
     private SimpleButton backButton;
 
-    public CharacterMenu(PAG6Game game, int nofPlayers) {
+    public CharacterMenu(PAG6Game game) {
         super(game);
-        this.nofPlayers = nofPlayers;
 
         // Init objects and assets
-        initTweenAssets();
-
-        initGameObjects();
-        initGameAssets();
-
         initUI();
+
+        takeNofPlayers();
     }
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+
         update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Render shapes
-        game.drawer.begin(ShapeRenderer.ShapeType.Filled);
-        game.drawer.setColor(0.4f, 1.0f, 0.3f, 1);
-        game.drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
-        game.drawer.end();
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -72,11 +76,13 @@ public class CharacterMenu extends State {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
-        playButton.isTouchDown(screenX, screenY);
-        backButton.isTouchDown(screenX, screenY);
+        if (buttonsEnabled) {
+            backButton.isTouchDown(screenX, screenY);
+            playButton.isTouchDown(screenX, screenY);
+        }
 
         return true;
     }
@@ -85,62 +91,138 @@ public class CharacterMenu extends State {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        screenX = (int) projected.x;
+        screenY = (int) projected.y;
 
-        if (playButton.isTouchUp(screenX, screenY) && nofPlayers == 1) {
-            game.getGameStateManager().pushScreen(new PlayState(game, 1, "maptest2.tmx"));
-        } else if (playButton.isTouchUp(screenX, screenY) && nofPlayers == 2) {
-            game.getGameStateManager().pushScreen(new PlayState(game, 2, "maptest2.tmx"));
-        } else if (backButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().popScreen();
+        if (buttonsEnabled) {
+            if (backButton.isTouchUp(screenX, screenY)) {
+                game.getGameStateManager().popScreen();
+            }
+            if (playButton.isTouchUp(screenX, screenY)) {
+                game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, "maptest2.tmx"));
+            }
         }
 
         return true;
     }
 
-    private void initTweenAssets() {
-    }
-
-    private void initGameObjects() {
-    }
-
-    private void initGameAssets() {
-    }
-
     private void initUI() {
-        float uiScale;
         TextureRegion region;
         float regionWidth, regionHeight;
 
         // Buttons
-        uiScale = 0.4f;
-
-        region = AssetLoader.playSPButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        region = AssetLoader.playButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         playButton = new SimpleButton(
-                V_WIDTH/3 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH*2/3 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown
+                AssetLoader.playButtonUp, AssetLoader.playButtonDown
         );
         characterMenuButtons.add(playButton);
 
-        region = AssetLoader.backButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        region = AssetLoader.mainMenuButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         backButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                V_WIDTH/3 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.backButtonUp, AssetLoader.backButtonDown
+                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         characterMenuButtons.add(backButton);
     }
 
+    private void takeNofPlayers() {
+        // TODO: Fix something wrong with Android input
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+            @Override
+            public void input(String text) {
+                if (Pattern.matches(nofPlayersPattern, text.trim())) {
+                    nofPlayers = Integer.valueOf(text.trim());
+                    playerNames = new ArrayList<String>();
+                    for (int i = 0; i < nofPlayers; i++) {
+                        playerNames.add(null);
+                    }
+
+                    takePlayerName();
+                } else {
+                    takeNofPlayers();
+                }
+            }
+
+            @Override
+            public void canceled() {
+                game.getGameStateManager().popScreen();
+            }
+        }, "Enter number of players", "", "from 1 to 8 players");
+    }
+
+    private void takePlayerName() {
+        // TODO: Fix something wrong with Android input
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+            @Override
+            public void input(String text) {
+                if (Pattern.matches(playerNamePattern, text.trim())) {
+                    playerNames.set(currentPlayer, text.trim().toUpperCase());
+                    currentPlayer++;
+                }
+                System.out.println("currentPlayer = " + currentPlayer);
+                if (currentPlayer < nofPlayers) {
+                    takePlayerName();
+                } else {
+                    enableButtons();
+                }
+            }
+
+            @Override
+            public void canceled() {
+                game.getGameStateManager().popScreen();
+            }
+        }, "Enter name of Player " + (currentPlayer + 1) + "/" + nofPlayers, "", "no numbers or special characters");
+    }
+
     private void drawUI() {
-        for (SimpleButton button : characterMenuButtons) {
-            button.draw(game.spriteBatch);
+        if (buttonsEnabled) {
+            for (SimpleButton button : characterMenuButtons) {
+                button.draw(game.spriteBatch);
+            }
         }
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 42;
+        parameter.color = Color.BLACK;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+        if (playerNames != null) {
+            if (playerNames.get(nofPlayers - 1) != null) {
+                String players = "PLAYERS:\n";
+                for (int i = 0; i < nofPlayers; i++) {
+                    players += playerNames.get(i);
+                    if (i == nofPlayers - 2) {
+                        players += " &";
+                    } else if (i < nofPlayers - 1) {
+                        players += ",";
+                    }
+                    if ((i + 1)%2 == 0) {
+                        players += "\n";
+                    } else {
+                        players += " ";
+                    }
+                }
+                players = players.trim() + ".";
+                gl.setText(font, players);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+            } else if (playerNames.size() > 0 && currentPlayer - 1 >= 0) {
+                String player1NameString = "PLAYER " + (currentPlayer) + ": " + playerNames.get(currentPlayer - 1);
+                gl.setText(font, player1NameString);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+            }
+        }
+    }
+
+    private void enableButtons() {
+        buttonsEnabled = true;
     }
 
 }

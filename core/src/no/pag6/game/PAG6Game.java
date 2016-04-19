@@ -1,15 +1,14 @@
-    package no.pag6.game;
+package no.pag6.game;
 
-    import com.badlogic.gdx.Game;
-    import com.badlogic.gdx.Gdx;
-    import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-    import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-    import no.pag6.helpers.AssetLoader;
-    import no.pag6.helpers.GameStateManager;
-    import no.pag6.states.MainMenu;
-    import no.pag6.states.PlayState;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.GameStateManager;
+import no.pag6.states.MainMenu;
 
-    public class PAG6Game extends Game {
+public class PAG6Game extends Game {
 
     public static final String TAG = "PAG6Game";
 
@@ -27,7 +26,8 @@
 
         AssetLoader.load();
 
-        gameStateManager.pushScreen(new PlayState(this, 4, "Map1.tmx")); // TODO: Set to SS when done debugging
+//        gameStateManager.pushScreen(new SplashScreen(this)); // TODO: Set to SS when done debugging
+        gameStateManager.pushScreen(new MainMenu(this));
     }
 
     @Override
