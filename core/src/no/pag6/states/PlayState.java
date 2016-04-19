@@ -4,17 +4,18 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polyline;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
@@ -25,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayState extends State {
+
+    // Viewport
+    private Viewport adjustedViewport;
 
     // Renderers
     private ShapeRenderer drawer;
@@ -53,17 +57,16 @@ public class PlayState extends State {
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
-    public PlayState(PAG6Game game, int nofPlayers, String mapFileName) {
+    public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
-
-        // Set up drawer
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
 
         // load the map
         map = new TmxMapLoader().load("maps/" + mapFileName);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
+
+        // Set special viewport for this state
+        adjustedViewport = new FitViewport(A_WIDTH, A_HEIGHT, cam);
 
         // set up box2d
         world = new World(GRAVITY, true);
@@ -86,7 +89,7 @@ public class PlayState extends State {
 
     @Override
     public void resize(int width, int height) {
-        viewPort.update(width, height);
+        adjustedViewport.update(width, height);
     }
 
     @Override
@@ -130,6 +133,7 @@ public class PlayState extends State {
         projected = cam.unproject(touchPoint);
         screenX = (int) projected.x;
         screenY = (int) projected.y;
+
         pauseButton.isTouchDown(screenX, screenY);
 
         return true;
@@ -145,10 +149,6 @@ public class PlayState extends State {
         if (pauseButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
-        // TODO: Handle laneswitching
-//        if (true) {
-//            switchLanes();
-//        }
 
         return true;
     }
@@ -168,9 +168,18 @@ public class PlayState extends State {
     }
 
     private void initUI() {
-        pauseButton = new SimpleButton(2560 - AssetLoader.optionsButtonUp.getRegionWidth() - 64, 64,
-                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
+        region = AssetLoader.pauseButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE/PPM;
+        regionHeight = region.getRegionHeight()*UI_SCALE/PPM;
+        pauseButton = new SimpleButton(
+                A_WIDTH/2 - regionWidth/2, A_HEIGHT*4/12 - regionHeight/2 + 500/PPM,
+                regionWidth, regionHeight,
+                AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
+        );
         playButtons.add(pauseButton);
     }
 

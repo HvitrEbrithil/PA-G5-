@@ -3,7 +3,6 @@ package no.pag6.helpers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetLoader {
@@ -24,7 +23,8 @@ public class AssetLoader {
 
     // Fonts
 //    public static BitmapFont ;
-    public static BitmapFont font;
+//    public static BitmapFont font;
+//    public static BitmapFont font;
 
     public static void load() {
         // Preferences
@@ -91,8 +91,8 @@ public class AssetLoader {
 //         = Gdx.audio.newSound(Gdx.files.internal("sounds/.wav"));
 
         // Fonts
-        font = new BitmapFont();
-        font.getData().setScale(.5f, .5f);
+//        font = new BitmapFont();
+//        font = new BitmapFont(Gdx.files.internal("fonts/arial_72.fnt"), Gdx.files.internal("fonts/arial_72.png"), false);
     }
 
     public static void dispose() {

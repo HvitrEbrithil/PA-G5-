@@ -19,7 +19,7 @@ public class State implements Screen, InputProcessor, Constants {
 
     protected PAG6Game game;
     protected OrthographicCamera cam;
-    protected Viewport viewPort;
+    protected Viewport viewport;
     protected Vector3 projected, touchPoint = new Vector3(0, 0, 0);
 
     // Background
@@ -28,7 +28,7 @@ public class State implements Screen, InputProcessor, Constants {
     public State(PAG6Game game) {
         this.game = game;
         cam = new OrthographicCamera();
-        viewPort = new FitViewport(V_WIDTH, V_HEIGHT, cam);
+        viewport = new FitViewport(V_WIDTH, V_HEIGHT, cam);
         cam.position.set(V_WIDTH/2, V_HEIGHT/2, 0);
 
         initBackground();
@@ -52,7 +52,7 @@ public class State implements Screen, InputProcessor, Constants {
     @Override
     public void resize(int width, int height) {
         Gdx.app.log(TAG, "resize called");
-        viewPort.update(width, height);
+        viewport.update(width, height);
     }
 
     @Override

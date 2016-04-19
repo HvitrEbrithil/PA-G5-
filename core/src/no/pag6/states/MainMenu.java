@@ -4,9 +4,12 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -99,7 +102,7 @@ public class MainMenu extends State {
         screenY = (int) projected.y;
 
         if (playButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().setScreen(new CharacterMenu(game, 2));
+            game.getGameStateManager().pushScreen(new CharacterMenu(game));
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
@@ -132,16 +135,13 @@ public class MainMenu extends State {
     }
 
     private void initUI() {
-        float uiScale;
         TextureRegion region;
         float regionWidth, regionHeight;
 
         // Buttons
-        uiScale = 0.4f;
-
         region = AssetLoader.playButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.5f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.5f;
         playButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -150,8 +150,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(playButton);
 
         region = AssetLoader.highscoreButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         highscoreButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -160,8 +160,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(highscoreButton);
 
         region = AssetLoader.optionsButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         optionsButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -170,8 +170,8 @@ public class MainMenu extends State {
         mainMenuButtons.add(optionsButton);
 
         region = AssetLoader.quitButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         quitButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -180,11 +180,11 @@ public class MainMenu extends State {
         mainMenuButtons.add(quitButton);
 
         // Logo and copyright
-        uiScale = 0.05f;
+        float tempUIScale = 0.04f;
 
         region = AssetLoader.logo;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
         logo = new Sprite(region);
         logo.setSize(regionWidth, regionHeight);
         logo.setPosition(8, 2);
@@ -196,8 +196,15 @@ public class MainMenu extends State {
         }
 
         logo.draw(game.spriteBatch);
-        AssetLoader.font.draw(game.spriteBatch, "Copyright 2016, Svartr Dras Inc.",
-                V_WIDTH/20, V_HEIGHT/25);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 9;
+        parameter.color = Color.BLACK;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+
+        font.draw(game.spriteBatch, "COPYRIGHT 2016, PROG ARK GRUPPE 6", V_WIDTH/22, V_HEIGHT/26);
     }
 
     private void drawTransition(float delta) {
