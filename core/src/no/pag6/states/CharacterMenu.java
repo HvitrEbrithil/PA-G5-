@@ -3,7 +3,6 @@ package no.pag6.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -53,11 +52,6 @@ public class CharacterMenu extends State {
     public void render(float delta) {
         super.render(delta);
 
-        update(delta);
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
@@ -99,7 +93,7 @@ public class CharacterMenu extends State {
                 game.getGameStateManager().popScreen();
             }
             if (playButton.isTouchUp(screenX, screenY)) {
-                game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, "maptest2.tmx"));
+                game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, "Map1.tmx"));
             }
         }
 

@@ -3,6 +3,7 @@ package no.pag6.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -43,12 +44,17 @@ public class State implements Screen, InputProcessor, Constants {
 
     @Override
     public void render(float delta) {
-        Gdx.app.log(TAG, "render called");
+        // Update logic
+        update(delta);
+
+        // Clear drawings
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render background
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
-        game.spriteBatch.enableBlending();
+        game.spriteBatch.disableBlending();
 
         drawBackground();
 
@@ -122,13 +128,10 @@ public class State implements Screen, InputProcessor, Constants {
     }
 
     public void update(float delta) {
-        Gdx.app.log(TAG, "update called");
     }
 
     private void initBackground() {
         TextureRegion region = AssetLoader.background;
-        float regionWidth = region.getRegionWidth();
-        float regionHeight = region.getRegionHeight();
         background = new Sprite(region);
         background.setSize(V_WIDTH, V_HEIGHT);
         background.setPosition(0, 0);
