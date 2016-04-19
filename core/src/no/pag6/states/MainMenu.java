@@ -99,7 +99,7 @@ public class MainMenu extends State {
         screenY = (int) projected.y;
 
         if (playButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().pushScreen(new CharacterMenu(game, 2));
+            game.getGameStateManager().setScreen(new CharacterMenu(game, 2));
         } else if (highscoreButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(screenX, screenY)) {

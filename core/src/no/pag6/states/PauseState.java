@@ -99,6 +99,7 @@ public class PauseState extends State {
         } else if (optionsButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
         } else if (mainMenuButton.isTouchUp(screenX, screenY)) {
+            game.getGameStateManager().popScreen();
             game.getGameStateManager().setScreen(new MainMenu(game));
         }
 

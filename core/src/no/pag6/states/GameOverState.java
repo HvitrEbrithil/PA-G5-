@@ -26,7 +26,6 @@ public class GameOverState extends State {
 
     // Game UI
     private List<SimpleButton> gameOverButtons = new ArrayList<SimpleButton>();
-    private SimpleButton highscoreButton;
     private SimpleButton mainMenuButton;
 
     public GameOverState(PAG6Game game) {
@@ -76,7 +75,6 @@ public class GameOverState extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        highscoreButton.isTouchDown(screenX, screenY);
         mainMenuButton.isTouchDown(screenX, screenY);
 
         return true;
@@ -89,9 +87,7 @@ public class GameOverState extends State {
         screenX = (int) projected.x;
         screenY = (int) projected.y;
 
-        if (highscoreButton.isTouchUp(screenX, screenY)) {
-            game.getGameStateManager().setScreen(new HighscoreMenu(game));
-        } else if (mainMenuButton.isTouchUp(screenX, screenY)) {
+        if (mainMenuButton.isTouchUp(screenX, screenY)) {
             game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
@@ -119,16 +115,6 @@ public class GameOverState extends State {
 
         // Buttons
         uiScale = 0.67f;
-
-        region = AssetLoader.highscoreButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
-        highscoreButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
-                regionWidth, regionHeight,
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
-        );
-        gameOverButtons.add(highscoreButton);
 
         region = AssetLoader.mainMenuButtonUp;
         regionWidth = region.getRegionWidth()*uiScale;
