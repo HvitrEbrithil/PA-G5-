@@ -50,13 +50,15 @@ public class OptionsMenu extends State {
     public void render(float delta) {
         update(delta);
 
-        Gdx.gl.glClearColor(0.8f, 0.5f, 0.5f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
+
+        super.render(delta);
 
         drawUI();
 

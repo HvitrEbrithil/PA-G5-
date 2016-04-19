@@ -54,19 +54,15 @@ public class MainMenu extends State {
     public void render(float delta) {
         update(delta);
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(196, 229, 234, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Render shapes
-        game.drawer.begin(ShapeRenderer.ShapeType.Filled);
-        game.drawer.setColor(1.0f, 0.4f, 0.3f, 1);
-        game.drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
-        game.drawer.end();
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
+
+        super.render(delta);
 
         drawUI();
 

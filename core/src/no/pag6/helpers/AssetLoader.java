@@ -11,9 +11,9 @@ public class AssetLoader {
     public static Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture logoTexture, playSPButtonTexture, play2PButtonTexture, highscoreButtonTexture, optionsButtonTexture,
+    public static Texture backgroundTexture, logoTexture, playSPButtonTexture, play2PButtonTexture, highscoreButtonTexture, optionsButtonTexture,
             quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture, mainMenuButtonTexture;
-    public static TextureRegion logo, playSPButtonUp, playSPButtonDown, play2PButtonUp, play2PButtonDown,
+    public static TextureRegion background, logo, playSPButtonUp, playSPButtonDown, play2PButtonUp, play2PButtonDown,
             highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown, quitButtonUp, quitButtonDown,
             pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
 
@@ -35,6 +35,10 @@ public class AssetLoader {
         }
 
         // Textures and TextureRegions
+        backgroundTexture = new Texture(Gdx.files.internal("textures/menu_background.png"));
+        backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        background = new TextureRegion(backgroundTexture, 0, 0, 2560, 1440);
+
         logoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new TextureRegion(logoTexture, 0, 0, 512, 512);
@@ -98,6 +102,7 @@ public class AssetLoader {
     }
 
     public static void dispose() {
+        backgroundTexture.dispose();
         logoTexture.dispose();
         playSPButtonTexture.dispose();
         play2PButtonTexture.dispose();

@@ -6,6 +6,7 @@
     import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
     import no.pag6.helpers.AssetLoader;
     import no.pag6.helpers.GameStateManager;
+    import no.pag6.states.GameOverState;
     import no.pag6.states.MainMenu;
     import no.pag6.states.PauseState;
 
