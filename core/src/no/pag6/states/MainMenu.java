@@ -28,6 +28,7 @@ public class MainMenu extends State {
     // Game objects
 
     // Game assets
+    BitmapFont font;
 
     // Tween assets
     private Value alpha = new Value();
@@ -170,6 +171,13 @@ public class MainMenu extends State {
         logo = new Sprite(region);
         logo.setSize(regionWidth, regionHeight);
         logo.setPosition(8, 2);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 9;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void drawUI() {
@@ -178,14 +186,6 @@ public class MainMenu extends State {
         }
 
         logo.draw(game.spriteBatch);
-
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 9;
-        parameter.color = Color.BLACK;
-        BitmapFont font = generator.generateFont(parameter);
-        generator.dispose();
-
         font.draw(game.spriteBatch, "COPYRIGHT 2016, PROG ARK GRUPPE 6", V_WIDTH/22, V_HEIGHT/26);
     }
 
