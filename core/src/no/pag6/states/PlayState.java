@@ -103,16 +103,8 @@ public class PlayState extends State {
         b2dr.render(world, cam.combined);
     }
 
-    private void debug() {
-        System.out.println("debug");
-    }
-
     @Override
     public void update(float delta) {
-        if (players[activePlayerIdx].getB2dBody().getPosition().x > 19) {
-            debug();
-        }
-
         tweener.update(delta);
 
         world.step(TIME_STEP, 6, 2); // update physics
@@ -136,6 +128,7 @@ public class PlayState extends State {
         mapRenderer.setView(cam);
 
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
+            // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             players[activePlayerIdx].active = true;
@@ -282,7 +275,7 @@ public class PlayState extends State {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE && cl.isPlayerOnGround()) {
+        if (keycode == Input.Keys.SPACE) {
             players[activePlayerIdx].switchLanes();
 
             boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
@@ -307,6 +300,10 @@ public class PlayState extends State {
                         .ease(TweenEquations.easeOutQuad)
                         .start(tweener);
             }
+        }
+
+        if (keycode == Input.Keys.R) {
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
         }
 
         return true;

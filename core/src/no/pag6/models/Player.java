@@ -28,6 +28,7 @@ public class Player extends Sprite implements Constants {
 
         score = 0;
         onFirstLane = true;
+        shouldSwitchFilterBits = false;
         texture = new Texture("textures/player1.png");
 
         setBounds(0, 0, 70 / PPM, 86 / PPM);
@@ -94,12 +95,14 @@ public class Player extends Sprite implements Constants {
 
     public void switchLanes() {
         // jump
-        b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
+        if (footContactCount > 0) {
+            b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
+        }
 
-        shouldSwitchFilterBits = true;
+        shouldSwitchFilterBits = ! shouldSwitchFilterBits;
 
         // scale
-        b2dBody.getFixtureList().first().getShape().setRadius(isOnFirstLane() ? 5 / PPM : 10 / PPM);
+        // TODO: implement scaling as: 1) remove fixtures but remember size 2) add new, scaled fixtures to the body
         onFirstLane = !onFirstLane;
     }
 }
