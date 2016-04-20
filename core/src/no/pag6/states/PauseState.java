@@ -66,14 +66,12 @@ public class PauseState extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        resumeButton.isTouchDown(screenX, screenY);
-        highscoreButton.isTouchDown(screenX, screenY);
-        optionsButton.isTouchDown(screenX, screenY);
-        mainMenuButton.isTouchDown(screenX, screenY);
+        resumeButton.isTouchDown(projected.x, projected.y);
+        highscoreButton.isTouchDown(projected.x, projected.y);
+        optionsButton.isTouchDown(projected.x, projected.y);
+        mainMenuButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -81,17 +79,15 @@ public class PauseState extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (resumeButton.isTouchUp(screenX, screenY)) {
+        if (resumeButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
-        } else if (highscoreButton.isTouchUp(screenX, screenY)) {
+        } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
-        } else if (optionsButton.isTouchUp(screenX, screenY)) {
+        } else if (optionsButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
-        } else if (mainMenuButton.isTouchUp(screenX, screenY)) {
+        } else if (mainMenuButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
             game.getGameStateManager().setScreen(new MainMenu(game));
         }

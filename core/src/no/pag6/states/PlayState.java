@@ -111,9 +111,9 @@ public class PlayState extends State {
 
     @Override
     public void update(float delta) {
+        tweener.update(delta);
 
         world.step(TIME_STEP, 6, 2); // update physics
-        tweener.update(delta);
 
         // update camera
         cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
@@ -147,11 +147,9 @@ public class PlayState extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        pauseButton.isTouchDown(screenX, screenY);
+        pauseButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -159,11 +157,9 @@ public class PlayState extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (pauseButton.isTouchUp(screenX, screenY)) {
+        if (pauseButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
 
