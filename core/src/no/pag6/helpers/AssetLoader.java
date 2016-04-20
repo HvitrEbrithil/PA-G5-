@@ -85,15 +85,12 @@ public class AssetLoader {
         splashAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
         // Sounds
-<<<<<<< HEAD
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
 
         // Fonts
 //        font = new BitmapFont();
 //        font = new BitmapFont(Gdx.files.internal("fonts/arial_72.fnt"), Gdx.files.internal("fonts/arial_72.png"), false);
-=======
-//         = Gdx.audio.newSound(Gdx.files.internal("sounds/.wav"));
->>>>>>> d0a4902148114f6d3ab29556b253f56aa9d9e5ad
+
     }
 
     public static void dispose() {
