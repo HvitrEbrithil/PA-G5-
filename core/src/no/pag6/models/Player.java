@@ -19,6 +19,7 @@ public class Player extends Sprite implements Constants {
     private int footContactCount;
     private int id;
     private int nofLives;
+    private boolean shouldSwitchFilterBits;
 
     public Player(Body b2dBody, int id) {
         this.b2dBody = b2dBody;
@@ -74,6 +75,16 @@ public class Player extends Sprite implements Constants {
             b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
         }
 
+        if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
+            // set filter bits
+            Filter filter = b2dBody.getFixtureList().first().getFilterData();
+            boolean wasFirst = filter.maskBits == FIRST_LAYER_BITS;
+            filter.maskBits = wasFirst ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
+            b2dBody.getFixtureList().first().setFilterData(filter);
+            b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+            shouldSwitchFilterBits = false;
+        }
+
         setPosition(b2dBody.getPosition().x - getWidth() / 2, b2dBody.getPosition().y - getHeight() / 2);
     }
 
@@ -85,15 +96,10 @@ public class Player extends Sprite implements Constants {
         // jump
         b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
 
-        // set filter bits
-        Filter filter = b2dBody.getFixtureList().first().getFilterData();
-        filter.maskBits = isOnFirstLane() ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
-        b2dBody.getFixtureList().first().setFilterData(filter);
-        b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+        shouldSwitchFilterBits = true;
 
         // scale
         b2dBody.getFixtureList().first().getShape().setRadius(isOnFirstLane() ? 5 / PPM : 10 / PPM);
-
         onFirstLane = !onFirstLane;
     }
 }

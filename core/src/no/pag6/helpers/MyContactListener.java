@@ -13,6 +13,7 @@ import no.pag6.models.Player;
  */
 public class MyContactListener implements ContactListener {
     private Player player;
+    int count;
 
     public void setPlayer(Player player) {
         this.player = player;
@@ -32,16 +33,14 @@ public class MyContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        String id = "player" + player.getId() + "foot";
-
-        if (fixtureA.getUserData() != null && fixtureA.getUserData().equals(id)) {
+        if (fixtureA.getUserData() != null && fixtureA.getUserData().equals("player" + player.getId() + "foot")) {
             if (begin) {
                 player.incrementFootContactCount();
             } else {
                 player.decrementFootContactCount();
             }
         }
-        if (fixtureB.getUserData() != null && fixtureB.getUserData().equals(id)) {
+        if (fixtureB.getUserData() != null && fixtureB.getUserData().equals("player" + player.getId() + "foot")) {
             if (begin) {
                 player.incrementFootContactCount();
             } else {

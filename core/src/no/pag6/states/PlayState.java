@@ -78,8 +78,6 @@ public class PlayState extends State {
         players[activePlayerIdx].active = true;
         cl.setPlayer(players[activePlayerIdx]);
 
-        cam.position.set(A_WIDTH, 500 / PPM, 0);
-
         initTweenAssets();
         initGameObjects();
         initGameAssets();
@@ -90,8 +88,6 @@ public class PlayState extends State {
     @Override
     public void render(float delta) {
         super.render(delta);
-
-        b2dr.render(world, cam.combined);
 
         drawTiled();
 
@@ -104,10 +100,19 @@ public class PlayState extends State {
             player.draw(game.spriteBatch);
         }
         game.spriteBatch.end();
+        b2dr.render(world, cam.combined);
+    }
+
+    private void debug() {
+        System.out.println("debug");
     }
 
     @Override
     public void update(float delta) {
+        if (players[activePlayerIdx].getB2dBody().getPosition().x > 19) {
+            debug();
+        }
+
         tweener.update(delta);
 
         world.step(TIME_STEP, 6, 2); // update physics
@@ -131,7 +136,6 @@ public class PlayState extends State {
         mapRenderer.setView(cam);
 
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
-            System.out.println("died");
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             players[activePlayerIdx].active = true;
