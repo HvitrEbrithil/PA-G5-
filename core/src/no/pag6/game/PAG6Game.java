@@ -8,7 +8,6 @@ import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.GameStateManager;
 import no.pag6.states.SplashScreen;
 
-
 public class PAG6Game extends Game {
 
     public static final String TAG = "PAG6Game";
@@ -28,7 +27,6 @@ public class PAG6Game extends Game {
         AssetLoader.load();
 
         gameStateManager.pushScreen(new SplashScreen(this));
-
     }
 
     @Override
@@ -45,4 +43,5 @@ public class PAG6Game extends Game {
     public void render() {
         super.render();
     }
-    }
+
+}
