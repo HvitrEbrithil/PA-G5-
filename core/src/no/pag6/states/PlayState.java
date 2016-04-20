@@ -1,5 +1,8 @@
 package no.pag6.states;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
+import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
@@ -13,6 +16,8 @@ import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.models.Player;
+import no.pag6.tweenaccessors.Value;
+import no.pag6.tweenaccessors.ValueAccessor;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
@@ -35,9 +40,16 @@ public class PlayState extends State {
     private Box2DDebugRenderer b2dr;
     private MyContactListener cl;
 
+    // Renderers
+    private TweenManager tweener;
+
     // Game objects
 
     // Game assets
+
+    // Tween assets
+    private Value opacityLayer1 = new Value();
+    private Value opacityLayer2 = new Value();
 
     // Game UI
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
@@ -68,6 +80,7 @@ public class PlayState extends State {
 
         cam.position.set(A_WIDTH, 500 / PPM, 0);
 
+        initTweenAssets();
         initGameObjects();
         initGameAssets();
 
@@ -95,6 +108,8 @@ public class PlayState extends State {
 
     @Override
     public void update(float delta) {
+        tweener.update(delta);
+
         world.step(TIME_STEP, 6, 2); // update physics
 
         // update camera
@@ -106,13 +121,11 @@ public class PlayState extends State {
             player.update(delta);
         }
 
-        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
+        map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
 
-        map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 1 : 0.5f);
-        map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 1 : 0.5f);
-
-        map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 0.5f : 1);
-        map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 0.5f : 1);
+        map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
+        map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
 
         // update the Tiled map renderer
         mapRenderer.setView(cam);
@@ -157,6 +170,16 @@ public class PlayState extends State {
     }
 
     private void initGameAssets() {
+    }
+
+    private void initTweenAssets() {
+        // Register Tween Assets
+        Tween.registerAccessor(Value.class, new ValueAccessor());
+
+        tweener = new TweenManager();
+
+        opacityLayer1.setValue(1f);
+        opacityLayer2.setValue(.5f);
     }
 
     private void initUI() {
@@ -257,7 +280,31 @@ public class PlayState extends State {
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.SPACE && cl.isPlayerOnGround()) {
             players[activePlayerIdx].switchLanes();
+
+            boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+
+            // Tween animations
+            if (!playerIsOnFirstLane) {
+                Tween.to(opacityLayer1, -1, .5f)
+                        .target(.5f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+                Tween.to(opacityLayer2, -1, .5f)
+                        .target(1f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+            } else {
+                Tween.to(opacityLayer1, -1, .5f)
+                        .target(1f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+                Tween.to(opacityLayer2, -1, .5f)
+                        .target(.5f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+            }
         }
+
         return true;
     }
 

@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 public class CharacterMenu extends State {
 
     private int nofPlayers;
-    private String nofPlayersPattern = "^[1-8]$";
-    private String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
+    private final String nofPlayersPattern = "^[1-8]$";
+    private final String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
     private List<String> playerNames;
     private int currentPlayer = 0;
 
@@ -29,6 +29,7 @@ public class CharacterMenu extends State {
     // Game objects
 
     // Game assets
+    BitmapFont font;
 
     // Tween assets
 
@@ -124,6 +125,13 @@ public class CharacterMenu extends State {
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         characterMenuButtons.add(backButton);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 42;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void takeNofPlayers() {
@@ -146,7 +154,7 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
-                game.getGameStateManager().popScreen();
+//                game.getGameStateManager().popScreen();
             }
         }, "Enter number of players", "", "from 1 to 8 players");
     }
@@ -182,12 +190,6 @@ public class CharacterMenu extends State {
             }
         }
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 42;
-        parameter.color = Color.BLACK;
-        BitmapFont font = generator.generateFont(parameter);
-        generator.dispose();
         if (playerNames != null) {
             if (playerNames.get(nofPlayers - 1) != null) {
                 String players = "PLAYERS:\n";
