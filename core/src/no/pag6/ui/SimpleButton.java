@@ -60,4 +60,9 @@ public class SimpleButton {
         return false;
     }
 
+    public void setX(float x) {
+        this.x = x;
+        bounds.setX(x);
+    }
+
 }

@@ -52,6 +52,7 @@ public class PlayState extends State {
     private Value opacityLayer2 = new Value();
 
     // Game UI
+    float tempUIScale = .2f/PPM;
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
@@ -99,18 +100,20 @@ public class PlayState extends State {
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
+
         drawUI();
         for (Player player : players) {
             player.draw(game.spriteBatch);
         }
+
         game.spriteBatch.end();
     }
 
     @Override
     public void update(float delta) {
-        tweener.update(delta);
 
         world.step(TIME_STEP, 6, 2); // update physics
+        tweener.update(delta);
 
         // update camera
         cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
@@ -119,6 +122,8 @@ public class PlayState extends State {
         for (Player player : players) {
             player.update(delta);
         }
+        // Update UI
+        pauseButton.setX(players[activePlayerIdx].getB2dBody().getPosition().x - A_WIDTH/2 + 8/PPM);
 
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
         map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
@@ -187,10 +192,10 @@ public class PlayState extends State {
 
         // Buttons
         region = AssetLoader.pauseButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE/PPM;
-        regionHeight = region.getRegionHeight()*UI_SCALE/PPM;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
         pauseButton = new SimpleButton(
-                A_WIDTH/2 - regionWidth/2, A_HEIGHT*4/12 - regionHeight/2 + 500/PPM,
+                0, 500/PPM + A_HEIGHT/2 - 8/PPM,
                 regionWidth, regionHeight,
                 AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
         );
