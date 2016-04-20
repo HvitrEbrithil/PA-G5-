@@ -52,6 +52,7 @@ public class PlayState extends State {
     private Value opacityLayer2 = new Value();
 
     // Game UI
+    float tempUIScale = .2f/PPM;
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
@@ -99,10 +100,12 @@ public class PlayState extends State {
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
+
         drawUI();
         for (Player player : players) {
             player.draw(game.spriteBatch);
         }
+
         game.spriteBatch.end();
     }
 
@@ -119,6 +122,8 @@ public class PlayState extends State {
         for (Player player : players) {
             player.update(delta);
         }
+        // Update UI
+        pauseButton.setX(players[activePlayerIdx].getB2dBody().getPosition().x - A_WIDTH/2 + 8/PPM);
 
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
         map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
@@ -142,11 +147,9 @@ public class PlayState extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        pauseButton.isTouchDown(screenX, screenY);
+        pauseButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -154,11 +157,9 @@ public class PlayState extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (pauseButton.isTouchUp(screenX, screenY)) {
+        if (pauseButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
 
@@ -187,10 +188,10 @@ public class PlayState extends State {
 
         // Buttons
         region = AssetLoader.pauseButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE/PPM;
-        regionHeight = region.getRegionHeight()*UI_SCALE/PPM;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
         pauseButton = new SimpleButton(
-                A_WIDTH/2 - regionWidth/2, A_HEIGHT*4/12 - regionHeight/2 + 500/PPM,
+                0, 500/PPM + A_HEIGHT/2 - 8/PPM,
                 regionWidth, regionHeight,
                 AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
         );
