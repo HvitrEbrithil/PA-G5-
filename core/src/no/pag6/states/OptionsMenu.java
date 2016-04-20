@@ -62,11 +62,9 @@ public class OptionsMenu extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        backButtonOptions.isTouchDown(screenX, screenY);
+        backButtonOptions.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -74,11 +72,9 @@ public class OptionsMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (backButtonOptions.isTouchUp(screenX, screenY)) {
+        if (backButtonOptions.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
         }
 

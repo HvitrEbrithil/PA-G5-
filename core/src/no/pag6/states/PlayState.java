@@ -1,5 +1,8 @@
 package no.pag6.states;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
+import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
@@ -13,6 +16,8 @@ import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.models.Player;
+import no.pag6.tweenaccessors.Value;
+import no.pag6.tweenaccessors.ValueAccessor;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
@@ -35,11 +40,19 @@ public class PlayState extends State {
     private Box2DDebugRenderer b2dr;
     private MyContactListener cl;
 
+    // Renderers
+    private TweenManager tweener;
+
     // Game objects
 
     // Game assets
 
+    // Tween assets
+    private Value opacityLayer1 = new Value();
+    private Value opacityLayer2 = new Value();
+
     // Game UI
+    float tempUIScale = .2f/PPM;
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
@@ -66,8 +79,7 @@ public class PlayState extends State {
         players[activePlayerIdx].active = true;
         cl.setPlayer(players[activePlayerIdx]);
 
-        cam.position.set(A_WIDTH, 500 / PPM, 0);
-
+        initTweenAssets();
         initGameObjects();
         initGameAssets();
 
@@ -78,46 +90,50 @@ public class PlayState extends State {
     public void render(float delta) {
         super.render(delta);
 
-        b2dr.render(world, cam.combined);
-
         drawTiled();
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
+
         drawUI();
         for (Player player : players) {
             player.draw(game.spriteBatch);
         }
+
         game.spriteBatch.end();
+        b2dr.render(world, cam.combined);
     }
 
     @Override
     public void update(float delta) {
+        tweener.update(delta);
+
         world.step(TIME_STEP, 6, 2); // update physics
 
         // update camera
         cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
+        cam.position.y = players[activePlayerIdx].getB2dBody().getPosition().y; // center the camera around the activePlayer
         cam.update();
         // update the players
         for (Player player : players) {
             player.update(delta);
         }
+        // Update UI
+        pauseButton.setX(players[activePlayerIdx].getB2dBody().getPosition().x - A_WIDTH/2 + 8/PPM);
 
-        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
+        map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
 
-        map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 1 : 0.5f);
-        map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 1 : 0.5f);
-
-        map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 0.5f : 1);
-        map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(playerIsOnFirstLane ? 0.5f : 1);
+        map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
+        map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
 
         // update the Tiled map renderer
         mapRenderer.setView(cam);
 
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
-            System.out.println("died");
+            // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             players[activePlayerIdx].active = true;
@@ -129,11 +145,9 @@ public class PlayState extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        pauseButton.isTouchDown(screenX, screenY);
+        pauseButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -141,11 +155,9 @@ public class PlayState extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (pauseButton.isTouchUp(screenX, screenY)) {
+        if (pauseButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
 
@@ -158,16 +170,26 @@ public class PlayState extends State {
     private void initGameAssets() {
     }
 
+    private void initTweenAssets() {
+        // Register Tween Assets
+        Tween.registerAccessor(Value.class, new ValueAccessor());
+
+        tweener = new TweenManager();
+
+        opacityLayer1.setValue(1f);
+        opacityLayer2.setValue(.5f);
+    }
+
     private void initUI() {
         TextureRegion region;
         float regionWidth, regionHeight;
 
         // Buttons
         region = AssetLoader.pauseButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE/PPM;
-        regionHeight = region.getRegionHeight()*UI_SCALE/PPM;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
         pauseButton = new SimpleButton(
-                A_WIDTH/2 - regionWidth/2, A_HEIGHT*4/12 - regionHeight/2 + 500/PPM,
+                0, 500/PPM + A_HEIGHT/2 - 8/PPM,
                 regionWidth, regionHeight,
                 AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
         );
@@ -254,9 +276,37 @@ public class PlayState extends State {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE && cl.isPlayerOnGround()) {
+        if (keycode == Input.Keys.SPACE) {
             players[activePlayerIdx].switchLanes();
+
+            boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+
+            // Tween animations
+            if (!playerIsOnFirstLane) {
+                Tween.to(opacityLayer1, -1, .5f)
+                        .target(.5f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+                Tween.to(opacityLayer2, -1, .5f)
+                        .target(1f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+            } else {
+                Tween.to(opacityLayer1, -1, .5f)
+                        .target(1f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+                Tween.to(opacityLayer2, -1, .5f)
+                        .target(.5f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+            }
         }
+
+        if (keycode == Input.Keys.R) {
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
+        }
+
         return true;
     }
 

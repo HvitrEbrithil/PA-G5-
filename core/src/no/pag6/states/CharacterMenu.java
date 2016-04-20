@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 public class CharacterMenu extends State {
 
     private int nofPlayers;
-    private String nofPlayersPattern = "^[1-8]$";
-    private String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
+    private final String nofPlayersPattern = "^[1-8]$";
+    private final String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
     private List<String> playerNames;
     private int currentPlayer = 0;
 
@@ -29,6 +29,7 @@ public class CharacterMenu extends State {
     // Game objects
 
     // Game assets
+    BitmapFont font;
 
     // Tween assets
 
@@ -69,13 +70,11 @@ public class CharacterMenu extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
         if (buttonsEnabled) {
-            backButton.isTouchDown(screenX, screenY);
-            playButton.isTouchDown(screenX, screenY);
+            backButton.isTouchDown(projected.x, projected.y);
+            playButton.isTouchDown(projected.x, projected.y);
         }
 
         return true;
@@ -84,15 +83,13 @@ public class CharacterMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
         if (buttonsEnabled) {
-            if (backButton.isTouchUp(screenX, screenY)) {
+            if (backButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().popScreen();
             }
-            if (playButton.isTouchUp(screenX, screenY)) {
+            if (playButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, "Map1.tmx"));
             }
         }
@@ -124,6 +121,13 @@ public class CharacterMenu extends State {
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         characterMenuButtons.add(backButton);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 42;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void takeNofPlayers() {
@@ -146,7 +150,7 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
-                game.getGameStateManager().popScreen();
+//                game.getGameStateManager().popScreen();
             }
         }, "Enter number of players", "", "from 1 to 8 players");
     }
@@ -182,12 +186,6 @@ public class CharacterMenu extends State {
             }
         }
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 42;
-        parameter.color = Color.BLACK;
-        BitmapFont font = generator.generateFont(parameter);
-        generator.dispose();
         if (playerNames != null) {
             if (playerNames.get(nofPlayers - 1) != null) {
                 String players = "PLAYERS:\n";

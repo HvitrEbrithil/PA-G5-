@@ -2,24 +2,29 @@ package no.pag6.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+
+import java.util.ArrayList;
 
 public class AssetLoader {
 
     public static Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture splashTexture, backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
+    public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
             quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture, mainMenuButtonTexture;
-    public static TextureRegion splash, background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
+    public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
             quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
 
     // Animations
-//    public static Animation ;
+    public static Animation splashAnimation;
 
     // Sounds
-//    public static Sound ;
+    public static Sound splashSound;
 
     // Fonts
 //    public static BitmapFont ;
@@ -34,10 +39,6 @@ public class AssetLoader {
         }
 
         // Textures and TextureRegions
-        splashTexture = new Texture(Gdx.files.internal("textures/splash_screen.gif"));
-        splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        splash = new TextureRegion(splashTexture, 0, 0, 2560, 1440);
-
         backgroundTexture = new Texture(Gdx.files.internal("textures/menu_background.png"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         background = new TextureRegion(backgroundTexture, 0, 0, 2560, 1440);
@@ -87,12 +88,12 @@ public class AssetLoader {
         mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
 
         // Animations
-//        TextureRegion[]  = {};
-//         = new Animation(0.06f, );
-//        .setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+        TextureRegion[] splashFrames = initializeSplash();
+        splashAnimation = new Animation(0.033f, splashFrames);
+        splashAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
         // Sounds
-//         = Gdx.audio.newSound(Gdx.files.internal("sounds/.wav"));
+        splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
 
         // Fonts
 //        font = new BitmapFont();
@@ -100,6 +101,12 @@ public class AssetLoader {
     }
 
     public static void dispose() {
+        splashTexture1.dispose();
+        splashTexture6.dispose();
+        splashTexture11.dispose();
+        splashTexture27.dispose();
+        splashTexture33.dispose();
+        splashTexture38.dispose();
         backgroundTexture.dispose();
         logoTexture.dispose();
         playButtonTexture.dispose();
@@ -118,6 +125,66 @@ public class AssetLoader {
     public static void setHighScore(int val) {
         prefs.putInteger("high_score", val);
         prefs.flush();
+    }
+
+    private static TextureRegion[] initializeSplash() {
+        TextureRegion[] splashFrames = new TextureRegion[60];
+
+        // Frames 1 to 5
+        splashTexture1 = new Texture(Gdx.files.internal("textures/splash_frames_1.png"));
+        splashTexture1.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion splashFrame = new TextureRegion(splashTexture1, 0, 0, 800, 450);
+            splashFrames[i-1] = splashFrame;
+        }
+
+        // Frames 6 to 10
+        splashTexture6 = new Texture(Gdx.files.internal("textures/splash_frames_6.png"));
+        splashTexture6.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 6; i <= 10; i++) {
+            TextureRegion splashFrame = new TextureRegion(splashTexture6, (i == 6 ? 0 : (800*(i-6) + 1)), 0, 800, 450);
+            splashFrames[i-1] = splashFrame;
+        }
+
+        // Frames 11 to 26
+        splashTexture11 = new Texture(Gdx.files.internal("textures/splash_frames_11.png"));
+        splashTexture11.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 11; i <= 26; i++) {
+            TextureRegion splashFrame = new TextureRegion(splashTexture11, 0, 0, 800, 450);
+            splashFrames[i-1] = splashFrame;
+        }
+
+        // Frames 27 to 32
+        splashTexture27 = new Texture(Gdx.files.internal("textures/splash_frames_27.png"));
+        splashTexture27.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 27; i <= 32; i++) {
+            TextureRegion splashFrame = new TextureRegion(splashTexture27, (i == 27? 0 : (800*(i-27) + 1)), 0, 800, 450);
+            splashFrames[i-1] = splashFrame;
+        }
+
+        // Frames 33 to 37
+        splashTexture33 = new Texture(Gdx.files.internal("textures/splash_frames_33.png"));
+        splashTexture33.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 33; i <= 37; i++) {
+            TextureRegion splashFrame = new TextureRegion(splashTexture33, (i == 33 ? 0 : (800*(i-33) + 1)), 0, 800, 450);
+            splashFrames[i-1] = splashFrame;
+        }
+
+        // Frames 38 to 60
+        splashTexture38 = new Texture(Gdx.files.internal("textures/splash_frames_38.png"));
+        splashTexture38.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 38; i <= 60; i++) {
+            TextureRegion splashFrame = new TextureRegion(splashTexture38, 0, 0, 800, 450);
+            splashFrames[i-1] = splashFrame;
+        }
+
+        return splashFrames;
     }
 
 }

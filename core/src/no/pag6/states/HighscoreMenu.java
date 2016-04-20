@@ -62,11 +62,9 @@ public class HighscoreMenu extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        backButton.isTouchDown(screenX, screenY);
+        backButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -74,11 +72,9 @@ public class HighscoreMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (backButton.isTouchUp(screenX, screenY)) {
+        if (backButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
         }
 

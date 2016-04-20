@@ -28,6 +28,7 @@ public class MainMenu extends State {
     // Game objects
 
     // Game assets
+    BitmapFont font;
 
     // Tween assets
     private Value alpha = new Value();
@@ -70,14 +71,12 @@ public class MainMenu extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        playButton.isTouchDown(screenX, screenY);
-        highscoreButton.isTouchDown(screenX, screenY);
-        optionsButton.isTouchDown(screenX, screenY);
-        quitButton.isTouchDown(screenX, screenY);
+        playButton.isTouchDown(projected.x, projected.y);
+        highscoreButton.isTouchDown(projected.x, projected.y);
+        optionsButton.isTouchDown(projected.x, projected.y);
+        quitButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -85,17 +84,15 @@ public class MainMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (playButton.isTouchUp(screenX, screenY)) {
+        if (playButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new CharacterMenu(game));
-        } else if (highscoreButton.isTouchUp(screenX, screenY)) {
+        } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
-        } else if (optionsButton.isTouchUp(screenX, screenY)) {
+        } else if (optionsButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
-        } else if (quitButton.isTouchUp(screenX, screenY)) {
+        } else if (quitButton.isTouchUp(projected.x, projected.y)) {
             game.dispose();
             System.exit(0);
         }
@@ -170,6 +167,13 @@ public class MainMenu extends State {
         logo = new Sprite(region);
         logo.setSize(regionWidth, regionHeight);
         logo.setPosition(8, 2);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 9;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void drawUI() {
@@ -178,14 +182,6 @@ public class MainMenu extends State {
         }
 
         logo.draw(game.spriteBatch);
-
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 9;
-        parameter.color = Color.BLACK;
-        BitmapFont font = generator.generateFont(parameter);
-        generator.dispose();
-
         font.draw(game.spriteBatch, "COPYRIGHT 2016, PROG ARK GRUPPE 6", V_WIDTH/22, V_HEIGHT/26);
     }
 
