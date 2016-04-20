@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.GameStateManager;
 import no.pag6.states.MainMenu;
+import no.pag6.states.PlayState;
 
 public class PAG6Game extends Game {
 
@@ -26,8 +27,7 @@ public class PAG6Game extends Game {
 
         AssetLoader.load();
 
-//        gameStateManager.pushScreen(new SplashScreen(this)); // TODO: Set to SS when done debugging
-        gameStateManager.pushScreen(new MainMenu(this));
+        gameStateManager.pushScreen(new PlayState(this, 1, null, "Map1.tmx")); // TODO: Set to SS when done debugging
     }
 
     @Override

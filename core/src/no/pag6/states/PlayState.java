@@ -79,8 +79,6 @@ public class PlayState extends State {
         players[activePlayerIdx].active = true;
         cl.setPlayer(players[activePlayerIdx]);
 
-        cam.position.set(A_WIDTH, 500 / PPM, 0);
-
         initTweenAssets();
         initGameObjects();
         initGameAssets();
@@ -91,8 +89,6 @@ public class PlayState extends State {
     @Override
     public void render(float delta) {
         super.render(delta);
-
-        b2dr.render(world, cam.combined);
 
         drawTiled();
 
@@ -107,6 +103,7 @@ public class PlayState extends State {
         }
 
         game.spriteBatch.end();
+        b2dr.render(world, cam.combined);
     }
 
     @Override
@@ -117,6 +114,7 @@ public class PlayState extends State {
 
         // update camera
         cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
+        cam.position.y = players[activePlayerIdx].getB2dBody().getPosition().y; // center the camera around the activePlayer
         cam.update();
         // update the players
         for (Player player : players) {
@@ -135,7 +133,7 @@ public class PlayState extends State {
         mapRenderer.setView(cam);
 
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
-            System.out.println("died");
+            // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             players[activePlayerIdx].active = true;
@@ -278,7 +276,7 @@ public class PlayState extends State {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE && cl.isPlayerOnGround()) {
+        if (keycode == Input.Keys.SPACE) {
             players[activePlayerIdx].switchLanes();
 
             boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
@@ -303,6 +301,10 @@ public class PlayState extends State {
                         .ease(TweenEquations.easeOutQuad)
                         .start(tweener);
             }
+        }
+
+        if (keycode == Input.Keys.R) {
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
         }
 
         return true;
