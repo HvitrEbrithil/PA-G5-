@@ -18,14 +18,16 @@ public class Player extends Sprite implements Constants {
     public boolean active = false;
     private int footContactCount;
     private int id;
+    private int nofLives;
 
     public Player(Body b2dBody, int id) {
         this.b2dBody = b2dBody;
         this.id = id;
+        nofLives = 3;
 
         score = 0;
         onFirstLane = true;
-        texture = new Texture("textures/player.png");
+        texture = new Texture("textures/player1.png");
 
         setBounds(0, 0, 70 / PPM, 86 / PPM);
         setRegion(texture);

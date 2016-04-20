@@ -99,6 +99,7 @@ public class PlayState extends State {
 
         // update camera
         cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
+        cam.position.y = players[activePlayerIdx].getB2dBody().getPosition().y; // center the camera around the activePlayer
         cam.update();
         // update the players
         for (Player player : players) {
