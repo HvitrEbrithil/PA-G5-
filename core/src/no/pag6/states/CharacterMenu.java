@@ -156,7 +156,12 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
-                game.getGameStateManager().popScreen();
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        game.getGameStateManager().popScreen();
+                    }
+                });
             }
         }, "Enter number of players", "", "from 1 to 8 players");
     }
@@ -180,7 +185,12 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
-                game.getGameStateManager().popScreen();
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        game.getGameStateManager().popScreen();
+                    }
+                });
             }
         }, "Enter name of Player " + (currentPlayer + 1) + "/" + nofPlayers, "", "no numbers or special characters");
     }
