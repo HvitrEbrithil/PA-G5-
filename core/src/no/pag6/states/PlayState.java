@@ -3,7 +3,9 @@ package no.pag6.states;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -88,7 +90,11 @@ public class PlayState extends State {
 
     @Override
     public void render(float delta) {
-        super.render(delta);
+        update(delta);
+
+        // Clear drawings
+        Gdx.gl.glClearColor(208/255f, 244/255f, 247/255f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         drawTiled();
 
@@ -113,15 +119,21 @@ public class PlayState extends State {
         world.step(TIME_STEP, 6, 2); // update physics
 
         // update camera
-        cam.position.x = players[activePlayerIdx].getB2dBody().getPosition().x; // center the camera around the activePlayer
-        cam.position.y = players[activePlayerIdx].getB2dBody().getPosition().y; // center the camera around the activePlayer
+        Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
+        if (playerPos.x < A_WIDTH/2) {
+            cam.position.x = A_WIDTH/2;
+        } else {
+            cam.position.x = playerPos.x; // center the camera around the activePlayer
+        }
+        cam.position.y = playerPos.y; // center the camera around the activePlayer
         cam.update();
         // update the players
         for (Player player : players) {
             player.update(delta);
         }
         // Update UI
-        pauseButton.setX(players[activePlayerIdx].getB2dBody().getPosition().x - A_WIDTH/2 + 8/PPM);
+        pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
+        pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
 
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
         map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());

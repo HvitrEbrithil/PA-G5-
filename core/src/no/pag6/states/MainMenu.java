@@ -69,6 +69,13 @@ public class MainMenu extends State {
     }
 
     @Override
+    public void dispose() {
+        super.dispose();
+
+        font.dispose();
+    }
+
+    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
