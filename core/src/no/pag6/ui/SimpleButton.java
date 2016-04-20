@@ -65,4 +65,9 @@ public class SimpleButton {
         bounds.x = x;
     }
 
+    public void setY(float y) {
+        this.y = y;
+        bounds.y = y;
+    }
+
 }

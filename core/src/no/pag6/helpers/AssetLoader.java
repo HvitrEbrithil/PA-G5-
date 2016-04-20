@@ -21,17 +21,9 @@ public class AssetLoader {
     // Sounds
 //    public static Sound ;
 
-    // Fonts
-//    public static BitmapFont ;
-//    public static BitmapFont font;
-//    public static BitmapFont font;
-
     public static void load() {
         // Preferences
         prefs = Gdx.app.getPreferences("PAG6Game");
-        if (!prefs.contains("high_score")) {
-            prefs.putInteger("high_score", 0);
-        }
 
         // Textures and TextureRegions
         backgroundTexture = new Texture(Gdx.files.internal("textures/menu_background.png"));
@@ -89,10 +81,6 @@ public class AssetLoader {
 
         // Sounds
 //         = Gdx.audio.newSound(Gdx.files.internal("sounds/.wav"));
-
-        // Fonts
-//        font = new BitmapFont();
-//        font = new BitmapFont(Gdx.files.internal("fonts/arial_72.fnt"), Gdx.files.internal("fonts/arial_72.png"), false);
     }
 
     public static void dispose() {
@@ -108,11 +96,13 @@ public class AssetLoader {
         mainMenuButtonTexture.dispose();
     }
 
-    public static int getHighScore() {
-        return prefs.getInteger("high_score");
+    public static int getHighScore(int playerNumber) {
+        String key = "high_score_p" + playerNumber;
+        return prefs.getInteger(key, 0);
     }
-    public static void setHighScore(int val) {
-        prefs.putInteger("high_score", val);
+    public static void setHighScore(int playerNumber, int val) {
+        String key = "high_score_p" + playerNumber;
+        prefs.putInteger(key, val);
         prefs.flush();
     }
 

@@ -68,6 +68,13 @@ public class CharacterMenu extends State {
     }
 
     @Override
+    public void dispose() {
+        super.dispose();
+
+        font.dispose();
+    }
+
+    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
@@ -131,7 +138,6 @@ public class CharacterMenu extends State {
     }
 
     private void takeNofPlayers() {
-        // TODO: Fix something wrong with Android input
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
@@ -150,18 +156,18 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
-//                game.getGameStateManager().popScreen();
+                game.getGameStateManager().popScreen();
             }
         }, "Enter number of players", "", "from 1 to 8 players");
     }
 
     private void takePlayerName() {
-        // TODO: Fix something wrong with Android input
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
-                if (Pattern.matches(playerNamePattern, text.trim())) {
-                    playerNames.set(currentPlayer, text.trim().toUpperCase());
+                String modifiedName = text.trim().toUpperCase();
+                if (Pattern.matches(playerNamePattern, modifiedName) && !playerNames.contains(modifiedName)) {
+                    playerNames.set(currentPlayer, modifiedName);
                     currentPlayer++;
                 }
                 System.out.println("currentPlayer = " + currentPlayer);
@@ -188,7 +194,7 @@ public class CharacterMenu extends State {
 
         if (playerNames != null) {
             if (playerNames.get(nofPlayers - 1) != null) {
-                String players = "PLAYERS:\n";
+                String players = "PLAYER" + (playerNames.size() > 1 ? "S:\n" : ": ");
                 for (int i = 0; i < nofPlayers; i++) {
                     players += playerNames.get(i);
                     if (i == nofPlayers - 2) {
