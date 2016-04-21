@@ -129,5 +129,7 @@ public class Player extends Sprite implements Constants {
         // scale
         // TODO: implement scaling as: 1) remove fixtures but remember size 2) add new, scaled fixtures to the body
         onFirstLane = !onFirstLane;
+
+        AssetLoader.swooshSound.play(0.3f);
     }
 }

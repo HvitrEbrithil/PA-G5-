@@ -22,6 +22,8 @@ import java.util.List;
 
 public class MainMenu extends State {
 
+    private boolean musicStarted = false;
+
     // Renderers
     private TweenManager tweener;
 
@@ -53,6 +55,11 @@ public class MainMenu extends State {
     @Override
     public void render(float delta) {
         super.render(delta);
+
+        if (! musicStarted) {
+            AssetLoader.backgroundMusic.loop(0.2f);
+            musicStarted = true;
+        }
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);

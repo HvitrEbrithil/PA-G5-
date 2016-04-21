@@ -35,7 +35,7 @@ public class SplashScreen extends State {
         }
 
         if (runtime > 1.0f && ! splashSoundPlayed) {
-            AssetLoader.splashSound.play();
+            AssetLoader.splashSound.play(0.8f);
             splashSoundPlayed = true;
         }
     }
