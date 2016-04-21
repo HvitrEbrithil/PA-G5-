@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
+import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
