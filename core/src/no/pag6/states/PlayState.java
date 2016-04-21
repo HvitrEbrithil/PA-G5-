@@ -324,7 +324,7 @@ public class PlayState extends State {
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
             // TODO: Delete tween under if UI breaks
-            Tween.to(cameraZoom, -1, 1f)
+            Tween.to(cameraZoom, -1, .5f)
                     .target(.9f)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
@@ -338,7 +338,7 @@ public class PlayState extends State {
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
             // TODO: Delete tween under if UI breaks
-            Tween.to(cameraZoom, -1, .9f)
+            Tween.to(cameraZoom, -1, .5f)
                     .target(1f)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);

@@ -1,16 +1,20 @@
 package no.pag6.models;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
+import aurelienribon.tweenengine.TweenManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Filter;
-
+import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.helpers.Constants;
+import no.pag6.tweenaccessors.Value;
+import no.pag6.tweenaccessors.ValueAccessor;
 
 public class Player extends Sprite implements Constants {
+
     private int score;
     private boolean onFirstLane;
     private Body b2dBody;
@@ -20,6 +24,13 @@ public class Player extends Sprite implements Constants {
     private int id;
     private int nofLives;
     private boolean shouldSwitchFilterBits;
+
+    private float originWidth = 70/PPM;
+    private float originHeight = 86/PPM;
+
+    // Tween
+    private TweenManager tweener;
+    private Value playerScale = new Value();
 
     public Player(Body b2dBody, int id) {
         this.b2dBody = b2dBody;
@@ -31,8 +42,19 @@ public class Player extends Sprite implements Constants {
         shouldSwitchFilterBits = false;
         texture = new Texture("textures/player1.png");
 
-        setBounds(0, 0, 70 / PPM, 86 / PPM);
+        setBounds(0, 0, originWidth, originHeight);
         setRegion(texture);
+
+        initTweenAssets();
+    }
+
+    private void initTweenAssets() {
+        // Register Tween Assets
+        Tween.registerAccessor(Value.class, new ValueAccessor());
+
+        tweener = new TweenManager();
+
+        playerScale.setValue(1f);
     }
 
     public int getId() {
@@ -68,6 +90,8 @@ public class Player extends Sprite implements Constants {
     }
 
     public void update(float delta) {
+        tweener.update(delta);
+
         if (active) {
             Vector2 vel = b2dBody.getLinearVelocity();
             float desiredVel = 2;
@@ -86,7 +110,44 @@ public class Player extends Sprite implements Constants {
             shouldSwitchFilterBits = false;
         }
 
-        setPosition(b2dBody.getPosition().x - getWidth() / 2, b2dBody.getPosition().y - getHeight() / 2);
+        // Scale player
+        float scaledWidth = originWidth*playerScale.getValue();
+        float scaledHeight = originHeight*playerScale.getValue();
+
+        // Scale sprite
+        setScale(playerScale.getValue());
+//        setSize(scaledWidth, scaledHeight);
+
+        // Scale body
+        Fixture bodyFixture = b2dBody.getFixtureList().first();
+        b2dBody.destroyFixture(bodyFixture);
+        Fixture footFixture = b2dBody.getFixtureList().first();
+        b2dBody.destroyFixture(footFixture);
+
+        // Body fixture
+        CircleShape newBodyShape = new CircleShape();
+        newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM)*playerScale.getValue());
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = newBodyShape;
+        fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
+        b2dBody.createFixture(fixtureDef);
+        newBodyShape.dispose();
+
+        // Foot fixture
+        PolygonShape newFootShape = new PolygonShape();
+        newFootShape.setAsBox((13/PPM)*playerScale.getValue(), (3/PPM)*playerScale.getValue(),
+                new Vector2(0, (-13/PPM)*playerScale.getValue()), 0);
+
+        fixtureDef.shape = newFootShape;
+        fixtureDef.isSensor = true;
+        Gdx.app.log("Player", "playerID = " + )
+        b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
+        newFootShape.dispose();
+
+        // Update position
+        setPosition(b2dBody.getPosition().x - scaledWidth/2, b2dBody.getPosition().y - scaledHeight/2);
+//        setPosition(b2dBody.getPosition().x - getWidth()/2, b2dBody.getPosition().y - getHeight()/2);
     }
 
     public void draw(Batch batch) {
@@ -101,8 +162,20 @@ public class Player extends Sprite implements Constants {
 
         shouldSwitchFilterBits = ! shouldSwitchFilterBits;
 
-        // scale
-        // TODO: implement scaling as: 1) remove fixtures but remember size 2) add new, scaled fixtures to the body
+        // Sprite
+        if (onFirstLane) {
+            Tween.to(playerScale, -1, .5f)
+                    .target(.7f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        } else {
+            Tween.to(playerScale, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        }
+
         onFirstLane = !onFirstLane;
     }
+
 }
