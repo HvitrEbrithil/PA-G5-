@@ -3,8 +3,14 @@ package no.pag6.states;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -12,6 +18,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.sun.prism.image.ViewPort;
+
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
@@ -46,14 +58,20 @@ public class PlayState extends State {
     // Game objects
 
     // Game assets
+    //BitmapFont font;
 
     // Tween assets
     private Value opacityLayer1 = new Value();
     private Value opacityLayer2 = new Value();
 
     // Game UI
+    private Label[] scores;
+    private Label scorePlayer1;
+    private Label scorePlayer2;
+    private Stage uiStage;
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
+
 
     public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
@@ -99,11 +117,13 @@ public class PlayState extends State {
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
-        drawUI();
+        //drawUI();
         for (Player player : players) {
             player.draw(game.spriteBatch);
         }
         game.spriteBatch.end();
+        game.spriteBatch.setProjectionMatrix(uiStage.getCamera().combined);
+        uiStage.draw();
     }
 
     @Override
@@ -118,6 +138,10 @@ public class PlayState extends State {
         // update the players
         for (Player player : players) {
             player.update(delta);
+        }
+
+        for (int i=0; i<nofPlayers; i++){
+            scores[i].setText(""+players[i].getScore());
         }
 
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
@@ -137,6 +161,7 @@ public class PlayState extends State {
             players[activePlayerIdx].incrementFootContactCount();
             cl.setPlayer(players[activePlayerIdx]);
         }
+
     }
 
     @Override
@@ -185,6 +210,10 @@ public class PlayState extends State {
         TextureRegion region;
         float regionWidth, regionHeight;
 
+        //The UI view
+        FitViewport uiViewPort = new FitViewport(V_WIDTH, V_HEIGHT, new OrthographicCamera());
+        uiStage = new Stage(uiViewPort, super.game.spriteBatch);
+
         // Buttons
         region = AssetLoader.pauseButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE/PPM;
@@ -195,6 +224,23 @@ public class PlayState extends State {
                 AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
         );
         playButtons.add(pauseButton);
+
+        // Player score
+        scores = new Label[nofPlayers];
+        for(int i=0; i<nofPlayers; i++){
+            scores[i] = new Label("" + players[i].getScore(), new Label.LabelStyle(new BitmapFont(), Color.RED));
+        }
+
+        Table table = new Table();
+        table.top();
+        table.setFillParent(true);
+        table.add(scores[0]).expandX().padTop(40);
+        if (nofPlayers==2){
+            table.row();
+            table.add(scores[1]).expandX().padTop(40);
+        }
+        uiStage.addActor(table);
+
     }
 
     private void drawTiled() {
@@ -205,6 +251,8 @@ public class PlayState extends State {
         for (SimpleButton button : playButtons) {
             button.draw(game.spriteBatch);
         }
+
+        //.draw(game.spriteBatch, players[0].toString(), V_WIDTH/22, V_HEIGHT/26);
     }
 
     private void addMapBodies() {

@@ -73,6 +73,8 @@ public class Player extends Sprite implements Constants {
         }
 
         setPosition(b2dBody.getPosition().x - getWidth() / 2, b2dBody.getPosition().y - getHeight() / 2);
+
+        setScore((int)b2dBody.getPosition().x);
     }
 
     public void draw(Batch batch) {
