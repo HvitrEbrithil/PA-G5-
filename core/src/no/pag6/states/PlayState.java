@@ -27,13 +27,15 @@ import java.util.List;
 
 public class PlayState extends State {
 
-    private float counttime = 0.0f;
-    private float playtime = 0.0f;
+    private float runTime = 0.0f;
+    private float countdownTime = 3.5f;
+    private boolean startSoundPlayed = false;
 
     // Player stats
     private int nofPlayers;
 
     private Player[] players;
+    private List<String> playerNames;
     private int activePlayerIdx;
 
     // map stuff
@@ -66,6 +68,7 @@ public class PlayState extends State {
     public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
+        this.playerNames = playerNames;
         this.mapFileName = mapFileName;
 
         players = new Player[nofPlayers];
@@ -116,38 +119,41 @@ public class PlayState extends State {
         }
 
         // This should be started when game starts and in case of player change
-        if (counttime < 3.5f) {
-            counttime += delta;
-
-            if (counttime == delta) {
-                AssetLoader.countdownSound.play(0.5f);
-            }
-
-            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(counttime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        if (runTime < countdownTime) {
+            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        } else if (runTime > countdownTime && !startSoundPlayed) {
+            AssetLoader.countdownSound.play(0.5f);
+            startSoundPlayed = true;
         }
 
         game.spriteBatch.end();
-        //b2dr.render(world, cam.combined);
+
+        // TODO: Remove before release
+        b2dr.render(world, cam.combined);
     }
 
     @Override
     public void update(float delta) {
+        runTime += delta;
+
         tweener.update(delta);
 
-        if (counttime > 3.5f) {
-            playtime += delta;
-
+        if (runTime > countdownTime) {
             world.step(TIME_STEP, 6, 2); // update physics
         }
 
         // update camera
         Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
-        if (playerPos.x < A_WIDTH / 2) {
-            cam.position.x = A_WIDTH / 2;
+        if (playerPos.x < A_WIDTH/2) {
+            cam.position.x = A_WIDTH/2;
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
-        cam.position.y = playerPos.y; // center the camera around the activePlayer
+        if (playerPos.y < A_HEIGHT/2) {
+            cam.position.y = A_HEIGHT/2;
+        } else {
+            cam.position.y = playerPos.y; // center the camera around the activePlayer
+        }
         cam.update();
         // update the players
         for (Player player : players) {
@@ -324,17 +330,21 @@ public class PlayState extends State {
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 
-            players[i] = new Player(cam, playerBody, i, i+1);
+            players[i] = new Player(cam, playerBody, i, playerNames != null ? playerNames.get(i) : "", i + 1);
         }
 
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE) {
+        if (keycode == Input.Keys.SPACE && runTime > countdownTime) {
             players[activePlayerIdx].switchLanes();
 
             tweenLayers();
+        }
+
+        if (keycode == Input.Keys.UP && runTime > countdownTime) {
+            players[activePlayerIdx].jump();
         }
 
         if (keycode == Input.Keys.R) {

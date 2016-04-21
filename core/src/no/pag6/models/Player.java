@@ -30,6 +30,7 @@ public class Player extends Sprite implements Constants {
     public boolean active = false;
     private int footContactCount;
     private int id;
+    // TODO
     private int nofLives;
     private boolean shouldSwitchFilterBits;
 
@@ -42,10 +43,11 @@ public class Player extends Sprite implements Constants {
 
     private boolean finished;
 
-    public Player(OrthographicCamera cam, Body b2dBody, int id, int characterType) {
+    public Player(OrthographicCamera cam, Body b2dBody, int id, String name, int characterType) {
         this.cam = cam;
         this.b2dBody = b2dBody;
         this.id = id;
+        this.name = name;
         nofLives = 3;
 
         score = 0;
@@ -153,7 +155,7 @@ public class Player extends Sprite implements Constants {
     }
 
     public void switchLanes() {
-        // jump
+        // jump and switch
         if (footContactCount > 0) {
             b2dBody.setLinearVelocity(PLAYER_MAX_VELOCITY, 6);
         }
@@ -167,6 +169,13 @@ public class Player extends Sprite implements Constants {
         onFirstLane = !onFirstLane;
 
         AssetLoader.swooshSound.play(0.3f);
+    }
+
+    public void jump() {
+        // jump
+        if (footContactCount > 0) {
+            b2dBody.setLinearVelocity(PLAYER_MAX_VELOCITY, 6);
+        }
     }
 
 //    // TODO: Fix this function if we have the time

@@ -163,7 +163,7 @@ public class CharacterMenu extends State {
                     }
                 });
             }
-        }, "ENTER NUMBER OF PLAYERS", "", "FROM 1 TO 8 PLAYERS");
+        }, "Enter number of players", "", "from 1 to 8 players");
     }
 
     private void takePlayerName() {
@@ -192,7 +192,7 @@ public class CharacterMenu extends State {
                     }
                 });
             }
-        }, "ENTER NAME OF PLAYER " + (currentPlayer + 1) + "/" + nofPlayers, "", "NO NUMBER OR SPECIAL CHARACTERS");
+        }, "Enter name of player " + (currentPlayer + 1) + "/" + nofPlayers, "", "no numbers or special characters");
     }
 
     private void drawUI() {
