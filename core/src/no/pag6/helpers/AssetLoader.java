@@ -28,7 +28,7 @@ public class AssetLoader {
             characterPurpleAnimation, characterRedAnimation, characterSilverAnimation, characterYellowAnimation;
 
     // Sounds
-    public static Sound splashSound;
+    public static Sound splashSound, backgroundMusic, countdownSound, swooshSound;
 
     public static void load() {
         // Preferences
@@ -96,6 +96,9 @@ public class AssetLoader {
 
         // Sounds
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
+        backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("sounds/background.mp3"));
+        countdownSound = Gdx.audio.newSound(Gdx.files.internal("sounds/countdown.mp3"));
+        swooshSound = Gdx.audio.newSound(Gdx.files.internal("sounds/swoosh.mp3"));
 
         // Fonts
 //        font = new BitmapFont();

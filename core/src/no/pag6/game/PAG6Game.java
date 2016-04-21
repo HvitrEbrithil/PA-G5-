@@ -13,6 +13,7 @@ public class PAG6Game extends Game implements Constants {
 
     public static final String TAG = "PAG6Game";
 
+    private float time = 0.0f;
     public ShapeRenderer drawer;
     public SpriteBatch spriteBatch;
     private GameStateManager gameStateManager;

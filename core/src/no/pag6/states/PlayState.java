@@ -29,6 +29,7 @@ public class PlayState extends State {
 
     private float runTime = 0.0f;
     private float countdownTime = 3.5f;
+    private boolean startSoundPlayed = false;
 
     // Player stats
     private int nofPlayers;
@@ -120,6 +121,9 @@ public class PlayState extends State {
         // This should be started when game starts and in case of player change
         if (runTime < countdownTime) {
             game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        } else if (runTime > countdownTime && !startSoundPlayed) {
+            AssetLoader.countdownSound.play(0.5f);
+            startSoundPlayed = true;
         }
 
         game.spriteBatch.end();
