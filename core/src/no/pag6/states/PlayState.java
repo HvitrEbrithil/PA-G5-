@@ -312,7 +312,6 @@ public class PlayState extends State {
     }
 
     private void tweenLayers() {
-        // TODO: Experiment with depth-illusion
         boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
         if (!playerIsOnFirstLane) {
             Tween.to(opacityLayer1, -1, .5f)
@@ -323,7 +322,6 @@ public class PlayState extends State {
                     .target(1f)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
-            // TODO: Delete tween under if UI breaks
             Tween.to(cameraZoom, -1, .5f)
                     .target(.9f)
                     .ease(TweenEquations.easeOutQuad)
@@ -337,7 +335,6 @@ public class PlayState extends State {
                     .target(.5f)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
-            // TODO: Delete tween under if UI breaks
             Tween.to(cameraZoom, -1, .5f)
                     .target(1f)
                     .ease(TweenEquations.easeOutQuad)

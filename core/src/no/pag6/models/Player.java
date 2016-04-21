@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Filter;
 import no.pag6.helpers.Constants;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
@@ -23,6 +24,7 @@ public class Player extends Sprite implements Constants {
     private int id;
     private int nofLives;
     private boolean shouldSwitchFilterBits;
+    private boolean lanesSwitched = false;
 
     private float originWidth = 70/PPM;
     private float originHeight = 86/PPM;
@@ -107,6 +109,7 @@ public class Player extends Sprite implements Constants {
             b2dBody.getFixtureList().first().setFilterData(filter);
             b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
             shouldSwitchFilterBits = false;
+            lanesSwitched = false;
         }
 
         // Scale player
@@ -132,74 +135,57 @@ public class Player extends Sprite implements Constants {
             b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
         }
 
-        shouldSwitchFilterBits = ! shouldSwitchFilterBits;
+        shouldSwitchFilterBits = !shouldSwitchFilterBits;
+        lanesSwitched = true;
 
         // Sprite
+//        scaleFixtures(onFirstLane ? .7f : 1f);
+        tweenPlayer(onFirstLane ? .7f : 1f);
+
+        onFirstLane = !onFirstLane;
+    }
+
+    // TODO: Fix this function if we have the time
+    // Current bug: Switching two times fast with this function messes with the maskBits
+//    private void scaleFixtures(float scale) {
+//        // Remove old fixtures
+//        Fixture bodyFixture = b2dBody.getFixtureList().first();
+//        Fixture footFixture = b2dBody.getFixtureList().get(1);
+//        b2dBody.destroyFixture(bodyFixture);
+//        b2dBody.destroyFixture(footFixture);
+//
+//        // Create new body fixture
+//        CircleShape newBodyShape = new CircleShape();
+//        newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM)*scale);
+//
+//        FixtureDef fixtureDef = new FixtureDef();
+//        fixtureDef.shape = newBodyShape;
+//        fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
+//        b2dBody.createFixture(fixtureDef);
+//        newBodyShape.dispose();
+//
+//        // Create new foot fixture
+//        PolygonShape newFootShape = new PolygonShape();
+//        newFootShape.setAsBox((13/PPM)*scale, (3/PPM)*scale, new Vector2(0, (-13/PPM)*scale), 0);
+//
+//        fixtureDef.shape = newFootShape;
+//        fixtureDef.isSensor = true;
+//        b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
+//        newFootShape.dispose();
+//    }
+
+    private void tweenPlayer(float scale) {
         if (onFirstLane) {
-            // Scale body
-            Fixture bodyFixture = b2dBody.getFixtureList().first();
-            b2dBody.destroyFixture(bodyFixture);
-            Fixture footFixture = b2dBody.getFixtureList().first();
-            b2dBody.destroyFixture(footFixture);
-
-            // Body fixture
-            CircleShape newBodyShape = new CircleShape();
-            newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM)*.7f);
-
-            FixtureDef fixtureDef = new FixtureDef();
-            fixtureDef.shape = newBodyShape;
-            fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
-            b2dBody.createFixture(fixtureDef);
-            newBodyShape.dispose();
-
-            // Foot fixture
-            PolygonShape newFootShape = new PolygonShape();
-            newFootShape.setAsBox((13/PPM)*.7f, (3/PPM)*.7f,
-                    new Vector2(0, (-13/PPM)*.7f), 0);
-
-            fixtureDef.shape = newFootShape;
-            fixtureDef.isSensor = true;
-            b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
-            newFootShape.dispose();
-
             Tween.to(playerScale, -1, .5f)
-                    .target(.7f)
+                    .target(scale)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
         } else {
-            // Scale body
-            Fixture bodyFixture = b2dBody.getFixtureList().first();
-            b2dBody.destroyFixture(bodyFixture);
-            Fixture footFixture = b2dBody.getFixtureList().first();
-            b2dBody.destroyFixture(footFixture);
-
-            // Body fixture
-            CircleShape newBodyShape = new CircleShape();
-            newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM));
-
-            FixtureDef fixtureDef = new FixtureDef();
-            fixtureDef.shape = newBodyShape;
-            fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
-            b2dBody.createFixture(fixtureDef);
-            newBodyShape.dispose();
-
-            // Foot fixture
-            PolygonShape newFootShape = new PolygonShape();
-            newFootShape.setAsBox((13/PPM), (3/PPM),
-                    new Vector2(0, (-13/PPM)), 0);
-
-            fixtureDef.shape = newFootShape;
-            fixtureDef.isSensor = true;
-            b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
-            newFootShape.dispose();
-
             Tween.to(playerScale, -1, .5f)
                     .target(1f)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
         }
-
-        onFirstLane = !onFirstLane;
     }
 
 }
