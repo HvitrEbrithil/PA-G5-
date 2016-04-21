@@ -22,14 +22,18 @@ public interface Constants {
             FIRST_FIRST_GFX_LAYER_NAME = "lane1_ground1",
             FIRST_SECOND_GFX_LAYER_NAME = "lane1_ground2",
             SECOND_FIRST_GFX_LAYER_NAME = "lane2_ground1",
-            SECOND_SECOND_GFX_LAYER_NAME = "lane2_ground2";
+            SECOND_SECOND_GFX_LAYER_NAME = "lane2_ground2",
+            GOAL_COLLISION_NAME = "goal_collision",
+            MAP_EASY_1_NAME = "e1_map.tmx",
+            MAP_MED_1_NAME = "m1_map.tmx",
+            MAP_HARD_1_NAME = "h1_map.tmx";
 
-    String[] LAYERS = {FIRST_LAYER_NAME, SECOND_LAYER_NAME};
+    String[] LAYERS = {FIRST_LAYER_NAME, SECOND_LAYER_NAME, GOAL_COLLISION_NAME};
 
-    short FIRST_LAYER_BITS = 2, SECOND_LAYER_BITS = 4;
-    short[] FILTER_BITS = {FIRST_LAYER_BITS, SECOND_LAYER_BITS};
+    short FIRST_LAYER_BITS = 2, SECOND_LAYER_BITS = 4, GOAL_LAYER_BITS = 8;
+    short[] FILTER_BITS = {FIRST_LAYER_BITS, SECOND_LAYER_BITS, GOAL_LAYER_BITS};
 
-    int INIT_PLAYER_POS_X = 20, INIT_PLAYER_POS_Y = 600, PLAYER_BODY_RADIUS = 10;
+    int INIT_PLAYER_POS_X = 1155, INIT_PLAYER_POS_Y = 600, PLAYER_BODY_RADIUS = 10;
 
     float PLAYER_MAX_VELOCITY = 2;
 

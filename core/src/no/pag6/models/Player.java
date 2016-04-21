@@ -3,7 +3,9 @@ package no.pag6.models;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -15,25 +17,32 @@ import no.pag6.tweenaccessors.ValueAccessor;
 
 public class Player extends Sprite implements Constants {
 
+    private OrthographicCamera cam;
+    private String name;
+    private float playtime = 0.0f;
     private int score;
     private boolean onFirstLane;
+    private PlayerCharacter playerCharacter;
+    private Texture playerTexture;
+    private Animation playerAnimation;
     private Body b2dBody;
-    private Texture texture;
     public boolean active = false;
     private int footContactCount;
     private int id;
     private int nofLives;
     private boolean shouldSwitchFilterBits;
-    private boolean lanesSwitched = false;
 
-    private float originWidth = 70/PPM;
-    private float originHeight = 86/PPM;
+    private float originWidth = 75/PPM;
+    private float originHeight = 100/PPM;
 
     // Tween
     private TweenManager tweener;
     private Value playerScale = new Value();
 
-    public Player(Body b2dBody, int id) {
+    private boolean finished;
+
+    public Player(OrthographicCamera cam, Body b2dBody, int id, int characterType) {
+        this.cam = cam;
         this.b2dBody = b2dBody;
         this.id = id;
         nofLives = 3;
@@ -41,10 +50,13 @@ public class Player extends Sprite implements Constants {
         score = 0;
         onFirstLane = true;
         shouldSwitchFilterBits = false;
-        texture = new Texture("textures/player1.png");
+
+        playerCharacter = new PlayerCharacter(characterType);
+        playerTexture = playerCharacter.getTexture();
+        playerAnimation = playerCharacter.getAnimation();
 
         setBounds(0, 0, originWidth, originHeight);
-        setRegion(texture);
+        setRegion(playerTexture);
 
         initTweenAssets();
     }
@@ -56,6 +68,14 @@ public class Player extends Sprite implements Constants {
         tweener = new TweenManager();
 
         playerScale.setValue(1f);
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
     public int getId() {
@@ -91,11 +111,13 @@ public class Player extends Sprite implements Constants {
     }
 
     public void update(float delta) {
+        playtime += delta;
+
         tweener.update(delta);
 
         if (active) {
             Vector2 vel = b2dBody.getLinearVelocity();
-            float desiredVel = 2;
+            float desiredVel = PLAYER_MAX_VELOCITY;
             float velChange = desiredVel - vel.x;
             float impulse = b2dBody.getMass() * velChange;
             b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
@@ -103,13 +125,13 @@ public class Player extends Sprite implements Constants {
 
         if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
             // set filter bits
-            Filter filter = b2dBody.getFixtureList().first().getFilterData();
+            Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
             boolean wasFirst = filter.maskBits == FIRST_LAYER_BITS;
             filter.maskBits = wasFirst ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
-            b2dBody.getFixtureList().first().setFilterData(filter);
             b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+            filter.maskBits |= GOAL_LAYER_BITS;
+            b2dBody.getFixtureList().get(0).setFilterData(filter);
             shouldSwitchFilterBits = false;
-            lanesSwitched = false;
         }
 
         // Scale player
@@ -126,17 +148,16 @@ public class Player extends Sprite implements Constants {
     }
 
     public void draw(Batch batch) {
-        super.draw(batch);
+        batch.draw(playerAnimation.getKeyFrame(playtime), getX(), getY(), 75/PPM, 100/PPM);
     }
 
     public void switchLanes() {
         // jump
         if (footContactCount > 0) {
-            b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
+            b2dBody.setLinearVelocity(PLAYER_MAX_VELOCITY, 6);
         }
 
         shouldSwitchFilterBits = !shouldSwitchFilterBits;
-        lanesSwitched = true;
 
         // Sprite
 //        scaleFixtures(onFirstLane ? .7f : 1f);
@@ -145,8 +166,8 @@ public class Player extends Sprite implements Constants {
         onFirstLane = !onFirstLane;
     }
 
-    // TODO: Fix this function if we have the time
-    // Current bug: Switching two times fast with this function messes with the maskBits
+//    // TODO: Fix this function if we have the time
+//    // Current bug: Switching two times fast with this function messes with the maskBits
 //    private void scaleFixtures(float scale) {
 //        // Remove old fixtures
 //        Fixture bodyFixture = b2dBody.getFixtureList().first();

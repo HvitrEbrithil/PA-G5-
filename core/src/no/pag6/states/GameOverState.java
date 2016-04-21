@@ -1,24 +1,35 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
+import no.pag6.models.Player;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameOverState extends State {
+    Player[] players;
 
     // Renderers
     private ShapeRenderer drawer;
     private TweenManager tweener;
+    private GlyphLayout gl = new GlyphLayout();
 
     // Game objects
 
+
     // Game assets
+    BitmapFont font;
 
     // Tween assets
 
@@ -26,8 +37,10 @@ public class GameOverState extends State {
     private List<SimpleButton> gameOverButtons = new ArrayList<SimpleButton>();
     private SimpleButton mainMenuButton;
 
-    public GameOverState(PAG6Game game) {
+    public GameOverState(PAG6Game game, Player[] players) {
         super(game);
+
+        this.players = players;
 
         // Set up drawer and batcher
         drawer = new ShapeRenderer();
@@ -47,11 +60,12 @@ public class GameOverState extends State {
     public void render(float delta) {
         super.render(delta);
 
-        // Render sprites
+        // Render sprites and text
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
 
+        drawScores();
         drawUI();
 
         game.spriteBatch.end();
@@ -114,6 +128,13 @@ public class GameOverState extends State {
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         gameOverButtons.add(mainMenuButton);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 42;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void drawUI() {
@@ -122,4 +143,10 @@ public class GameOverState extends State {
         }
     }
 
+    private void drawScores() {
+        //for (int i = 1; i <= players.length; i++) {
+          //  String playerScore = players[i-1].get        }
+        //gl.setText(font, players);
+        //font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+    }
 }
