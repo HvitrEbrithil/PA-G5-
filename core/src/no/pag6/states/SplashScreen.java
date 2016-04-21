@@ -15,15 +15,11 @@ public class SplashScreen extends State {
     }
 
     @Override
-    public void show() {
-    }
-
-    @Override
     public void render(float delta) {
+        runtime += delta;
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        runtime += delta;
 
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
@@ -39,4 +35,5 @@ public class SplashScreen extends State {
             splashSoundPlayed = true;
         }
     }
+
 }

@@ -97,7 +97,7 @@ public class CharacterMenu extends State {
                 game.getGameStateManager().popScreen();
             }
             if (playButton.isTouchUp(projected.x, projected.y)) {
-                game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, "Map1.tmx"));
+                game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, MAP_EASY_1_NAME));
             }
         }
 

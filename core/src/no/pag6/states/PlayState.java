@@ -37,6 +37,7 @@ public class PlayState extends State {
     private int activePlayerIdx;
 
     // map stuff
+    private String mapFileName;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
 
@@ -64,6 +65,8 @@ public class PlayState extends State {
     public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
+        this.mapFileName = mapFileName;
+
         players = new Player[nofPlayers];
         activePlayerIdx = 0;
 
@@ -346,7 +349,7 @@ public class PlayState extends State {
         }
 
         if (keycode == Input.Keys.R) {
-            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, mapFileName));
         }
 
         return true;
