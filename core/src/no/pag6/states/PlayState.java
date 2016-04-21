@@ -56,6 +56,7 @@ public class PlayState extends State {
     // Tween assets
     private Value opacityLayer1 = new Value();
     private Value opacityLayer2 = new Value();
+    private Value cameraZoom = new Value();
 
     // Game UI
     float tempUIScale = .2f/PPM;
@@ -153,11 +154,14 @@ public class PlayState extends State {
         pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
         pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
 
+        // Layer-change
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
         map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
 
         map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
         map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
+
+        cam.zoom = cameraZoom.getValue();
 
         // update the Tiled map renderer
         mapRenderer.setView(cam);
@@ -216,6 +220,7 @@ public class PlayState extends State {
 
         opacityLayer1.setValue(1f);
         opacityLayer2.setValue(.5f);
+        cameraZoom.setValue(1f);
     }
 
     private void initUI() {
@@ -324,35 +329,48 @@ public class PlayState extends State {
         if (keycode == Input.Keys.SPACE) {
             players[activePlayerIdx].switchLanes();
 
-            boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
-
-            // Tween animations
-            if (!playerIsOnFirstLane) {
-                Tween.to(opacityLayer1, -1, .5f)
-                        .target(.5f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-                Tween.to(opacityLayer2, -1, .5f)
-                        .target(1f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-            } else {
-                Tween.to(opacityLayer1, -1, .5f)
-                        .target(1f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-                Tween.to(opacityLayer2, -1, .5f)
-                        .target(.5f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-            }
+            tweenLayers();
         }
 
         if (keycode == Input.Keys.R) {
             game.getGameStateManager().setScreen(new PlayState(game, 1, null, mapFileName));
         }
+        if (keycode == Input.Keys.Q) {
+            System.exit(0);
+        }
 
         return true;
+    }
+
+    private void tweenLayers() {
+        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        if (!playerIsOnFirstLane) {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(.9f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        } else {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        }
     }
 
 }
