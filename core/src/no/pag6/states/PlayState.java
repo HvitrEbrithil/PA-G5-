@@ -109,7 +109,7 @@ public class PlayState extends State {
         }
 
         game.spriteBatch.end();
-        b2dr.render(world, cam.combined);
+        //b2dr.render(world, cam.combined);
     }
 
     @Override
@@ -331,7 +331,8 @@ public class PlayState extends State {
         }
 
         if (keycode == Input.Keys.R) {
-            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, MAP_HARD_1_NAME));
+
         }
 
         return true;

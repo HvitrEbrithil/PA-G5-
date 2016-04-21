@@ -28,7 +28,7 @@ public class PAG6Game extends Game implements Constants {
 
         AssetLoader.load();
 
-        gameStateManager.pushScreen(new PlayState(this, 1, null, MAP_EASY_1_NAME));
+        gameStateManager.pushScreen(new PlayState(this, 1, null, MAP_HARD_1_NAME));
     }
 
     @Override
