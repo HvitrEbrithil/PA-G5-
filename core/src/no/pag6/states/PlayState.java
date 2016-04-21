@@ -27,6 +27,9 @@ import java.util.List;
 
 public class PlayState extends State {
 
+    private float counttime = 0.0f;
+    private float playtime = 0.0f;
+
     // Player stats
     private int nofPlayers;
 
@@ -108,20 +111,30 @@ public class PlayState extends State {
             player.draw(game.spriteBatch);
         }
 
+        // This should be started when game starts and in case of player change
+        if (counttime < 3.5f) {
+            counttime += delta;
+            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(counttime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        }
+
         game.spriteBatch.end();
-        b2dr.render(world, cam.combined);
+        //b2dr.render(world, cam.combined);
     }
 
     @Override
     public void update(float delta) {
         tweener.update(delta);
 
-        world.step(TIME_STEP, 6, 2); // update physics
+        if (counttime > 3.5f) {
+            playtime += delta;
+
+            world.step(TIME_STEP, 6, 2); // update physics
+        }
 
         // update camera
         Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
-        if (playerPos.x < A_WIDTH/2) {
-            cam.position.x = A_WIDTH/2;
+        if (playerPos.x < A_WIDTH / 2) {
+            cam.position.x = A_WIDTH / 2;
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
@@ -131,6 +144,8 @@ public class PlayState extends State {
         for (Player player : players) {
             player.update(delta);
         }
+
+
         // Update UI
         pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
         pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
@@ -281,7 +296,7 @@ public class PlayState extends State {
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 
-            players[i] = new Player(playerBody, i);
+            players[i] = new Player(cam, playerBody, i, i+1);
         }
 
     }

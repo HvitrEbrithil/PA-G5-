@@ -158,7 +158,7 @@ public class CharacterMenu extends State {
             public void canceled() {
                 game.getGameStateManager().popScreen();
             }
-        }, "Enter number of players", "", "from 1 to 8 players");
+        }, "ENTER NUMBER OF PLAYERS", "", "FROM 1 TO 8 PLAYERS");
     }
 
     private void takePlayerName() {
@@ -182,7 +182,7 @@ public class CharacterMenu extends State {
             public void canceled() {
                 game.getGameStateManager().popScreen();
             }
-        }, "Enter name of Player " + (currentPlayer + 1) + "/" + nofPlayers, "", "no numbers or special characters");
+        }, "ENTER NAME OF PLAYER " + (currentPlayer + 1) + "/" + nofPlayers, "", "NO NUMBER OR SPECIAL CHARACTERS");
     }
 
     private void drawUI() {
@@ -208,7 +208,7 @@ public class CharacterMenu extends State {
                         players += " ";
                     }
                 }
-                players = players.trim() + ".";
+                players = players.trim();
                 gl.setText(font, players);
                 font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
             } else if (playerNames.size() > 0 && currentPlayer - 1 >= 0) {

@@ -1,6 +1,8 @@
 package no.pag6.models;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,20 +10,28 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
 
+import no.pag6.game.PAG6Game;
+import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 
 public class Player extends Sprite implements Constants {
+    private OrthographicCamera cam;
+    private String name;
+    private float playtime = 0.0f;
     private int score;
     private boolean onFirstLane;
+    private PlayerCharacter playerCharacter;
+    private Texture playerTexture;
+    private Animation playerAnimation;
     private Body b2dBody;
-    private Texture texture;
     public boolean active = false;
     private int footContactCount;
     private int id;
     private int nofLives;
     private boolean shouldSwitchFilterBits;
 
-    public Player(Body b2dBody, int id) {
+    public Player(OrthographicCamera cam, Body b2dBody, int id, int characterType) {
+        this.cam = cam;
         this.b2dBody = b2dBody;
         this.id = id;
         nofLives = 3;
@@ -29,10 +39,13 @@ public class Player extends Sprite implements Constants {
         score = 0;
         onFirstLane = true;
         shouldSwitchFilterBits = false;
-        texture = new Texture("textures/player1.png");
 
-        setBounds(0, 0, 70 / PPM, 86 / PPM);
-        setRegion(texture);
+        playerCharacter = new PlayerCharacter(characterType);
+        playerTexture = playerCharacter.getTexture();
+        playerAnimation = playerCharacter.getAnimation();
+
+        setBounds(0, 0, 75 / PPM, 100 / PPM);
+        setRegion(playerTexture);
     }
 
     public int getId() {
@@ -68,6 +81,8 @@ public class Player extends Sprite implements Constants {
     }
 
     public void update(float delta) {
+        playtime += delta;
+
         if (active) {
             Vector2 vel = b2dBody.getLinearVelocity();
             float desiredVel = 2;
@@ -90,7 +105,7 @@ public class Player extends Sprite implements Constants {
     }
 
     public void draw(Batch batch) {
-        super.draw(batch);
+        batch.draw(playerAnimation.getKeyFrame(playtime), getX(), getY(), 75/PPM, 100/PPM);
     }
 
     public void switchLanes() {

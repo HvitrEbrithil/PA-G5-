@@ -15,13 +15,17 @@ public class AssetLoader {
     public static Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
-            quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture, mainMenuButtonTexture;
+    public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
+            logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture,
+            resumeButtonTexture, mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture,
+            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture;
     public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
-            quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
+            quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp,
+            mainMenuButtonDown;
 
     // Animations
-    public static Animation splashAnimation;
+    public static Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
+            characterPurpleAnimation, characterRedAnimation, characterSilverAnimation, characterYellowAnimation;
 
     // Sounds
     public static Sound splashSound;
@@ -80,9 +84,15 @@ public class AssetLoader {
         mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
 
         // Animations
-        TextureRegion[] splashFrames = initializeSplash();
+        TextureRegion[] splashFrames = initSplash();
         splashAnimation = new Animation(0.033f, splashFrames);
         splashAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+
+        TextureRegion[] countFrames = initCount();
+        countAnimation = new Animation(1.0f, countFrames);
+        countAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+
+        initCharacters();
 
         // Sounds
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
@@ -100,6 +110,7 @@ public class AssetLoader {
         splashTexture27.dispose();
         splashTexture33.dispose();
         splashTexture38.dispose();
+        countTexture.dispose();
         backgroundTexture.dispose();
         logoTexture.dispose();
         playButtonTexture.dispose();
@@ -122,7 +133,7 @@ public class AssetLoader {
         prefs.flush();
     }
 
-    private static TextureRegion[] initializeSplash() {
+    private static TextureRegion[] initSplash() {
         TextureRegion[] splashFrames = new TextureRegion[60];
 
         // Frames 1 to 5
@@ -180,6 +191,126 @@ public class AssetLoader {
         }
 
         return splashFrames;
+    }
+
+    private static TextureRegion[] initCount() {
+        TextureRegion[] countFrames = new TextureRegion[4];
+        countTexture = new Texture(Gdx.files.internal("textures/count_frames.png"));
+        countTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        for (int i = 1; i <= 4; i++) {
+            TextureRegion countFrame = new TextureRegion(countTexture, (i == 1 ? 0 : (800*(i-1) + 1)), 0, 800, 450);
+            countFrames[i-1] = countFrame;
+        }
+
+        return countFrames;
+
+    }
+
+    private static void initCharacters() {
+        // Blue
+        characterBlueTexture = new Texture(Gdx.files.internal("textures/character_blue.png"));
+        characterBlueTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterBlueFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterBlueFrame = new TextureRegion(characterBlueTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterBlueFrames[i-1] = characterBlueFrame;
+        }
+
+        characterBlueAnimation = new Animation(0.1f, characterBlueFrames);
+        characterBlueAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Green
+        characterGreenTexture = new Texture(Gdx.files.internal("textures/character_green.png"));
+        characterGreenTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterGreenFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterGreenFrame = new TextureRegion(characterGreenTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterGreenFrames[i-1] = characterGreenFrame;
+        }
+
+        characterGreenAnimation = new Animation(0.1f, characterGreenFrames);
+        characterGreenAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Orange
+        characterOrangeTexture = new Texture(Gdx.files.internal("textures/character_orange.png"));
+        characterOrangeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterOrangeFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterOrangeFrame = new TextureRegion(characterOrangeTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterOrangeFrames[i-1] = characterOrangeFrame;
+        }
+
+        characterOrangeAnimation = new Animation(0.1f, characterOrangeFrames);
+        characterOrangeAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Pink
+        characterPinkTexture = new Texture(Gdx.files.internal("textures/character_pink.png"));
+        characterPinkTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterPinkFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterPinkFrame = new TextureRegion(characterPinkTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterPinkFrames[i-1] = characterPinkFrame;
+        }
+
+        characterPinkAnimation = new Animation(0.1f, characterPinkFrames);
+        characterPinkAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Purple
+        characterPurpleTexture = new Texture(Gdx.files.internal("textures/character_purple.png"));
+        characterPurpleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterPurpleFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterPurpleFrame = new TextureRegion(characterPurpleTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterPurpleFrames[i-1] = characterPurpleFrame;
+        }
+
+        characterPurpleAnimation = new Animation(0.1f, characterPurpleFrames);
+        characterPurpleAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Red
+        characterRedTexture = new Texture(Gdx.files.internal("textures/character_red.png"));
+        characterRedTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterRedFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterRedFrame = new TextureRegion(characterRedTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterRedFrames[i-1] = characterRedFrame;
+        }
+
+        characterRedAnimation = new Animation(0.1f, characterRedFrames);
+        characterRedAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Silver
+        characterSilverTexture = new Texture(Gdx.files.internal("textures/character_silver.png"));
+        characterSilverTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterSilverFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterSilverFrame = new TextureRegion(characterSilverTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterSilverFrames[i-1] = characterSilverFrame;
+        }
+
+        characterSilverAnimation = new Animation(0.1f, characterSilverFrames);
+        characterSilverAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        // Yellow
+        characterYellowTexture = new Texture(Gdx.files.internal("textures/character_silver.png"));
+        characterYellowTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        TextureRegion[] characterYellowFrames = new TextureRegion[5];
+        for (int i = 1; i <= 5; i++) {
+            TextureRegion characterYellowFrame = new TextureRegion(characterYellowTexture, (i == 1 ? 0 : (150*(i-1) + 1)), 0, 150, 200);
+            characterYellowFrames[i-1] = characterYellowFrame;
+        }
+
+        characterYellowAnimation = new Animation(0.1f, characterYellowFrames);
+        characterYellowAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
     }
 
 }
