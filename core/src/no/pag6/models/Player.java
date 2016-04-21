@@ -164,6 +164,8 @@ public class Player extends Sprite implements Constants {
         tweenPlayer(onFirstLane ? .7f : 1f);
 
         onFirstLane = !onFirstLane;
+
+        AssetLoader.swooshSound.play(0.3f);
     }
 
 //    // TODO: Fix this function if we have the time

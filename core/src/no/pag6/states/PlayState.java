@@ -118,6 +118,11 @@ public class PlayState extends State {
         // This should be started when game starts and in case of player change
         if (counttime < 3.5f) {
             counttime += delta;
+
+            if (counttime == delta) {
+                AssetLoader.countdownSound.play(0.5f);
+            }
+
             game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(counttime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
