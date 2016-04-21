@@ -119,11 +119,12 @@ public class PlayState extends State {
         }
 
         // This should be started when game starts and in case of player change
-        if (runTime < countdownTime) {
-            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
-        } else if (runTime > countdownTime && !startSoundPlayed) {
+        if (!startSoundPlayed) {
             AssetLoader.countdownSound.play(0.5f);
             startSoundPlayed = true;
+        }
+        if (runTime < countdownTime) {
+            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
         game.spriteBatch.end();
