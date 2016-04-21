@@ -26,8 +26,7 @@ public class PAG6Game extends Game {
 
         AssetLoader.load();
 
-//        gameStateManager.pushScreen(new SplashScreen(this)); // TODO: Set to SS when done debugging
-        gameStateManager.pushScreen(new MainMenu(this));
+        gameStateManager.pushScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
     }
 
     @Override
@@ -44,4 +43,5 @@ public class PAG6Game extends Game {
     public void render() {
         super.render();
     }
-    }
+
+}

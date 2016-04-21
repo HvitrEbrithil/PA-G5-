@@ -18,14 +18,18 @@ public class Player extends Sprite implements Constants {
     public boolean active = false;
     private int footContactCount;
     private int id;
+    private int nofLives;
+    private boolean shouldSwitchFilterBits;
 
     public Player(Body b2dBody, int id) {
         this.b2dBody = b2dBody;
         this.id = id;
+        nofLives = 3;
 
         score = 0;
         onFirstLane = true;
-        texture = new Texture("textures/player.png");
+        shouldSwitchFilterBits = false;
+        texture = new Texture("textures/player1.png");
 
         setBounds(0, 0, 70 / PPM, 86 / PPM);
         setRegion(texture);
@@ -72,6 +76,16 @@ public class Player extends Sprite implements Constants {
             b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
         }
 
+        if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
+            // set filter bits
+            Filter filter = b2dBody.getFixtureList().first().getFilterData();
+            boolean wasFirst = filter.maskBits == FIRST_LAYER_BITS;
+            filter.maskBits = wasFirst ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
+            b2dBody.getFixtureList().first().setFilterData(filter);
+            b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+            shouldSwitchFilterBits = false;
+        }
+
         setPosition(b2dBody.getPosition().x - getWidth() / 2, b2dBody.getPosition().y - getHeight() / 2);
 
         setScore((int)b2dBody.getPosition().x);
@@ -83,17 +97,14 @@ public class Player extends Sprite implements Constants {
 
     public void switchLanes() {
         // jump
-        b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
+        if (footContactCount > 0) {
+            b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
+        }
 
-        // set filter bits
-        Filter filter = b2dBody.getFixtureList().first().getFilterData();
-        filter.maskBits = isOnFirstLane() ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
-        b2dBody.getFixtureList().first().setFilterData(filter);
-        b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+        shouldSwitchFilterBits = ! shouldSwitchFilterBits;
 
         // scale
-        b2dBody.getFixtureList().first().getShape().setRadius(isOnFirstLane() ? 5 / PPM : 10 / PPM);
-
+        // TODO: implement scaling as: 1) remove fixtures but remember size 2) add new, scaled fixtures to the body
         onFirstLane = !onFirstLane;
     }
 }

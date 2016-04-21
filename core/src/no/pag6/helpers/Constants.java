@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 public interface Constants {
 
     // Screen and viewport
-    int V_WIDTH = 1280, V_HEIGHT = 720;
+    int V_WIDTH = 1600, V_HEIGHT = 900;
     float PPM = 100;
     int A_WIDTH = (int) (V_WIDTH/PPM), A_HEIGHT = (int) (V_HEIGHT/PPM);
     float TIME_STEP = 1/60f;

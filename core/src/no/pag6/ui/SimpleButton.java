@@ -38,7 +38,7 @@ public class SimpleButton {
         }
     }
 
-    public boolean isTouchDown(int screenX, int screenY) {
+    public boolean isTouchDown(float screenX, float screenY) {
         if (bounds.contains(screenX, screenY)) {
             isPressed = true;
 
@@ -48,7 +48,7 @@ public class SimpleButton {
         return false;
     }
 
-    public boolean isTouchUp(int screenX, int screenY) {
+    public boolean isTouchUp(float screenX, float screenY) {
         if (bounds.contains(screenX, screenY) && isPressed) {
             isPressed = false;
 
@@ -58,6 +58,16 @@ public class SimpleButton {
         isPressed = false;
 
         return false;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+        bounds.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+        bounds.y = y;
     }
 
 }

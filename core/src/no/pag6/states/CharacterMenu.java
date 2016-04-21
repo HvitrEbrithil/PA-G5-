@@ -68,15 +68,20 @@ public class CharacterMenu extends State {
     }
 
     @Override
+    public void dispose() {
+        super.dispose();
+
+        font.dispose();
+    }
+
+    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
         if (buttonsEnabled) {
-            backButton.isTouchDown(screenX, screenY);
-            playButton.isTouchDown(screenX, screenY);
+            backButton.isTouchDown(projected.x, projected.y);
+            playButton.isTouchDown(projected.x, projected.y);
         }
 
         return true;
@@ -85,15 +90,13 @@ public class CharacterMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) projected.x;
-        screenY = (int) projected.y;
+        projected = viewport.unproject(touchPoint);
 
         if (buttonsEnabled) {
-            if (backButton.isTouchUp(screenX, screenY)) {
+            if (backButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().popScreen();
             }
-            if (playButton.isTouchUp(screenX, screenY)) {
+            if (playButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, "Map1.tmx"));
             }
         }
@@ -135,7 +138,6 @@ public class CharacterMenu extends State {
     }
 
     private void takeNofPlayers() {
-        // TODO: Fix something wrong with Android input
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
@@ -154,18 +156,18 @@ public class CharacterMenu extends State {
 
             @Override
             public void canceled() {
-//                game.getGameStateManager().popScreen();
+                game.getGameStateManager().popScreen();
             }
         }, "Enter number of players", "", "from 1 to 8 players");
     }
 
     private void takePlayerName() {
-        // TODO: Fix something wrong with Android input
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
-                if (Pattern.matches(playerNamePattern, text.trim())) {
-                    playerNames.set(currentPlayer, text.trim().toUpperCase());
+                String modifiedName = text.trim().toUpperCase();
+                if (Pattern.matches(playerNamePattern, modifiedName) && !playerNames.contains(modifiedName)) {
+                    playerNames.set(currentPlayer, modifiedName);
                     currentPlayer++;
                 }
                 System.out.println("currentPlayer = " + currentPlayer);
@@ -192,7 +194,7 @@ public class CharacterMenu extends State {
 
         if (playerNames != null) {
             if (playerNames.get(nofPlayers - 1) != null) {
-                String players = "PLAYERS:\n";
+                String players = "PLAYER" + (playerNames.size() > 1 ? "S:\n" : ": ");
                 for (int i = 0; i < nofPlayers; i++) {
                     players += playerNames.get(i);
                     if (i == nofPlayers - 2) {
