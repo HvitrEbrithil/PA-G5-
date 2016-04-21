@@ -3,7 +3,6 @@ package no.pag6.models;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -118,33 +117,6 @@ public class Player extends Sprite implements Constants {
         setScale(playerScale.getValue());
 //        setSize(scaledWidth, scaledHeight);
 
-        // Scale body
-        Fixture bodyFixture = b2dBody.getFixtureList().first();
-        b2dBody.destroyFixture(bodyFixture);
-        Fixture footFixture = b2dBody.getFixtureList().first();
-        b2dBody.destroyFixture(footFixture);
-
-        // Body fixture
-        CircleShape newBodyShape = new CircleShape();
-        newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM)*playerScale.getValue());
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = newBodyShape;
-        fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
-        b2dBody.createFixture(fixtureDef);
-        newBodyShape.dispose();
-
-        // Foot fixture
-        PolygonShape newFootShape = new PolygonShape();
-        newFootShape.setAsBox((13/PPM)*playerScale.getValue(), (3/PPM)*playerScale.getValue(),
-                new Vector2(0, (-13/PPM)*playerScale.getValue()), 0);
-
-        fixtureDef.shape = newFootShape;
-        fixtureDef.isSensor = true;
-        Gdx.app.log("Player", "playerID = " + )
-        b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
-        newFootShape.dispose();
-
         // Update position
         setPosition(b2dBody.getPosition().x - scaledWidth/2, b2dBody.getPosition().y - scaledHeight/2);
 //        setPosition(b2dBody.getPosition().x - getWidth()/2, b2dBody.getPosition().y - getHeight()/2);
@@ -164,11 +136,63 @@ public class Player extends Sprite implements Constants {
 
         // Sprite
         if (onFirstLane) {
+            // Scale body
+            Fixture bodyFixture = b2dBody.getFixtureList().first();
+            b2dBody.destroyFixture(bodyFixture);
+            Fixture footFixture = b2dBody.getFixtureList().first();
+            b2dBody.destroyFixture(footFixture);
+
+            // Body fixture
+            CircleShape newBodyShape = new CircleShape();
+            newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM)*.7f);
+
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = newBodyShape;
+            fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
+            b2dBody.createFixture(fixtureDef);
+            newBodyShape.dispose();
+
+            // Foot fixture
+            PolygonShape newFootShape = new PolygonShape();
+            newFootShape.setAsBox((13/PPM)*.7f, (3/PPM)*.7f,
+                    new Vector2(0, (-13/PPM)*.7f), 0);
+
+            fixtureDef.shape = newFootShape;
+            fixtureDef.isSensor = true;
+            b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
+            newFootShape.dispose();
+
             Tween.to(playerScale, -1, .5f)
                     .target(.7f)
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
         } else {
+            // Scale body
+            Fixture bodyFixture = b2dBody.getFixtureList().first();
+            b2dBody.destroyFixture(bodyFixture);
+            Fixture footFixture = b2dBody.getFixtureList().first();
+            b2dBody.destroyFixture(footFixture);
+
+            // Body fixture
+            CircleShape newBodyShape = new CircleShape();
+            newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM));
+
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = newBodyShape;
+            fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
+            b2dBody.createFixture(fixtureDef);
+            newBodyShape.dispose();
+
+            // Foot fixture
+            PolygonShape newFootShape = new PolygonShape();
+            newFootShape.setAsBox((13/PPM), (3/PPM),
+                    new Vector2(0, (-13/PPM)), 0);
+
+            fixtureDef.shape = newFootShape;
+            fixtureDef.isSensor = true;
+            b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
+            newFootShape.dispose();
+
             Tween.to(playerScale, -1, .5f)
                     .target(1f)
                     .ease(TweenEquations.easeOutQuad)
