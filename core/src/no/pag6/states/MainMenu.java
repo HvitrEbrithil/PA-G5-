@@ -4,7 +4,12 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -18,46 +23,36 @@ import java.util.List;
 public class MainMenu extends State {
 
     // Renderers
-    private ShapeRenderer drawer;
     private TweenManager tweener;
 
     // Game objects
 
     // Game assets
+    BitmapFont font;
 
     // Tween assets
     private Value alpha = new Value();
 
     // Game UI
     private List<SimpleButton> mainMenuButtons = new ArrayList<SimpleButton>();
-    private SimpleButton playSPButton;
-    private SimpleButton play2PButton;
+    private SimpleButton playButton;
     private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
     private SimpleButton quitButton;
+    private Sprite logo;
 
     public MainMenu(PAG6Game game) {
         super(game);
 
-        // Set up drawer and batcher
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
-
         // Init objects and assets
         initTweenAssets();
-
-        initGameObjects();
-        initGameAssets();
 
         initUI();
     }
 
     @Override
     public void render(float delta) {
-        update(delta);
-
-        Gdx.gl.glClearColor(1.0f, 0.1f, 0.1f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        super.render(delta);
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -68,25 +63,27 @@ public class MainMenu extends State {
 
         game.spriteBatch.end();
 
-        drawTransition(delta);
+        if (alpha.getValue() > 0) {
+            drawTransition(delta);
+        }
     }
 
     @Override
-    public void update(float delta) {
+    public void dispose() {
+        super.dispose();
+
+        font.dispose();
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        playSPButton.isTouchDown(screenX, screenY);
-        play2PButton.isTouchDown(screenX, screenY);
-        highscoreButton.isTouchDown(screenX, screenY);
-        optionsButton.isTouchDown(screenX, screenY);
-        quitButton.isTouchDown(screenX, screenY);
+        playButton.isTouchDown(projected.x, projected.y);
+        highscoreButton.isTouchDown(projected.x, projected.y);
+        optionsButton.isTouchDown(projected.x, projected.y);
+        quitButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -94,28 +91,17 @@ public class MainMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (playSPButton.isTouchUp(screenX, screenY)) {
-            PlayState playState = new PlayState(game, 1, "test_lvl.tmx");
-            game.gameStack.push(playState);
-            game.setScreen(playState);
-        } else if (play2PButton.isTouchUp(screenX, screenY)) {
-            PlayState playState = new PlayState(game, 2, "test_lvl.tmx");
-            game.gameStack.push(playState);
-            game.setScreen(playState);
-        } else if (highscoreButton.isTouchUp(screenX, screenY)) {
-            HighscoreMenu highscoreMenu = new HighscoreMenu(game);
-            game.gameStack.push(highscoreMenu);
-            game.setScreen(highscoreMenu);
-        } else if (optionsButton.isTouchUp(screenX, screenY)) {
-            OptionsMenu optionsMenu = new OptionsMenu(game);
-            game.gameStack.push(optionsMenu);
-            game.setScreen(optionsMenu);
-        } else if (quitButton.isTouchUp(screenX, screenY)) {
+        if (playButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().pushScreen(new CharacterMenu(game));
+        } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().pushScreen(new HighscoreMenu(game));
+        } else if (optionsButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().pushScreen(new OptionsMenu(game));
+        } else if (quitButton.isTouchUp(projected.x, projected.y)) {
             game.dispose();
+            System.exit(0);
         }
 
         return true;
@@ -134,55 +120,91 @@ public class MainMenu extends State {
                 .start(tweener);
     }
 
-    private void initGameObjects() {
-    }
-
-    private void initGameAssets() {
-    }
-
     private void initUI() {
-        playSPButton = new SimpleButton(2560/2 - AssetLoader.playSPButtonUp.getRegionWidth()/2, 300,
-                AssetLoader.playSPButtonUp.getRegionWidth(), AssetLoader.playSPButtonUp.getRegionHeight(),
-                AssetLoader.playSPButtonUp, AssetLoader.playSPButtonDown);
-        mainMenuButtons.add(playSPButton);
-        play2PButton = new SimpleButton(2560/2 - AssetLoader.play2PButtonUp.getRegionWidth()/2, 500,
-                AssetLoader.play2PButtonUp.getRegionWidth(), AssetLoader.play2PButtonUp.getRegionHeight(),
-                AssetLoader.play2PButtonUp, AssetLoader.play2PButtonDown);
-        mainMenuButtons.add(play2PButton);
-        highscoreButton = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 - 400, 700,
-                AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
+        region = AssetLoader.playButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.5f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.5f;
+        playButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.playButtonUp, AssetLoader.playButtonDown
+        );
+        mainMenuButtons.add(playButton);
+
+        region = AssetLoader.highscoreButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        highscoreButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
+        );
         mainMenuButtons.add(highscoreButton);
-        optionsButton = new SimpleButton(2560/2 - AssetLoader.optionsButtonUp.getRegionWidth()/2 + 400, 700,
-                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+
+        region = AssetLoader.optionsButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        optionsButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
+        );
         mainMenuButtons.add(optionsButton);
-        quitButton = new SimpleButton(2560/2 - AssetLoader.exitButtonUp.getRegionWidth()/2, 1000,
-                AssetLoader.exitButtonUp.getRegionWidth(), AssetLoader.exitButtonUp.getRegionHeight(),
-                AssetLoader.exitButtonUp, AssetLoader.exitButtonDown);
+
+        region = AssetLoader.quitButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        quitButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.quitButtonUp, AssetLoader.quitButtonDown
+        );
         mainMenuButtons.add(quitButton);
+
+        // Logo and copyright
+        float tempUIScale = 0.04f;
+
+        region = AssetLoader.logo;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        logo = new Sprite(region);
+        logo.setSize(regionWidth, regionHeight);
+        logo.setPosition(8, 2);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 9;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void drawUI() {
         for (SimpleButton button : mainMenuButtons) {
             button.draw(game.spriteBatch);
         }
+
+        logo.draw(game.spriteBatch);
+        font.draw(game.spriteBatch, "COPYRIGHT 2016, PROG ARK GRUPPE 6", V_WIDTH/22, V_HEIGHT/26);
     }
 
     private void drawTransition(float delta) {
-        if (alpha.getValue() > 0) {
-            tweener.update(delta);
+        tweener.update(delta);
 
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-            drawer.begin(ShapeRenderer.ShapeType.Filled);
-            drawer.setColor(1, 1, 1, alpha.getValue());
-            drawer.rect(0, 0, A_WIDTH, A_HEIGHT);
-            drawer.end();
+        game.drawer.setProjectionMatrix(cam.combined);
+        game.drawer.begin(ShapeRenderer.ShapeType.Filled);
+        game.drawer.setColor(1, 1, 1, alpha.getValue());
+        game.drawer.rect(0, 0, V_WIDTH, V_HEIGHT);
+        game.drawer.end();
 
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
 }

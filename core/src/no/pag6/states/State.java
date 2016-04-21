@@ -3,11 +3,15 @@ package no.pag6.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
+import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 
 public class State implements Screen, InputProcessor, Constants {
@@ -16,30 +20,51 @@ public class State implements Screen, InputProcessor, Constants {
 
     protected PAG6Game game;
     protected OrthographicCamera cam;
-    protected Viewport viewPort;
+    protected Viewport viewport;
     protected Vector3 projected, touchPoint = new Vector3(0, 0, 0);
+
+    // Background
+    private Sprite background;
 
     public State(PAG6Game game) {
         this.game = game;
         cam = new OrthographicCamera();
-        viewPort = new FitViewport(A_WIDTH, A_HEIGHT, cam);
-        Gdx.input.setInputProcessor(this);
+        viewport = new FitViewport(V_WIDTH, V_HEIGHT, cam);
+        cam.position.set(V_WIDTH/2, V_HEIGHT/2, 0);
+
+        initBackground();
     }
 
     @Override
     public void show() {
         Gdx.app.log(TAG, "show called");
+
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.app.log(TAG, "render called");
+        // Update logic
+        update(delta);
+
+        // Clear drawings
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Render background
+        game.spriteBatch.setProjectionMatrix(cam.combined);
+        game.spriteBatch.begin();
+        game.spriteBatch.disableBlending();
+
+        drawBackground();
+
+        game.spriteBatch.end();
     }
 
     @Override
     public void resize(int width, int height) {
         Gdx.app.log(TAG, "resize called");
-        viewPort.update(width, height);
+        viewport.update(width, height);
     }
 
     @Override
@@ -103,19 +128,17 @@ public class State implements Screen, InputProcessor, Constants {
     }
 
     public void update(float delta) {
-        Gdx.app.log(TAG, "update called");
     }
 
-    public void goBackToPreviousState(PAG6Game game) {
-        game.gameStack.pop();
-        State previousState = game.gameStack.pop();
-        game.gameStack.push(previousState);
-        game.setScreen(previousState);
+    private void initBackground() {
+        TextureRegion region = AssetLoader.background;
+        background = new Sprite(region);
+        background.setSize(V_WIDTH, V_HEIGHT);
+        background.setPosition(0, 0);
     }
 
-    public void goBackToPreviousPreviousState(PAG6Game game) {
-        game.gameStack.pop();
-        goBackToPreviousState(game);
+    private void drawBackground(){
+        background.draw(game.spriteBatch);
     }
 
 }

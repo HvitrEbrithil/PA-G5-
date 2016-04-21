@@ -1,12 +1,7 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
@@ -48,10 +43,7 @@ public class OptionsMenu extends State {
 
     @Override
     public void render(float delta) {
-        update(delta);
-
-        Gdx.gl.glClearColor(0.8f, 0.5f, 0.5f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        super.render(delta);
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -70,11 +62,9 @@ public class OptionsMenu extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        backButtonOptions.isTouchDown(screenX, screenY);
+        backButtonOptions.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -82,12 +72,10 @@ public class OptionsMenu extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (backButtonOptions.isTouchUp(screenX, screenY)) {
-            goBackToPreviousState(game);
+        if (backButtonOptions.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().popScreen();
         }
 
         return true;
@@ -109,8 +97,8 @@ public class OptionsMenu extends State {
 
     private void initUI() {
         backButtonOptions = new SimpleButton(64, 64,
-                AssetLoader.backArrowButton.getRegionWidth(), AssetLoader.backArrowButton.getRegionHeight(),
-                AssetLoader.backArrowButton, AssetLoader.backArrowButton);
+                AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonUp.getRegionHeight(),
+                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
         optionsMenuButtons.add(backButtonOptions);
     }
 

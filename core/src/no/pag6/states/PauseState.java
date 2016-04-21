@@ -1,12 +1,8 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
@@ -29,9 +25,9 @@ public class PauseState extends State {
     // Game UI
     private List<SimpleButton> pauseButtons = new ArrayList<SimpleButton>();
     private SimpleButton resumeButton;
-    private SimpleButton highscoreButtonPause;
+    private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
-    private SimpleButton menuButtonPause;
+    private SimpleButton mainMenuButton;
 
     public PauseState(PAG6Game game) {
         super(game);
@@ -51,10 +47,7 @@ public class PauseState extends State {
 
     @Override
     public void render(float delta) {
-        update(delta);
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        super.render(delta);
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -73,14 +66,12 @@ public class PauseState extends State {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        resumeButton.isTouchDown(screenX, screenY);
-        highscoreButtonPause.isTouchDown(screenX, screenY);
-        optionsButton.isTouchDown(screenX, screenY);
-        menuButtonPause.isTouchDown(screenX, screenY);
+        resumeButton.isTouchDown(projected.x, projected.y);
+        highscoreButton.isTouchDown(projected.x, projected.y);
+        optionsButton.isTouchDown(projected.x, projected.y);
+        mainMenuButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -88,25 +79,17 @@ public class PauseState extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (resumeButton.isTouchUp(screenX, screenY)) {
-            game.gameStack.pop();
-            State previousState = game.gameStack.pop();
-            game.gameStack.push(previousState);
-            game.setScreen(previousState);
-        } else if (highscoreButtonPause.isTouchUp(screenX, screenY)) {
-            HighscoreMenu highscoreMenu = new HighscoreMenu(game);
-            game.gameStack.push(highscoreMenu);
-            game.setScreen(highscoreMenu);
-        } else if (optionsButton.isTouchUp(screenX, screenY)) {
-            OptionsMenu optionsMenu = new OptionsMenu(game);
-            game.gameStack.push(optionsMenu);
-            game.setScreen(optionsMenu);
-        } else if (menuButtonPause.isTouchUp(screenX, screenY)) {
-            goBackToPreviousPreviousState(game);
+        if (resumeButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().popScreen();
+        } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().pushScreen(new HighscoreMenu(game));
+        } else if (optionsButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().pushScreen(new OptionsMenu(game));
+        } else if (mainMenuButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().popScreen();
+            game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
         return true;
@@ -127,22 +110,52 @@ public class PauseState extends State {
     }
 
     private void initUI() {
-        resumeButton = new SimpleButton(2560 - AssetLoader.exitCrossButton.getRegionWidth() - 64, 64,
-                AssetLoader.exitCrossButton.getRegionWidth(), AssetLoader.exitCrossButton.getRegionHeight(),
-                AssetLoader.exitCrossButton, AssetLoader.exitCrossButton);
+        float uiScale;
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
+        uiScale = 0.67f;
+
+        region = AssetLoader.resumeButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        resumeButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.resumeButtonUp, AssetLoader.resumeButtonDown
+        );
         pauseButtons.add(resumeButton);
-        highscoreButtonPause = new SimpleButton(2560/2 - AssetLoader.highscoreButtonUp.getRegionWidth()/2 + 500, 1200,
-                AssetLoader.highscoreButtonUp.getRegionWidth(), AssetLoader.highscoreButtonUp.getRegionHeight(),
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown);
-        pauseButtons.add(highscoreButtonPause);
-        optionsButton = new SimpleButton(2560/2 - AssetLoader.optionsButtonUp.getRegionWidth()/2 - 500, 1200,
-                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+
+        region = AssetLoader.highscoreButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        highscoreButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
+        );
+        pauseButtons.add(highscoreButton);
+
+        region = AssetLoader.optionsButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        optionsButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
+        );
         pauseButtons.add(optionsButton);
-        menuButtonPause = new SimpleButton(2560/2 - AssetLoader.mainMenuButtonUp.getRegionWidth()/2, 1200,
-                AssetLoader.mainMenuButtonUp.getRegionWidth(), AssetLoader.mainMenuButtonUp.getRegionHeight(),
-                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown);
-        pauseButtons.add(menuButtonPause);
+
+        region = AssetLoader.mainMenuButtonUp;
+        regionWidth = region.getRegionWidth()*uiScale;
+        regionHeight = region.getRegionHeight()*uiScale;
+        mainMenuButton = new SimpleButton(
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*2/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
+        );
+        pauseButtons.add(mainMenuButton);
     }
 
     private void drawUI() {

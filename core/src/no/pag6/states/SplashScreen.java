@@ -23,13 +23,11 @@ public class SplashScreen extends State {
         logo = new Sprite(AssetLoader.logo);
         logo.setColor(1, 1, 1, 0);
 
-        float width = Gdx.graphics.getWidth();
-        float height = Gdx.graphics.getHeight();
-        float desiredWidth = width*0.7f;
-        float scale = desiredWidth/logo.getWidth();
+        float desiredWidth = V_WIDTH*0.3f;
+        float desiredHeight = logo.getHeight()*(desiredWidth/logo.getWidth());
 
-        logo.setSize(logo.getWidth()*scale, logo.getHeight()*scale);
-        logo.setPosition(width/2 - logo.getWidth()/2, height/2 - logo.getHeight()/2);
+        logo.setSize(desiredWidth, desiredHeight);
+        logo.setPosition(V_WIDTH/2 - logo.getWidth()/2, V_HEIGHT/2 - logo.getHeight()/2);
 
         setupTween();
     }
@@ -38,7 +36,7 @@ public class SplashScreen extends State {
     public void render(float delta) {
         tweener.update(delta);
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.spriteBatch.setProjectionMatrix(cam.combined);
@@ -54,7 +52,7 @@ public class SplashScreen extends State {
         TweenCallback cb = new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                game.setScreen(new MainMenu(game));
+                game.getGameStateManager().setScreen(new MainMenu(game));
             }
         };
 

@@ -10,12 +10,10 @@ public class AssetLoader {
     public static Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture logoTexture, playSPButtonTexture, play2PButtonTexture, mainMenuButtonTexture,
-            exitButtonTexture, exitCrossButtonTexture, highscoreButtonTexture, backArrowButtonTexture,
-            optionsButtonTexture;
-    public static TextureRegion logo, playSPButtonUp, playSPButtonDown, play2PButtonUp, play2PButtonDown,
-            mainMenuButtonUp, mainMenuButtonDown, exitButtonUp, exitButtonDown, exitCrossButton,
-            highscoreButtonUp, highscoreButtonDown, backArrowButton, optionsButtonUp, optionsButtonDown;
+    public static Texture backgroundTexture, logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture,
+            quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture, mainMenuButtonTexture;
+    public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
+            quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown;
 
     // Animations
 //    public static Animation ;
@@ -23,72 +21,58 @@ public class AssetLoader {
     // Sounds
 //    public static Sound ;
 
-    // Fonts
-//    public static BitmapFont ;
-
     public static void load() {
         // Preferences
         prefs = Gdx.app.getPreferences("PAG6Game");
-        if (!prefs.contains("high_score")) {
-            prefs.putInteger("high_score", 0);
-        }
 
         // Textures and TextureRegions
-        backArrowButtonTexture = new Texture(Gdx.files.internal("textures/back_arrow_button.png"));
-        backArrowButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        backArrowButton = new TextureRegion(backArrowButtonTexture, 0, 0, 256, 256);
-        backArrowButton.flip(false, true);
-
-        exitButtonTexture = new Texture(Gdx.files.internal("textures/exit_button.png"));
-        exitButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        exitButtonUp = new TextureRegion(exitButtonTexture, 0, 0, 512, 128);
-        exitButtonUp.flip(false, true);
-        exitButtonDown = new TextureRegion(exitButtonTexture, 0, 129, 512, 128);
-        exitButtonDown.flip(false, true);
-
-        exitCrossButtonTexture = new Texture(Gdx.files.internal("textures/exit_cross_button.png"));
-        exitCrossButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        exitCrossButton = new TextureRegion(exitCrossButtonTexture, 0, 0, 256, 256);
-        exitCrossButton.flip(false, true);
-
-        highscoreButtonTexture = new Texture(Gdx.files.internal("textures/highscore_button.png"));
-        highscoreButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        highscoreButtonUp = new TextureRegion(highscoreButtonTexture, 0, 0, 512, 128);
-        highscoreButtonUp.flip(false, true);
-        highscoreButtonDown = new TextureRegion(highscoreButtonTexture, 0, 129, 512, 128);
-        highscoreButtonDown.flip(false, true);
+        backgroundTexture = new Texture(Gdx.files.internal("textures/menu_background.png"));
+        backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        background = new TextureRegion(backgroundTexture, 0, 0, 2560, 1440);
 
         logoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new TextureRegion(logoTexture, 0, 0, 512, 512);
 
-        mainMenuButtonTexture = new Texture(Gdx.files.internal("textures/main_menu_button.png"));
-        mainMenuButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        mainMenuButtonUp = new TextureRegion(mainMenuButtonTexture, 0, 0, 512, 128);
-        mainMenuButtonUp.flip(false, true);
-        mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
-        mainMenuButtonDown.flip(false, true);
+        playButtonTexture = new Texture(Gdx.files.internal("textures/play_button.png"));
+        playButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        playButtonUp = new TextureRegion(playButtonTexture, 0, 0, 512, 128);
+        playButtonDown = new TextureRegion(playButtonTexture, 0, 129, 512, 128);
+
+        highscoreButtonTexture = new Texture(Gdx.files.internal("textures/highscore_button.png"));
+        highscoreButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        highscoreButtonUp = new TextureRegion(highscoreButtonTexture, 0, 0, 512, 128);
+        highscoreButtonDown = new TextureRegion(highscoreButtonTexture, 0, 129, 512, 128);
 
         optionsButtonTexture = new Texture(Gdx.files.internal("textures/options_button.png"));
         optionsButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         optionsButtonUp = new TextureRegion(optionsButtonTexture, 0, 0, 512, 128);
-        optionsButtonUp.flip(false, true);
         optionsButtonDown = new TextureRegion(optionsButtonTexture, 0, 129, 512, 128);
-        optionsButtonDown.flip(false, true);
 
-        playSPButtonTexture = new Texture(Gdx.files.internal("textures/play_sp_button.png"));
-        playSPButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        playSPButtonUp = new TextureRegion(playSPButtonTexture, 0, 0, 512, 128);
-        playSPButtonUp.flip(false, true);
-        playSPButtonDown = new TextureRegion(playSPButtonTexture, 0, 129, 512, 128);
-        playSPButtonDown.flip(false, true);
+        quitButtonTexture = new Texture(Gdx.files.internal("textures/quit_button.png"));
+        quitButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        quitButtonUp = new TextureRegion(quitButtonTexture, 0, 0, 512, 128);
+        quitButtonDown = new TextureRegion(quitButtonTexture, 0, 129, 512, 128);
 
-        play2PButtonTexture = new Texture(Gdx.files.internal("textures/play_2p_button.png"));
-        play2PButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        play2PButtonUp = new TextureRegion(play2PButtonTexture, 0, 0, 512, 128);
-        play2PButtonUp.flip(false, true);
-        play2PButtonDown = new TextureRegion(play2PButtonTexture, 0, 129, 512, 128);
-        play2PButtonDown.flip(false, true);
+        pauseButtonTexture = new Texture(Gdx.files.internal("textures/pause_button.png"));
+        pauseButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        pauseButtonUp = new TextureRegion(pauseButtonTexture, 0, 0, 256, 256);
+        pauseButtonDown = new TextureRegion(pauseButtonTexture, 0, 257, 256, 256);
+
+        backButtonTexture = new Texture(Gdx.files.internal("textures/back_button.png"));
+        backButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        backButtonUp = new TextureRegion(backButtonTexture, 0, 0, 512, 128);
+        backButtonDown = new TextureRegion(backButtonTexture, 0, 129, 512, 128);
+
+        resumeButtonTexture = new Texture(Gdx.files.internal("textures/resume_button.png"));
+        resumeButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        resumeButtonUp = new TextureRegion(resumeButtonTexture, 0, 0, 512, 128);
+        resumeButtonDown = new TextureRegion(resumeButtonTexture, 0, 129, 512, 128);
+
+        mainMenuButtonTexture = new Texture(Gdx.files.internal("textures/main_menu_button.png"));
+        mainMenuButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        mainMenuButtonUp = new TextureRegion(mainMenuButtonTexture, 0, 0, 512, 128);
+        mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
 
         // Animations
 //        TextureRegion[]  = {};
@@ -97,29 +81,28 @@ public class AssetLoader {
 
         // Sounds
 //         = Gdx.audio.newSound(Gdx.files.internal("sounds/.wav"));
-
-        // Fonts
-//         = new BitmapFont(Gdx.files.internal("fonts/.fnt"));
-//        .getData().setScale(.25f, -.25f);
     }
 
     public static void dispose() {
+        backgroundTexture.dispose();
         logoTexture.dispose();
-        playSPButtonTexture.dispose();
-        play2PButtonTexture.dispose();
-        mainMenuButtonTexture.dispose();
-        exitButtonTexture.dispose();
-        exitCrossButtonTexture.dispose();
+        playButtonTexture.dispose();
         highscoreButtonTexture.dispose();
-        backArrowButtonTexture.dispose();
         optionsButtonTexture.dispose();
+        quitButtonTexture.dispose();
+        pauseButtonTexture.dispose();
+        backButtonTexture.dispose();
+        resumeButtonTexture.dispose();
+        mainMenuButtonTexture.dispose();
     }
 
-    public static int getHighScore() {
-        return prefs.getInteger("high_score");
+    public static int getHighScore(int playerNumber) {
+        String key = "high_score_p" + playerNumber;
+        return prefs.getInteger(key, 0);
     }
-    public static void setHighScore(int val) {
-        prefs.putInteger("high_score", val);
+    public static void setHighScore(int playerNumber, int val) {
+        String key = "high_score_p" + playerNumber;
+        prefs.putInteger(key, val);
         prefs.flush();
     }
 

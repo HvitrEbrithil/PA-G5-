@@ -1,18 +1,25 @@
 package no.pag6.states;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Polyline;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.MyContactListener;
+import no.pag6.models.Player;
+import no.pag6.tweenaccessors.Value;
+import no.pag6.tweenaccessors.ValueAccessor;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
@@ -20,12 +27,11 @@ import java.util.List;
 
 public class PlayState extends State {
 
-    // Renderers
-    private ShapeRenderer drawer;
-    private TweenManager tweener;
-
     // Player stats
     private int nofPlayers;
+
+    private Player[] players;
+    private int activePlayerIdx;
 
     // map stuff
     private TiledMap map;
@@ -34,25 +40,31 @@ public class PlayState extends State {
     // box2d stuff
     private World world;
     private Box2DDebugRenderer b2dr;
-    private Body playerBody;
+    private MyContactListener cl;
+
+    // Renderers
+    private TweenManager tweener;
 
     // Game objects
 
     // Game assets
 
     // Tween assets
+    private Value opacityLayer1 = new Value();
+    private Value opacityLayer2 = new Value();
 
     // Game UI
+    float tempUIScale = .2f/PPM;
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
-    public PlayState(PAG6Game game, int nofPlayers, String mapFileName) {
+    public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
+        players = new Player[nofPlayers];
+        activePlayerIdx = 0;
 
-        // Set up drawer and batcher
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
+        viewport.setWorldSize(A_WIDTH, A_HEIGHT);
 
         // load the map
         map = new TmxMapLoader().load("maps/" + mapFileName);
@@ -61,12 +73,15 @@ public class PlayState extends State {
         // set up box2d
         world = new World(GRAVITY, true);
         b2dr = new Box2DDebugRenderer();
+        cl = new MyContactListener();
+        world.setContactListener(cl);
         addMapBodies();
-        addPlayerBody();
+        addPlayerBodies();
 
-        // Init objects and assets
+        players[activePlayerIdx].active = true;
+        cl.setPlayer(players[activePlayerIdx]);
+
         initTweenAssets();
-
         initGameObjects();
         initGameAssets();
 
@@ -74,47 +89,77 @@ public class PlayState extends State {
     }
 
     @Override
-    public void resize(int width, int height) {
-        viewPort.update(width, height);
-    }
-
-    @Override
     public void render(float delta) {
         update(delta);
 
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        // Clear drawings
+        Gdx.gl.glClearColor(208/255f, 244/255f, 247/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        b2dr.render(world, cam.combined);
+        drawTiled();
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
 
-        drawTiled();
         drawUI();
+        for (Player player : players) {
+            player.draw(game.spriteBatch);
+        }
 
         game.spriteBatch.end();
+        b2dr.render(world, cam.combined);
     }
 
     @Override
     public void update(float delta) {
-        world.step(TIME_STEP, 6, 2);
+        tweener.update(delta);
 
-        cam.position.x = playerBody.getPosition().x; // center the camera around the player
+        world.step(TIME_STEP, 6, 2); // update physics
+
+        // update camera
+        Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
+        if (playerPos.x < A_WIDTH/2) {
+            cam.position.x = A_WIDTH/2;
+        } else {
+            cam.position.x = playerPos.x; // center the camera around the activePlayer
+        }
+        cam.position.y = playerPos.y; // center the camera around the activePlayer
         cam.update();
+        // update the players
+        for (Player player : players) {
+            player.update(delta);
+        }
+        // Update UI
+        pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
+        pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
 
+        map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
+        map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
+
+        map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
+        map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
+
+        // update the Tiled map renderer
         mapRenderer.setView(cam);
+
+        if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
+            // TODO: implement proper death
+            players[activePlayerIdx].active = false;
+            activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
+            players[activePlayerIdx].active = true;
+            players[activePlayerIdx].incrementFootContactCount();
+            cl.setPlayer(players[activePlayerIdx]);
+        }
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
-        pauseButton.isTouchDown(screenX, screenY);
+        projected = viewport.unproject(touchPoint);
+
+        pauseButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -122,31 +167,13 @@ public class PlayState extends State {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
-        projected = cam.unproject(touchPoint);
-        screenX = (int) touchPoint.x;
-        screenY = (int) touchPoint.y;
+        projected = viewport.unproject(touchPoint);
 
-        if (pauseButton.isTouchUp(screenX, screenY)) {
-            PauseState pauseState = new PauseState(game);
-            game.gameStack.push(pauseState);
-            game.setScreen(pauseState);
-        } else if (playerBody.getLinearVelocity().x <= PLAYER_MAX_VELOCITY) {
-            playerBody.applyLinearImpulse(MOVEMENT_IMPULSE, playerBody.getWorldCenter(), true);
+        if (pauseButton.isTouchUp(projected.x, projected.y)) {
+            game.getGameStateManager().pushScreen(new PauseState(game));
         }
-        // TODO: Handle laneswitching
-//        if (true) {
-//            switchLanes();
-//        }
 
         return true;
-    }
-
-    private void initTweenAssets() {
-        // Register Tween Assets
-
-        tweener = new TweenManager();
-
-        // Tween animations
     }
 
     private void initGameObjects() {
@@ -155,10 +182,29 @@ public class PlayState extends State {
     private void initGameAssets() {
     }
 
+    private void initTweenAssets() {
+        // Register Tween Assets
+        Tween.registerAccessor(Value.class, new ValueAccessor());
+
+        tweener = new TweenManager();
+
+        opacityLayer1.setValue(1f);
+        opacityLayer2.setValue(.5f);
+    }
+
     private void initUI() {
-        pauseButton = new SimpleButton(2560 - AssetLoader.optionsButtonUp.getRegionWidth() - 64, 64,
-                AssetLoader.optionsButtonUp.getRegionWidth(), AssetLoader.optionsButtonUp.getRegionHeight(),
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown);
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
+        region = AssetLoader.pauseButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        pauseButton = new SimpleButton(
+                0, 500/PPM + A_HEIGHT/2 - 8/PPM,
+                regionWidth, regionHeight,
+                AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
+        );
         playButtons.add(pauseButton);
     }
 
@@ -182,55 +228,98 @@ public class PlayState extends State {
 
         // loop through the layers in the map and add box2d bodies to the box2d world
         for (int i = 0; i < LAYERS.length; i++) {
-            for (MapObject mapObject : map.getLayers().get(LAYERS[i]).getObjects()
-                                                .getByType(RectangleMapObject.class)) {
+            for (PolylineMapObject polylineMapObject : map.getLayers().get(LAYERS[i]).getObjects().
+                    getByType(PolylineMapObject.class)) {
+                Polyline line = polylineMapObject.getPolyline();
 
-                Rectangle rect = ((RectangleMapObject) mapObject).getRectangle();
+                float[] vertices = line.getTransformedVertices();
+                Vector2[] worldVertices = new Vector2[vertices.length / 2];
+
+                for (int j = 0; j < worldVertices.length; j++) {
+                    worldVertices[j] = new Vector2(vertices[j*2] / PPM, vertices[j*2+1] / PPM);
+                }
+
+                ChainShape chainShape = new ChainShape();
+                chainShape.createChain(worldVertices);
+
                 bodyDef.position.set(
-                        (rect.getX() + rect.getWidth() / 2) / PPM,
-                        (rect.getY() + rect.getHeight() / 2) / PPM);
+                        line.getOriginX() / PPM,
+                        line.getOriginY() / PPM);
+
                 body = world.createBody(bodyDef);
-                shape.setAsBox(rect.getWidth() / (2*PPM), rect.getHeight() / (2*PPM));
-                fixtureDef.shape = shape;
+                fixtureDef.shape = chainShape;
                 fixtureDef.filter.categoryBits = FILTER_BITS[i];
                 body.createFixture(fixtureDef);
             }
         }
-        shape.dispose();
-    }
-
-    private void addPlayerBody() {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        playerBody = world.createBody(bodyDef);
-
-        CircleShape shape = new CircleShape();
-        shape.setRadius(PLAYER_BODY_RADIUS / PPM);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the player starts in lane 1
-        playerBody.createFixture(fixtureDef);
 
         shape.dispose();
     }
 
-    private void switchLanes() {
-        // make the player jump
-        playerBody.applyLinearImpulse(JUMP_IMPULSE, playerBody.getWorldCenter(), true);
+    private void addPlayerBodies() {
+        for (int i = 0; i < nofPlayers; i++) {
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.position.set(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            Body playerBody = world.createBody(bodyDef);
 
-        // change the collision bits
-        Filter filter = playerBody.getFixtureList().first().getFilterData();
-        filter.maskBits = SECOND_LAYER_BITS;
-        playerBody.getFixtureList().first().setFilterData(filter);
+            // body fixture
+            CircleShape shape = new CircleShape();
+            shape.setRadius(PLAYER_BODY_RADIUS / PPM);
 
-        // scale the player
-        playerBody.getFixtureList().first().getShape().setRadius(5 / PPM);
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the activePlayer starts in lane 1
+            playerBody.createFixture(fixtureDef);
+            shape.dispose();
 
-        // change the map layer opacities
-        map.getLayers().get(FIRST_GFX_LAYER_NAME).setOpacity(1);
-        map.getLayers().get(SECOND_GFX_LAYER_NAME).setOpacity(0.5f);
+            // add foot fixture
+            PolygonShape polygonShape = new PolygonShape();
+            polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
+            fixtureDef.shape = polygonShape;
+            fixtureDef.isSensor = true;
+            playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
+            polygonShape.dispose();
+
+            players[i] = new Player(playerBody, i);
+        }
+
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.SPACE) {
+            players[activePlayerIdx].switchLanes();
+
+            boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+
+            // Tween animations
+            if (!playerIsOnFirstLane) {
+                Tween.to(opacityLayer1, -1, .5f)
+                        .target(.5f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+                Tween.to(opacityLayer2, -1, .5f)
+                        .target(1f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+            } else {
+                Tween.to(opacityLayer1, -1, .5f)
+                        .target(1f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+                Tween.to(opacityLayer2, -1, .5f)
+                        .target(.5f)
+                        .ease(TweenEquations.easeOutQuad)
+                        .start(tweener);
+            }
+        }
+
+        if (keycode == Input.Keys.R) {
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
+        }
+
+        return true;
     }
 
 }
