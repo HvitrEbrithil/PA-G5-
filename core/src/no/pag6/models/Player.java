@@ -29,6 +29,7 @@ public class Player extends Sprite implements Constants {
     private int id;
     private int nofLives;
     private boolean shouldSwitchFilterBits;
+    private boolean finished;
 
     public Player(OrthographicCamera cam, Body b2dBody, int id, int characterType) {
         this.cam = cam;
@@ -46,6 +47,14 @@ public class Player extends Sprite implements Constants {
 
         setBounds(0, 0, 75 / PPM, 100 / PPM);
         setRegion(playerTexture);
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
     public int getId() {
@@ -85,7 +94,7 @@ public class Player extends Sprite implements Constants {
 
         if (active) {
             Vector2 vel = b2dBody.getLinearVelocity();
-            float desiredVel = 2;
+            float desiredVel = PLAYER_MAX_VELOCITY;
             float velChange = desiredVel - vel.x;
             float impulse = b2dBody.getMass() * velChange;
             b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
@@ -93,11 +102,12 @@ public class Player extends Sprite implements Constants {
 
         if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
             // set filter bits
-            Filter filter = b2dBody.getFixtureList().first().getFilterData();
+            Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
             boolean wasFirst = filter.maskBits == FIRST_LAYER_BITS;
             filter.maskBits = wasFirst ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
-            b2dBody.getFixtureList().first().setFilterData(filter);
             b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+            filter.maskBits |= GOAL_LAYER_BITS;
+            b2dBody.getFixtureList().get(0).setFilterData(filter);
             shouldSwitchFilterBits = false;
         }
 
@@ -111,7 +121,7 @@ public class Player extends Sprite implements Constants {
     public void switchLanes() {
         // jump
         if (footContactCount > 0) {
-            b2dBody.applyLinearImpulse(JUMP_IMPULSE, b2dBody.getWorldCenter(), true);
+            b2dBody.setLinearVelocity(PLAYER_MAX_VELOCITY, 6);
         }
 
         shouldSwitchFilterBits = ! shouldSwitchFilterBits;
