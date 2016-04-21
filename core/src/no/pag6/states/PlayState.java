@@ -144,13 +144,21 @@ public class PlayState extends State {
         // update the Tiled map renderer
         mapRenderer.setView(cam);
 
+        // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
             // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             players[activePlayerIdx].active = true;
-            players[activePlayerIdx].incrementFootContactCount();
+            if (nofPlayers > 1) {
+                players[activePlayerIdx].incrementFootContactCount();
+            }
             cl.setPlayer(players[activePlayerIdx]);
+        }
+
+        // check finish
+        if (players[activePlayerIdx].isFinished()) {
+            System.out.println("finish");
         }
     }
 
@@ -249,7 +257,13 @@ public class PlayState extends State {
                 body = world.createBody(bodyDef);
                 fixtureDef.shape = chainShape;
                 fixtureDef.filter.categoryBits = FILTER_BITS[i];
-                body.createFixture(fixtureDef);
+                if (LAYERS[i].equals(GOAL_COLLISION_NAME)) {
+                    fixtureDef.isSensor = true;
+                }
+                Fixture fixture = body.createFixture(fixtureDef);
+                if (LAYERS[i].equals(GOAL_COLLISION_NAME)) {
+                    fixture.setUserData("goal");
+                }
             }
         }
 
@@ -269,7 +283,7 @@ public class PlayState extends State {
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
-            fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the activePlayer starts in lane 1
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS | GOAL_LAYER_BITS; // the activePlayer starts in lane 1
             playerBody.createFixture(fixtureDef);
             shape.dispose();
 
@@ -278,6 +292,7 @@ public class PlayState extends State {
             polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
             fixtureDef.shape = polygonShape;
             fixtureDef.isSensor = true;
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS;
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 

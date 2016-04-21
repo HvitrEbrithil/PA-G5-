@@ -47,6 +47,13 @@ public class MyContactListener implements ContactListener {
                 player.decrementFootContactCount();
             }
         }
+
+        if (fixtureA.getUserData() != null && fixtureA.getUserData().equals("goal")) {
+            player.setFinished(true);
+        }
+        if (fixtureB.getUserData() != null && fixtureB.getUserData().equals("goal")) {
+            player.setFinished(true);
+        }
     }
 
     public boolean isPlayerOnGround() {
