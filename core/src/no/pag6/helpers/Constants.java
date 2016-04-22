@@ -37,4 +37,8 @@ public interface Constants {
 
     float PLAYER_MAX_VELOCITY = 2;
 
+    // Game
+    int MAX_PLAYERS = 8;
+    int HIGHSCORES_TO_SHOW = 10;
+
 }

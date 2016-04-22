@@ -14,9 +14,11 @@ import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 
-public class State implements Screen, InputProcessor, Constants {
+public abstract class State implements Screen, InputProcessor, Constants {
 
     public static final String TAG = "State";
+
+    protected float runTime = 0.0f;
 
     protected PAG6Game game;
     protected OrthographicCamera cam;
@@ -37,8 +39,6 @@ public class State implements Screen, InputProcessor, Constants {
 
     @Override
     public void show() {
-        Gdx.app.log(TAG, "show called");
-
         Gdx.input.setInputProcessor(this);
     }
 
@@ -63,7 +63,6 @@ public class State implements Screen, InputProcessor, Constants {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log(TAG, "resize called");
         viewport.update(width, height);
     }
 
@@ -128,6 +127,12 @@ public class State implements Screen, InputProcessor, Constants {
     }
 
     public void update(float delta) {
+        runTime += delta;
+
+        // Music
+        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying()) {
+            AssetLoader.backgroundMusic.play();
+        }
     }
 
     private void initBackground() {

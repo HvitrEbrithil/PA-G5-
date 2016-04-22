@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 public class CharacterMenu extends State {
 
     private int nofPlayers;
-    private final String nofPlayersPattern = "^[1-8]$";
+    private final String nofPlayersPattern = "^[1-" + MAX_PLAYERS + "]$";
     private final String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
     private List<String> playerNames;
     private int currentPlayer = 0;
 
     // Renderers
-    private GlyphLayout gl = new GlyphLayout();
 
     // Game objects
 
     // Game assets
-    BitmapFont font;
+    private GlyphLayout gl = new GlyphLayout();
+    private BitmapFont font;
 
     // Tween assets
 
@@ -67,10 +67,6 @@ public class CharacterMenu extends State {
     }
 
     @Override
-    public void update(float delta) {
-    }
-
-    @Override
     public void dispose() {
         super.dispose();
 
@@ -98,8 +94,7 @@ public class CharacterMenu extends State {
         if (buttonsEnabled) {
             if (backButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().popScreen();
-            }
-            if (playButton.isTouchUp(projected.x, projected.y)) {
+            } else if (playButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, MAP_EASY_1_NAME));
             }
         }
@@ -181,7 +176,7 @@ public class CharacterMenu extends State {
                     }
                 });
             }
-        }, "Enter number of players", "", "From 1 to 8 players");
+        }, "Enter number of players", "", "from 1 to " + MAX_PLAYERS + " players");
     }
 
     private void takePlayerName() {
@@ -193,7 +188,6 @@ public class CharacterMenu extends State {
                     playerNames.set(currentPlayer, modifiedName);
                     currentPlayer++;
                 }
-                System.out.println("currentPlayer = " + currentPlayer);
                 if (currentPlayer < nofPlayers) {
                     takePlayerName();
                 } else {
@@ -210,7 +204,7 @@ public class CharacterMenu extends State {
                     }
                 });
             }
-        }, "Enter name of player " + (currentPlayer + 1) + "/" + nofPlayers, "", "No numbers or special characters");
+        }, "Enter name of player " + (currentPlayer + 1) + "/" + nofPlayers, "", "no numbers or special characters");
     }
 
     private void drawUI() {

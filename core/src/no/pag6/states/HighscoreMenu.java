@@ -1,48 +1,40 @@
 package no.pag6.states;
 
-import aurelienribon.tweenengine.TweenManager;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HighscoreMenu extends State {
 
-    // Renderers
-    private ShapeRenderer drawer;
-    private TweenManager tweener;
-
-    // Game objects
-
     // Game assets
-
-    // Tween assets
+    private GlyphLayout gl = new GlyphLayout();
+    private BitmapFont font;
 
     // Game UI
-    private List<SimpleButton> highscoreMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton backButton;
     private Sprite highscoreTitle;
+
+    // Highscores
+    List<String> highscorePlayers;
+    List<String> highscores;
 
     public HighscoreMenu(PAG6Game game) {
         super(game);
 
-        // Set up drawer and batcher
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
-
         // Init objects and assets
-        initTweenAssets();
-
-        initGameObjects();
-        initGameAssets();
-
         initUI();
+
+        getPlayerHighscores();
     }
 
     @Override
@@ -57,10 +49,6 @@ public class HighscoreMenu extends State {
         drawUI();
 
         game.spriteBatch.end();
-    }
-
-    @Override
-    public void update(float delta) {
     }
 
     @Override
@@ -85,29 +73,18 @@ public class HighscoreMenu extends State {
         return true;
     }
 
-    private void initTweenAssets() {
-        // Register Tween Assets
-
-        tweener = new TweenManager();
-
-        // Tween animations
-    }
-
-    private void initGameObjects() {
-    }
-
-    private void initGameAssets() {
-    }
-
     private void initUI() {
         TextureRegion region;
         float regionWidth, regionHeight;
 
         // Buttons
-        backButton = new SimpleButton(64, 64,
-                AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonDown.getRegionHeight(),
+        region = AssetLoader.backButtonUp;
+        regionWidth = region.getRegionWidth();
+        regionHeight = region.getRegionHeight();
+        backButton = new SimpleButton(
+                64, 64,
+                regionWidth, regionHeight,
                 AssetLoader.backButtonUp, AssetLoader.backButtonDown);
-        highscoreMenuButtons.add(backButton);
 
         // Title
         region = AssetLoader.highscoreTitle;
@@ -116,11 +93,37 @@ public class HighscoreMenu extends State {
         highscoreTitle = new Sprite(region);
         highscoreTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
         highscoreTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
+
+        // Font
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
+    }
+
+    private void getPlayerHighscores() {
+        highscorePlayers = Arrays.asList(AssetLoader.getHighscorePlayers().split(","));
+        highscores = Arrays.asList(AssetLoader.getHighscores().split(","));
+
+        int maxIndex = (HIGHSCORES_TO_SHOW < highscores.size()) ? HIGHSCORES_TO_SHOW : highscores.size();
+        highscorePlayers = highscorePlayers.subList(0, maxIndex);
+        highscores = highscores.subList(0, maxIndex);
     }
 
     private void drawUI() {
-        for (SimpleButton button : highscoreMenuButtons) {
-            button.draw(game.spriteBatch);
+        backButton.draw(game.spriteBatch);
+
+        // Player highscores
+        if (highscorePlayers.get(0).equals("")) {
+            gl.setText(font, "NO HIGHSCORES YET");
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT/2 + gl.height/2);
+        } else {
+            for (int i = 0; i < highscores.size(); i++) {
+                gl.setText(font, highscorePlayers.get(i) + ": " + highscores.get(i));
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(18 - i)/24 + gl.height/2);
+            }
         }
 
         highscoreTitle.draw(game.spriteBatch);

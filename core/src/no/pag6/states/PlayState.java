@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
-import no.pag6.helpers.GameStateManager;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.models.Player;
 import no.pag6.tweenaccessors.Value;
@@ -28,7 +27,7 @@ import java.util.List;
 
 public class PlayState extends State {
 
-    private float runTime = 0.0f;
+    private float playTime = 0.0f;
     private float countdownTime = 3.5f;
     private boolean startSoundPlayed = false;
 
@@ -119,12 +118,12 @@ public class PlayState extends State {
         }
 
         // This should be started when game starts and in case of player change
-        if (!startSoundPlayed) {
+        if (!startSoundPlayed && AssetLoader.getSoundOn()) {
             AssetLoader.countdownSound.play(0.5f);
             startSoundPlayed = true;
         }
-        if (runTime < countdownTime) {
-            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        if (playTime < countdownTime) {
+            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
         game.spriteBatch.end();
@@ -134,11 +133,13 @@ public class PlayState extends State {
 
     @Override
     public void update(float delta) {
-        runTime += delta;
+        super.update(delta);
+
+        playTime += delta;
 
         tweener.update(delta);
 
-        if (runTime > countdownTime) {
+        if (playTime > countdownTime) {
             world.step(TIME_STEP, 6, 2); // update physics
         }
 
@@ -149,8 +150,8 @@ public class PlayState extends State {
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
-        if (playerPos.y < A_HEIGHT/2) {
-            cam.position.y = A_HEIGHT/2;
+        if (playerPos.y < A_HEIGHT*1.8f) {
+            cam.position.y = A_HEIGHT*1.8f;
         } else {
             cam.position.y = playerPos.y; // center the camera around the activePlayer
         }
@@ -179,6 +180,10 @@ public class PlayState extends State {
 
         // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
+            // TODO: Move this if-loop to where the real final death of a player occurs
+            if (!players[activePlayerIdx].isKilled()) {
+                players[activePlayerIdx].kill();
+            }
             // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
@@ -187,6 +192,11 @@ public class PlayState extends State {
                 players[activePlayerIdx].incrementFootContactCount();
             }
             cl.setPlayer(players[activePlayerIdx]);
+
+            // Tween values
+            opacityLayer1.setValue(1f);
+            opacityLayer2.setValue(.5f);
+            cameraZoom.setValue(1f);
         }
 
         // check finish
@@ -330,19 +340,19 @@ public class PlayState extends State {
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 
-            players[i] = new Player(cam, playerBody, i, playerNames != null ? playerNames.get(i) : "", i + 1);
+            players[i] = new Player(cam, playerBody, i, playerNames.get(i), i + 1);
         }
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE && runTime > countdownTime) {
+        if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
             players[activePlayerIdx].switchLanes();
 
             tweenLayers();
         }
 
-        if (keycode == Input.Keys.UP && runTime > countdownTime) {
+        if (keycode == Input.Keys.UP && playTime > countdownTime) {
             players[activePlayerIdx].jump();
         }
 
