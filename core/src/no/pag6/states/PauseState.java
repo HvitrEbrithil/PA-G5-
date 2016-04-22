@@ -35,6 +35,8 @@ public class PauseState extends State {
     public PauseState(PAG6Game game) {
         super(game);
 
+        AssetLoader.countdownSound.pause();
+
         // Set up drawer and batcher
         drawer = new ShapeRenderer();
         drawer.setProjectionMatrix(cam.combined);
@@ -85,6 +87,8 @@ public class PauseState extends State {
         projected = viewport.unproject(touchPoint);
 
         if (resumeButton.isTouchUp(projected.x, projected.y)) {
+            AssetLoader.countdownSound.resume();
+            AssetLoader.backgroundMusic.pause();
             game.getGameStateManager().popScreen();
         } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
