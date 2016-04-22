@@ -26,7 +26,7 @@ public abstract class State implements Screen, InputProcessor, Constants {
     protected Vector3 projected, touchPoint = new Vector3(0, 0, 0);
 
     // Background
-    private Sprite background;
+    private  Sprite background;
 
     public State(PAG6Game game) {
         this.game = game;
@@ -130,7 +130,7 @@ public abstract class State implements Screen, InputProcessor, Constants {
         runTime += delta;
 
         // Music
-        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying()) {
+        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying() && ! (game.getGameStateManager().getScreen() instanceof PlayState)) {
             AssetLoader.backgroundMusic.play();
         }
     }

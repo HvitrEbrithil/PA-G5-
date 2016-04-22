@@ -228,6 +228,7 @@ public class PlayState extends State {
 
         if (pauseButton.isTouchUp(projected.x, projected.y)) {
             AssetLoader.backgroundMusic.play();
+            AssetLoader.countdownSound.pause();
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
 

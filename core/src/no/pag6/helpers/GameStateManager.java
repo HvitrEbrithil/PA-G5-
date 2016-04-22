@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import java.util.Stack;
 
 import no.pag6.game.PAG6Game;
+import no.pag6.states.State;
 
 /**
  * Created by Tobias on 18.04.2016.
@@ -33,6 +34,10 @@ public class GameStateManager {
     public void setScreen(Screen screen) {
         screens.pop();
         pushScreen(screen);
+    }
+
+    public Screen getScreen() {
+        return screens.peek();
     }
 
 }
