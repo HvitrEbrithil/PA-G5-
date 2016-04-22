@@ -226,16 +226,6 @@ public class CharacterMenu extends State {
                 String players = "";
                 for (int i = 0; i < nofPlayers; i++) {
                     players += playerNames.get(i) + "\n";
-                    //if (i == nofPlayers - 2) {
-                    //    players += " &";
-                    //} else if (i < nofPlayers - 1) {
-                    //    players += ",";
-                    //}
-                    //if ((i + 1)%2 == 0) {
-                    //    players += "\n";
-                    //} else {
-                    //    players += " ";
-                    //}
                 }
                 players = players.trim();
                 gl.setText(font, players);

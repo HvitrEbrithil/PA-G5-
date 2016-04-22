@@ -158,8 +158,7 @@ public class GameOverState extends State {
         String scores = "";
 
         for (int i = 1; i <= players.length; i++) {
-            String scoreString = "" + players[i-1].getName() + ": " + Integer.toString(players[i-1].getScore());
-            scores += scoreString + "\n";
+           scores += players[i-1].getName() + ": " + Integer.toString(players[i-1].getScore()) + "\n";
         }
 
         gl.setText(font, scores);

@@ -128,13 +128,13 @@ public class PauseState extends State {
         );
         pauseButtons.add(resumeButton);
 
-        region = AssetLoader.highscoreButtonUp;
+        region = AssetLoader.highscoresButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         highscoreButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*12/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
+                AssetLoader.highscoresButtonUp, AssetLoader.highscoresButtonDown
         );
         pauseButtons.add(highscoreButton);
 
