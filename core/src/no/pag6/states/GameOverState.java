@@ -123,7 +123,7 @@ public class GameOverState extends State {
         regionWidth = region.getRegionWidth()*uiScale;
         regionHeight = region.getRegionHeight()*uiScale;
         mainMenuButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*1/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*3/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );

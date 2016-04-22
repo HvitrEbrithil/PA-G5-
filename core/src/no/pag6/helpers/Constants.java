@@ -11,7 +11,7 @@ public interface Constants {
     float TIME_STEP = 1/60f;
 
     // UI
-    float UI_SCALE = 0.4f;
+    float UI_SCALE = 0.6f;
 
     // Play state
     Vector2 GRAVITY = new Vector2(0, -10),
@@ -33,7 +33,7 @@ public interface Constants {
     short FIRST_LAYER_BITS = 2, SECOND_LAYER_BITS = 4, GOAL_LAYER_BITS = 8;
     short[] FILTER_BITS = {FIRST_LAYER_BITS, SECOND_LAYER_BITS, GOAL_LAYER_BITS};
 
-    int INIT_PLAYER_POS_X = 1155, INIT_PLAYER_POS_Y = 600, PLAYER_BODY_RADIUS = 10;
+    int INIT_PLAYER_POS_X = 1155, INIT_PLAYER_POS_Y = 1700, PLAYER_BODY_RADIUS = 10;
 
     float PLAYER_MAX_VELOCITY = 2;
 

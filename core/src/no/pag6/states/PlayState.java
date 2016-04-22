@@ -28,17 +28,19 @@ import java.util.List;
 
 public class PlayState extends State {
 
-    private float counttime = 0.0f;
-    private float playtime = 0.0f;
+    private float runTime = 0.0f;
+    private float countdownTime = 3.5f;
+    private boolean startSoundPlayed = false;
 
     // Player stats
     private int nofPlayers;
-    private List<String> playerNames;
 
     private Player[] players;
+    private List<String> playerNames;
     private int activePlayerIdx;
 
     // map stuff
+    private String mapFileName;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
 
@@ -57,6 +59,7 @@ public class PlayState extends State {
     // Tween assets
     private Value opacityLayer1 = new Value();
     private Value opacityLayer2 = new Value();
+    private Value cameraZoom = new Value();
 
     // Game UI
     float tempUIScale = .2f/PPM;
@@ -67,6 +70,8 @@ public class PlayState extends State {
         super(game);
         this.nofPlayers = nofPlayers;
         this.playerNames = playerNames;
+        this.mapFileName = mapFileName;
+
         players = new Player[nofPlayers];
         activePlayerIdx = 0;
 
@@ -115,38 +120,41 @@ public class PlayState extends State {
         }
 
         // This should be started when game starts and in case of player change
-        if (counttime < 3.5f) {
-            counttime += delta;
-
-            if (counttime == delta) {
-                AssetLoader.countdownSound.play(0.5f);
-            }
-
-            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(counttime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        if (!startSoundPlayed) {
+            AssetLoader.countdownSound.play(0.5f);
+            startSoundPlayed = true;
+        }
+        if (runTime < countdownTime) {
+            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
         game.spriteBatch.end();
-        //b2dr.render(world, cam.combined);
+        // TODO: Remove before release
+        b2dr.render(world, cam.combined);
     }
 
     @Override
     public void update(float delta) {
+        runTime += delta;
+
         tweener.update(delta);
 
-        if (counttime > 3.5f) {
-            playtime += delta;
-
+        if (runTime > countdownTime) {
             world.step(TIME_STEP, 6, 2); // update physics
         }
 
         // update camera
         Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
-        if (playerPos.x < A_WIDTH / 2) {
-            cam.position.x = A_WIDTH / 2;
+        if (playerPos.x < A_WIDTH/2) {
+            cam.position.x = A_WIDTH/2;
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
-        cam.position.y = playerPos.y; // center the camera around the activePlayer
+        if (playerPos.y < A_HEIGHT/2) {
+            cam.position.y = A_HEIGHT/2;
+        } else {
+            cam.position.y = playerPos.y; // center the camera around the activePlayer
+        }
         cam.update();
         // update the players
         for (Player player : players) {
@@ -158,11 +166,14 @@ public class PlayState extends State {
         pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
         pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
 
+        // Layer-change
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
         map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
 
         map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
         map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
+
+        cam.zoom = cameraZoom.getValue();
 
         // update the Tiled map renderer
         mapRenderer.setView(cam);
@@ -221,6 +232,7 @@ public class PlayState extends State {
 
         opacityLayer1.setValue(1f);
         opacityLayer2.setValue(.5f);
+        cameraZoom.setValue(1f);
     }
 
     private void initUI() {
@@ -319,41 +331,27 @@ public class PlayState extends State {
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 
-            players[i] = new Player(cam, playerBody, i, playerNames.get(i), i+1);
+            players[i] = new Player(cam, playerBody, i, playerNames != null ? playerNames.get(i) : "", i + 1);
         }
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE) {
+        if (keycode == Input.Keys.SPACE && runTime > countdownTime) {
             players[activePlayerIdx].switchLanes();
 
-            boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+            tweenLayers();
+        }
 
-            // Tween animations
-            if (!playerIsOnFirstLane) {
-                Tween.to(opacityLayer1, -1, .5f)
-                        .target(.5f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-                Tween.to(opacityLayer2, -1, .5f)
-                        .target(1f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-            } else {
-                Tween.to(opacityLayer1, -1, .5f)
-                        .target(1f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-                Tween.to(opacityLayer2, -1, .5f)
-                        .target(.5f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-            }
+        if (keycode == Input.Keys.UP && runTime > countdownTime) {
+            players[activePlayerIdx].jump();
         }
 
         if (keycode == Input.Keys.R) {
-            game.getGameStateManager().setScreen(new PlayState(game, 1, null, MAP_EASY_1_NAME));
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, mapFileName));
+        }
+        if (keycode == Input.Keys.Q) {
+            System.exit(0);
         }
 
         // TODO: This shall be placed where GameOverState is the argument of setScreen and not generated by key action
@@ -362,6 +360,37 @@ public class PlayState extends State {
         }
 
         return true;
+    }
+
+    private void tweenLayers() {
+        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        if (!playerIsOnFirstLane) {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(.9f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        } else {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        }
     }
 
 }

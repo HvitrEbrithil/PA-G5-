@@ -7,9 +7,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 import no.pag6.helpers.GameStateManager;
-import no.pag6.models.Player;
-import no.pag6.states.GameOverState;
 import no.pag6.states.SplashScreen;
+
 
 public class PAG6Game extends Game implements Constants {
 
