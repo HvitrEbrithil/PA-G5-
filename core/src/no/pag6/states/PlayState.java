@@ -114,7 +114,13 @@ public class PlayState extends State {
 
         drawUI();
         for (Player player : players) {
-            player.draw(game.spriteBatch);
+            if (player != players[activePlayerIdx]) {
+                game.spriteBatch.setColor(1, 1, 1, .2f);
+                player.draw(game.spriteBatch);
+                game.spriteBatch.setColor(1, 1, 1, 1);
+            } else {
+                player.draw(game.spriteBatch);
+            }
         }
 
         // This should be started when game starts and in case of player change
