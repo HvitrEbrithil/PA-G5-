@@ -27,7 +27,7 @@ public class PAG6Game extends Game implements Constants {
 
         AssetLoader.load();
 
-//        gameStateManager.pushScreen(new PlayState(this, 1, null, MAP_EASY_1_NAME)); // TODO: Set to SS when done debugging
+//        gameStateManager.pushScreen(new PlayState(this, 3, Arrays.asList("SPILLER EN", "SPILLER TO", "SPILLER TRE"), MAP_EASY_1_NAME)); // TODO: Set to SS when done debugging
 //        gameStateManager.pushScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
         gameStateManager.pushScreen(new SplashScreen(this));
     }
