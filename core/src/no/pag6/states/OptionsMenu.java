@@ -111,13 +111,11 @@ public class OptionsMenu extends State {
 
         // Buttons
         region = al.backButtonUp;
-        regionWidth = region.getRegionWidth();
-        regionHeight = region.getRegionHeight();
-        backButton = new SimpleButton(
-                64, 64,
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
+        backButton = new SimpleButton(V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                al.backButtonUp, al.backButtonDown
-        );
+                al.backButtonUp, al.backButtonDown);
 
         float tempUIScale = UI_SCALE*.5f;
 
@@ -125,7 +123,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         musicOnButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.onButtonUp, al.onButtonDown
         );
@@ -134,7 +132,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         musicOffButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.offButtonUp, al.offButtonDown
         );
@@ -143,7 +141,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOnButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.onButtonUp, al.onButtonDown
         );
@@ -152,17 +150,17 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOffButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.offButtonUp, al.offButtonDown
         );
 
         // Title
         region = al.optionsTitle;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         optionsTitle = new Sprite(region);
-        optionsTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        optionsTitle.setSize(regionWidth, regionHeight);
         optionsTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         // Font
@@ -192,9 +190,9 @@ public class OptionsMenu extends State {
         }
 
         gl.setText(font, "MUSIC");
-        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*8/12 + gl.height/2);
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*14/24 + gl.height/2);
         gl.setText(font, "SOUND");
-        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*6/12 + gl.height/2);
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*10/24 + gl.height/2);
     }
 
 }

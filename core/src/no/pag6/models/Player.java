@@ -163,8 +163,8 @@ public class Player extends Sprite implements Constants {
         }
 
         // Push to prefs
-        al.setHighscorePlayers(String.join(",", highscorePlayers));
-        al.setHighscores(String.join(",", highscores));
+        al.setHighscorePlayers(joinStrings(highscorePlayers, ","));
+        al.setHighscores(joinStrings(highscores, ","));
     }
 
     public int getScore() {
@@ -296,6 +296,17 @@ public class Player extends Sprite implements Constants {
                     .ease(TweenEquations.easeOutQuad)
                     .start(tweener);
         }
+    }
+
+    private String joinStrings(List<String> stringArray, String delimiter) {
+        StringBuilder sbStr = new StringBuilder();
+        for (int i = 0, il = stringArray.size(); i < il; i++) {
+            if (i > 0)
+                sbStr.append(delimiter);
+            sbStr.append(stringArray.get(i));
+        }
+
+        return sbStr.toString();
     }
 
 }

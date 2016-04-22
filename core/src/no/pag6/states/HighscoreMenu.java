@@ -21,7 +21,7 @@ public class HighscoreMenu extends State {
 
     // Game UI
     private SimpleButton backButton;
-    private Sprite highscoreTitle;
+    private Sprite highscoresTitle;
 
     // Highscores
     List<String> highscorePlayers;
@@ -78,25 +78,24 @@ public class HighscoreMenu extends State {
 
         // Buttons
         region = al.backButtonUp;
-        regionWidth = region.getRegionWidth();
-        regionHeight = region.getRegionHeight();
-        backButton = new SimpleButton(
-                64, 64,
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
+        backButton = new SimpleButton(V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.backButtonUp, al.backButtonDown);
 
         // Title
-        region = al.highscoreTitle;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
-        highscoreTitle = new Sprite(region);
-        highscoreTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
-        highscoreTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
+        region = al.highscoresTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
+        highscoresTitle = new Sprite(region);
+        highscoresTitle.setSize(regionWidth, regionHeight);
+        highscoresTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         // Font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
+        parameter.size = 38;
         parameter.color = Color.BLACK;
         font = generator.generateFont(parameter);
         generator.dispose();
@@ -117,15 +116,20 @@ public class HighscoreMenu extends State {
         // Player highscores
         if (highscorePlayers.get(0).equals("")) {
             gl.setText(font, "NO HIGHSCORES YET");
-            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT/2 + gl.height/2);
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24 + gl.height/2);
         } else {
+            // Draw highscores
+            String highscoresString = "";
+
             for (int i = 0; i < highscores.size(); i++) {
-                gl.setText(font, highscorePlayers.get(i) + ": " + highscores.get(i));
-                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(18 - i)/24 + gl.height/2);
+                highscoresString += highscorePlayers.get(i) + ": " + highscores.get(i) + "\n";
             }
+
+            gl.setText(font, highscoresString);
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
         }
 
-        highscoreTitle.draw(game.spriteBatch);
+        highscoresTitle.draw(game.spriteBatch);
     }
 
 }

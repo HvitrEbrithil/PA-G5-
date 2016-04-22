@@ -35,7 +35,7 @@ public class MainMenu extends State {
     // Game UI
     private List<SimpleButton> mainMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton playButton;
-    private SimpleButton highscoreButton;
+    private SimpleButton highscoresButton;
     private SimpleButton optionsButton;
     private SimpleButton quitButton;
     private Sprite logo;
@@ -80,7 +80,7 @@ public class MainMenu extends State {
         projected = viewport.unproject(touchPoint);
 
         playButton.isTouchDown(projected.x, projected.y);
-        highscoreButton.isTouchDown(projected.x, projected.y);
+        highscoresButton.isTouchDown(projected.x, projected.y);
         optionsButton.isTouchDown(projected.x, projected.y);
         quitButton.isTouchDown(projected.x, projected.y);
 
@@ -94,7 +94,7 @@ public class MainMenu extends State {
 
         if (playButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new CharacterMenu(game));
-        } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
+        } else if (highscoresButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
@@ -134,15 +134,15 @@ public class MainMenu extends State {
         );
         mainMenuButtons.add(playButton);
 
-        region = al.highscoreButtonUp;
+        region = al.highscoresButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
-        highscoreButton = new SimpleButton(
+        highscoresButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                al.highscoreButtonUp, al.highscoreButtonDown
+                al.highscoresButtonUp, al.highscoresButtonDown
         );
-        mainMenuButtons.add(highscoreButton);
+        mainMenuButtons.add(highscoresButton);
 
         region = al.optionsButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;

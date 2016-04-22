@@ -128,17 +128,17 @@ public class CharacterMenu extends State {
 
         // Titles
         region = al.playerTitle;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playerTitle = new Sprite(region);
-        playerTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        playerTitle.setSize(regionWidth, regionHeight);
         playerTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         region = al.playersTitle;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playersTitle = new Sprite(region);
-        playersTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        playersTitle.setSize(regionWidth, regionHeight);
         playersTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
@@ -225,16 +225,6 @@ public class CharacterMenu extends State {
                 String players = "";
                 for (int i = 0; i < nofPlayers; i++) {
                     players += playerNames.get(i) + "\n";
-                    //if (i == nofPlayers - 2) {
-                    //    players += " &";
-                    //} else if (i < nofPlayers - 1) {
-                    //    players += ",";
-                    //}
-                    //if ((i + 1)%2 == 0) {
-                    //    players += "\n";
-                    //} else {
-                    //    players += " ";
-                    //}
                 }
                 players = players.trim();
                 gl.setText(font, players);
@@ -242,7 +232,7 @@ public class CharacterMenu extends State {
             } else if (playerNames.size() > 0 && currentPlayer - 1 >= 0) {
                 String player1NameString = "PLAYER " + (currentPlayer) + ": " + playerNames.get(currentPlayer - 1);
                 gl.setText(font, player1NameString);
-                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*22/24);
             }
         }
     }
