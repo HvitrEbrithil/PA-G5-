@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public interface Constants {
 
+    AssetLoader al = AssetLoader.getInstance();
+
     // Screen and viewport
     int V_WIDTH = 1600, V_HEIGHT = 900;
     float PPM = 100;

@@ -1,7 +1,6 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.models.Player;
 import no.pag6.ui.SimpleButton;
 
@@ -119,18 +117,18 @@ public class GameOverState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.mainMenuButtonUp;
+        region = al.mainMenuButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         mainMenuButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
+                al.mainMenuButtonUp, al.mainMenuButtonDown
         );
         gameOverButtons.add(mainMenuButton);
 
         // Title
-        region = AssetLoader.gameOverTitle;
+        region = al.gameOverTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         gameOverTitle = new Sprite(region);

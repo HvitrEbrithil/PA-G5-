@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 
 public abstract class State implements Screen, InputProcessor, Constants {
@@ -130,13 +129,13 @@ public abstract class State implements Screen, InputProcessor, Constants {
         runTime += delta;
 
         // Music
-        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying()) {
-            AssetLoader.backgroundMusic.play();
+        if (runTime > 2f && al.getMusicOn() && !al.backgroundMusic.isPlaying()) {
+            al.backgroundMusic.play();
         }
     }
 
     private void initBackground() {
-        TextureRegion region = AssetLoader.background;
+        TextureRegion region = al.background;
         background = new Sprite(region);
         background.setSize(V_WIDTH, V_HEIGHT);
         background.setPosition(0, 0);

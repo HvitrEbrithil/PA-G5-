@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
 import no.pag6.ui.SimpleButton;
@@ -125,48 +124,48 @@ public class MainMenu extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.playButtonUp;
+        region = al.playButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.3f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.3f;
         playButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.playButtonUp, AssetLoader.playButtonDown
+                al.playButtonUp, al.playButtonDown
         );
         mainMenuButtons.add(playButton);
 
-        region = AssetLoader.highscoreButtonUp;
+        region = al.highscoreButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         highscoreButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
+                al.highscoreButtonUp, al.highscoreButtonDown
         );
         mainMenuButtons.add(highscoreButton);
 
-        region = AssetLoader.optionsButtonUp;
+        region = al.optionsButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         optionsButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*7/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
+                al.optionsButtonUp, al.optionsButtonDown
         );
         mainMenuButtons.add(optionsButton);
 
-        region = AssetLoader.quitButtonUp;
+        region = al.quitButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         quitButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.quitButtonUp, AssetLoader.quitButtonDown
+                al.quitButtonUp, al.quitButtonDown
         );
         mainMenuButtons.add(quitButton);
 
         // Logo and copyright
-        region = AssetLoader.logo;
+        region = al.logo;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         logo = new Sprite(region);

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
 import java.util.Arrays;
@@ -78,16 +77,16 @@ public class HighscoreMenu extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.backButtonUp;
+        region = al.backButtonUp;
         regionWidth = region.getRegionWidth();
         regionHeight = region.getRegionHeight();
         backButton = new SimpleButton(
                 64, 64,
                 regionWidth, regionHeight,
-                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
+                al.backButtonUp, al.backButtonDown);
 
         // Title
-        region = AssetLoader.highscoreTitle;
+        region = al.highscoreTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         highscoreTitle = new Sprite(region);
@@ -104,8 +103,8 @@ public class HighscoreMenu extends State {
     }
 
     private void getPlayerHighscores() {
-        highscorePlayers = Arrays.asList(AssetLoader.getHighscorePlayers().split(","));
-        highscores = Arrays.asList(AssetLoader.getHighscores().split(","));
+        highscorePlayers = Arrays.asList(al.getHighscorePlayers().split(","));
+        highscores = Arrays.asList(al.getHighscores().split(","));
 
         int maxIndex = (HIGHSCORES_TO_SHOW < highscores.size()) ? HIGHSCORES_TO_SHOW : highscores.size();
         highscorePlayers = highscorePlayers.subList(0, maxIndex);

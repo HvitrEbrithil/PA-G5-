@@ -2,9 +2,9 @@ package no.pag6.models;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.Constants;
 
-public class PlayerCharacter {
+public class PlayerCharacter implements Constants {
     private Texture characterTexture;
     private Animation characterAnimation;
 
@@ -12,62 +12,62 @@ public class PlayerCharacter {
         switch (colorCode) {
             // Blue
             case(1):
-                characterTexture = AssetLoader.characterBlueTexture;
-                characterAnimation = AssetLoader.characterBlueAnimation;
+                characterTexture = al.characterBlueTexture;
+                characterAnimation = al.characterBlueAnimation;
 
                 break;
 
             // Green
             case(2):
-                characterTexture = AssetLoader.characterGreenTexture;
-                characterAnimation = AssetLoader.characterGreenAnimation;
+                characterTexture = al.characterGreenTexture;
+                characterAnimation = al.characterGreenAnimation;
 
                 break;
 
             // Orange
             case(3):
-                characterTexture = AssetLoader.characterOrangeTexture;
-                characterAnimation = AssetLoader.characterOrangeAnimation;
+                characterTexture = al.characterOrangeTexture;
+                characterAnimation = al.characterOrangeAnimation;
 
                 break;
 
             // Pink
             case(4):
-                characterTexture = AssetLoader.characterPinkTexture;
-                characterAnimation = AssetLoader.characterPinkAnimation;
+                characterTexture = al.characterPinkTexture;
+                characterAnimation = al.characterPinkAnimation;
 
                 break;
 
             // Purple
             case(5):
-                characterTexture = AssetLoader.characterPurpleTexture;
-                characterAnimation = AssetLoader.characterPurpleAnimation;
+                characterTexture = al.characterPurpleTexture;
+                characterAnimation = al.characterPurpleAnimation;
 
                 break;
 
             // Red
             case(6):
-                characterTexture = AssetLoader.characterRedTexture;
-                characterAnimation = AssetLoader.characterRedAnimation;
+                characterTexture = al.characterRedTexture;
+                characterAnimation = al.characterRedAnimation;
 
                 break;
 
             // Silver
             case(7):
-                characterTexture = AssetLoader.characterSilverTexture;
-                characterAnimation = AssetLoader.characterSilverAnimation;
+                characterTexture = al.characterSilverTexture;
+                characterAnimation = al.characterSilverAnimation;
 
                 break;
 
             // Yellow
             case(8):
-                characterTexture = AssetLoader.characterYellowTexture;
-                characterAnimation = AssetLoader.characterYellowAnimation;
+                characterTexture = al.characterYellowTexture;
+                characterAnimation = al.characterYellowAnimation;
 
                 break;
 
             default:
-                characterTexture = AssetLoader.characterBlueTexture;
+                characterTexture = al.characterBlueTexture;
 
                 break;
         }

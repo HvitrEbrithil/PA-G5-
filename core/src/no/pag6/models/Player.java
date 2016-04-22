@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
@@ -119,8 +118,8 @@ public class Player extends Sprite implements Constants {
     }
 
     public int getHighscore() {
-        List<String> highscorePlayers = Arrays.asList(AssetLoader.getHighscorePlayers().split(","));
-        List<String> highscores = Arrays.asList(AssetLoader.getHighscores().split(","));
+        List<String> highscorePlayers = Arrays.asList(al.getHighscorePlayers().split(","));
+        List<String> highscores = Arrays.asList(al.getHighscores().split(","));
         for (int i = 0; i < highscores.size(); i++) {
             if (highscorePlayers.get(i).equals(name)) {
                 return Integer.valueOf(highscores.get(i));
@@ -132,8 +131,8 @@ public class Player extends Sprite implements Constants {
     public void setHighscore() {
         int playerIndex = -1;
 
-        ArrayList<String> highscorePlayers = new ArrayList<String>(Arrays.asList(AssetLoader.getHighscorePlayers().split(",")));
-        ArrayList<String> highscores = new ArrayList<String>(Arrays.asList(AssetLoader.getHighscores().split(",")));
+        ArrayList<String> highscorePlayers = new ArrayList<String>(Arrays.asList(al.getHighscorePlayers().split(",")));
+        ArrayList<String> highscores = new ArrayList<String>(Arrays.asList(al.getHighscores().split(",")));
         for (int i = 0; i < highscores.size(); i++) {
             if (highscorePlayers.get(i).equals(name)) {
                 playerIndex = i;
@@ -164,8 +163,8 @@ public class Player extends Sprite implements Constants {
         }
 
         // Push to prefs
-        AssetLoader.setHighscorePlayers(String.join(",", highscorePlayers));
-        AssetLoader.setHighscores(String.join(",", highscores));
+        al.setHighscorePlayers(String.join(",", highscorePlayers));
+        al.setHighscores(String.join(",", highscores));
     }
 
     public int getScore() {
@@ -244,8 +243,8 @@ public class Player extends Sprite implements Constants {
 
         onFirstLane = !onFirstLane;
 
-        if (AssetLoader.getSoundOn()) {
-            AssetLoader.swooshSound.play(0.3f);
+        if (al.getSoundOn()) {
+            al.swooshSound.play(0.3f);
         }
     }
 
