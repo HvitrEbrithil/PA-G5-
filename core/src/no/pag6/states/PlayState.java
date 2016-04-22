@@ -62,7 +62,6 @@ public class PlayState extends State {
     private Value cameraZoom = new Value();
 
     // Game UI
-    float tempUIScale = .2f/PPM;
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
     private SimpleButton pauseButton;
 
@@ -241,8 +240,8 @@ public class PlayState extends State {
 
         // Buttons
         region = AssetLoader.pauseButtonUp;
-        regionWidth = region.getRegionWidth()*tempUIScale;
-        regionHeight = region.getRegionHeight()*tempUIScale;
+        regionWidth = region.getRegionWidth()*.22f*UI_SCALE/PPM;;
+        regionHeight = region.getRegionHeight()*.22f*UI_SCALE/PPM;;
         pauseButton = new SimpleButton(
                 0, 500/PPM + A_HEIGHT/2 - 8/PPM,
                 regionWidth, regionHeight,

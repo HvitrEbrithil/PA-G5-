@@ -118,43 +118,41 @@ public class PauseState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        uiScale = 0.67f;
-
         region = AssetLoader.resumeButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         resumeButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*16/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.resumeButtonUp, AssetLoader.resumeButtonDown
         );
         pauseButtons.add(resumeButton);
 
         region = AssetLoader.highscoreButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         highscoreButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*12/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
         );
         pauseButtons.add(highscoreButton);
 
         region = AssetLoader.optionsButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         optionsButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
         );
         pauseButtons.add(optionsButton);
 
         region = AssetLoader.mainMenuButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         mainMenuButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*2/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
