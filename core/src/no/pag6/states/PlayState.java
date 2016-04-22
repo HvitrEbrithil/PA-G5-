@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
-import no.pag6.helpers.GameStateManager;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.models.Player;
 import no.pag6.tweenaccessors.Value;
@@ -152,8 +151,8 @@ public class PlayState extends State {
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
-        if (playerPos.y < A_HEIGHT/2) {
-            cam.position.y = A_HEIGHT/2;
+        if (playerPos.y < A_HEIGHT*1.8f) {
+            cam.position.y = A_HEIGHT*1.8f;
         } else {
             cam.position.y = playerPos.y; // center the camera around the activePlayer
         }
@@ -194,6 +193,11 @@ public class PlayState extends State {
                 players[activePlayerIdx].incrementFootContactCount();
             }
             cl.setPlayer(players[activePlayerIdx]);
+
+            // Tween values
+            opacityLayer1.setValue(1f);
+            opacityLayer2.setValue(.5f);
+            cameraZoom.setValue(1f);
         }
 
         // check finish
@@ -337,7 +341,7 @@ public class PlayState extends State {
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 
-            players[i] = new Player(cam, playerBody, i, playerNames != null ? playerNames.get(i) : "", i + 1);
+            players[i] = new Player(cam, playerBody, i, playerNames.get(i), i + 1);
         }
     }
 

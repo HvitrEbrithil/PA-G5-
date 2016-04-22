@@ -96,6 +96,10 @@ public class HighscoreMenu extends State {
     private void getPlayerHighscores() {
         highscorePlayers = Arrays.asList(AssetLoader.getHighscorePlayers().split(","));
         highscores = Arrays.asList(AssetLoader.getHighscores().split(","));
+
+        int maxIndex = (HIGHSCORES_TO_SHOW < highscores.size()) ? HIGHSCORES_TO_SHOW : highscores.size();
+        highscorePlayers = highscorePlayers.subList(0, maxIndex);
+        highscores = highscores.subList(0, maxIndex);
     }
 
     private void drawUI() {

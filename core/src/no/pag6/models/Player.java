@@ -3,7 +3,6 @@ package no.pag6.models;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -135,8 +134,6 @@ public class Player extends Sprite implements Constants {
 
         ArrayList<String> highscorePlayers = new ArrayList<String>(Arrays.asList(AssetLoader.getHighscorePlayers().split(",")));
         ArrayList<String> highscores = new ArrayList<String>(Arrays.asList(AssetLoader.getHighscores().split(",")));
-        Gdx.app.log("HS", highscorePlayers.toString());
-        Gdx.app.log("HS", highscores.toString());
         for (int i = 0; i < highscores.size(); i++) {
             if (highscorePlayers.get(i).equals(name)) {
                 playerIndex = i;
@@ -150,15 +147,18 @@ public class Player extends Sprite implements Constants {
         }
 
         // Add new highscore
+        boolean scoreSet = false;
         if (!highscorePlayers.get(0).equals("")) {
             for (int i = 0; i < highscores.size(); i++) {
                 if (score > Integer.valueOf(highscores.get(i))) {
                     highscorePlayers.add(i, name);
                     highscores.add(i, String.valueOf(score));
+                    scoreSet = true;
                     break;
                 }
             }
-        } else {
+        }
+        if (!scoreSet) {
             highscorePlayers.add(name);
             highscores.add(String.valueOf(score));
         }
