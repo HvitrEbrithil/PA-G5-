@@ -128,7 +128,6 @@ public class PlayState extends State {
         }
 
         game.spriteBatch.end();
-
         // TODO: Remove before release
         b2dr.render(world, cam.combined);
     }
