@@ -113,8 +113,8 @@ public class CharacterMenu extends State {
 
         // Buttons
         region = AssetLoader.playButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playButton = new SimpleButton(
                 V_WIDTH*2/3 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
@@ -123,8 +123,8 @@ public class CharacterMenu extends State {
         characterMenuButtons.add(playButton);
 
         region = AssetLoader.mainMenuButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         backButton = new SimpleButton(
                 V_WIDTH/3 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,

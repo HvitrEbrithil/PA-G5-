@@ -119,13 +119,11 @@ public class GameOverState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        uiScale = 0.67f;
-
         region = AssetLoader.mainMenuButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         mainMenuButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*3/24 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
@@ -157,10 +155,14 @@ public class GameOverState extends State {
 
     private void drawScores() {
         // Draw name and score for each players
+        String scores = "";
+
         for (int i = 1; i <= players.length; i++) {
             String scoreString = "" + players[i-1].getName() + ": " + Integer.toString(players[i-1].getScore());
-            gl.setText(font, scoreString);
-            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(11-i)/12);
+            scores += scoreString + "\n";
         }
+
+        gl.setText(font, scores);
+        font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
     }
 }

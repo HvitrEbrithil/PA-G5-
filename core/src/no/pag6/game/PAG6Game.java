@@ -30,8 +30,7 @@ public class PAG6Game extends Game implements Constants {
 
         AssetLoader.load();
 
-        gameStateManager.pushScreen(new PauseState(this));
-                //new SplashScreen(this));
+        gameStateManager.pushScreen(new SplashScreen(this));
     }
 
     @Override
