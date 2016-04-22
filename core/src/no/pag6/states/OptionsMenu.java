@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
 public class OptionsMenu extends State {
@@ -42,8 +41,8 @@ public class OptionsMenu extends State {
         // Init objects and assets
         initUI();
 
-        musicOn = AssetLoader.getMusicOn();
-        soundOn = AssetLoader.getSoundOn();
+        musicOn = al.getMusicOn();
+        soundOn = al.getSoundOn();
     }
 
     @Override
@@ -88,18 +87,18 @@ public class OptionsMenu extends State {
         if (backButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
         } else if (musicOnButton.isTouchUp(projected.x, projected.y)) {
-            AssetLoader.setMusicOn(false);
+            al.setMusicOn(false);
             musicOn = false;
-            AssetLoader.backgroundMusic.pause();
+            al.backgroundMusic.pause();
         } else if (musicOffButton.isTouchUp(projected.x, projected.y)) {
-            AssetLoader.setMusicOn(true);
+            al.setMusicOn(true);
             musicOn = true;
-            AssetLoader.backgroundMusic.play();
+            al.backgroundMusic.play();
         } else if (soundOnButton.isTouchUp(projected.x, projected.y)) {
-            AssetLoader.setSoundOn(false);
+            al.setSoundOn(false);
             soundOn = false;
         } else if (soundOffButton.isTouchUp(projected.x, projected.y)) {
-            AssetLoader.setSoundOn(true);
+            al.setSoundOn(true);
             soundOn = true;
         }
 
@@ -111,53 +110,53 @@ public class OptionsMenu extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.backButtonUp;
+        region = al.backButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         backButton = new SimpleButton(V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
+                al.backButtonUp, al.backButtonDown);
 
         float tempUIScale = UI_SCALE*.5f;
 
-        region = AssetLoader.onButtonUp;
+        region = al.onButtonUp;
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         musicOnButton = new SimpleButton(
                 V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.onButtonUp, AssetLoader.onButtonDown
+                al.onButtonUp, al.onButtonDown
         );
 
-        region = AssetLoader.offButtonUp;
+        region = al.offButtonUp;
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         musicOffButton = new SimpleButton(
                 V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.offButtonUp, AssetLoader.offButtonDown
+                al.offButtonUp, al.offButtonDown
         );
 
-        region = AssetLoader.onButtonUp;
+        region = al.onButtonUp;
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOnButton = new SimpleButton(
                 V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.onButtonUp, AssetLoader.onButtonDown
+                al.onButtonUp, al.onButtonDown
         );
 
-        region = AssetLoader.offButtonUp;
+        region = al.offButtonUp;
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOffButton = new SimpleButton(
                 V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.offButtonUp, AssetLoader.offButtonDown
+                al.offButtonUp, al.offButtonDown
         );
 
         // Title
-        region = AssetLoader.optionsTitle;
+        region = al.optionsTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         optionsTitle = new Sprite(region);

@@ -18,7 +18,6 @@ import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.helpers.MyGestureListener;
 import no.pag6.models.Player;
@@ -137,12 +136,12 @@ public class PlayState extends State {
         }
 
         // This should be started when game starts and in case of player change
-        if (!startSoundPlayed && AssetLoader.getSoundOn()) {
-            AssetLoader.countdownSound.play(0.5f);
+        if (!startSoundPlayed && al.getSoundOn()) {
+            al.countdownSound.play(0.5f);
             startSoundPlayed = true;
         }
         if (playTime < countdownTime) {
-            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+            game.spriteBatch.draw(al.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
         game.spriteBatch.end();
@@ -345,13 +344,13 @@ public class PlayState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.pauseButtonUp;
+        region = al.pauseButtonUp;
         regionWidth = region.getRegionWidth()*.22f*UI_SCALE/PPM;;
         regionHeight = region.getRegionHeight()*.22f*UI_SCALE/PPM;;
         pauseButton = new SimpleButton(
                 0, 500/PPM + A_HEIGHT/2 - 8/PPM,
                 regionWidth, regionHeight,
-                AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
+                al.pauseButtonUp, al.pauseButtonDown
         );
         playButtons.add(pauseButton);
     }

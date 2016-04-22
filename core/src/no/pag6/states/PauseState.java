@@ -1,12 +1,10 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
-
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
@@ -118,48 +116,48 @@ public class PauseState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.resumeButtonUp;
+        region = al.resumeButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         resumeButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*16/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.resumeButtonUp, AssetLoader.resumeButtonDown
+                al.resumeButtonUp, al.resumeButtonDown
         );
         pauseButtons.add(resumeButton);
 
-        region = AssetLoader.highscoresButtonUp;
+        region = al.highscoresButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         highscoreButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*12/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.highscoresButtonUp, AssetLoader.highscoresButtonDown
+                al.highscoresButtonUp, al.highscoresButtonDown
         );
         pauseButtons.add(highscoreButton);
 
-        region = AssetLoader.optionsButtonUp;
+        region = al.optionsButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         optionsButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
+                al.optionsButtonUp, al.optionsButtonDown
         );
         pauseButtons.add(optionsButton);
 
-        region = AssetLoader.mainMenuButtonUp;
+        region = al.mainMenuButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         mainMenuButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
+                al.mainMenuButtonUp, al.mainMenuButtonDown
         );
         pauseButtons.add(mainMenuButton);
 
         // Title
-        region = AssetLoader.pauseTitle;
+        region = al.pauseTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         pauseTitle = new Sprite(region);

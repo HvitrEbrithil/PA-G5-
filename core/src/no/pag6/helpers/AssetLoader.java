@@ -10,29 +10,41 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetLoader {
 
-    public static Preferences prefs;
+    // Singleton
+    private static AssetLoader instance;
+    private AssetLoader() {
+    }
+    public static AssetLoader getInstance() {
+        if (instance == null) {
+            instance = new AssetLoader();
+        }
+        return instance;
+    }
+
+    // Preferences
+    public Preferences prefs;
 
     // Textures and TextureRegions
-    public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
+    public Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
             logoTexture, playerTitleTexture, playersTitleTexture, pauseTitleTexture, optionsTitleTexture, highscoresTitleTexture, gameOverTitleTexture,
             playButtonTexture, highscoresButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture,
             mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture, characterPurpleTexture,
             characterRedTexture, characterSilverTexture, characterYellowTexture, onButtonTexture, offButtonTexture;
-    public static TextureRegion background, logo, playerTitle, playersTitle, pauseTitle, optionsTitle, highscoresTitle, gameOverTitle, playButtonUp,
+    public TextureRegion background, logo, playerTitle, playersTitle, pauseTitle, optionsTitle, highscoresTitle, gameOverTitle, playButtonUp,
             playButtonDown, highscoresButtonUp, highscoresButtonDown, optionsButtonUp, optionsButtonDown, quitButtonUp, quitButtonDown, pauseButtonUp,
             pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown, onButtonUp,
             onButtonDown, offButtonUp, offButtonDown;
 
     // Animations
-    public static Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
+    public Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
             characterPurpleAnimation, characterRedAnimation, characterSilverAnimation, characterYellowAnimation;
 
     // Sounds
-    public static Sound splashSound, countdownSound, swooshSound;
+    public Sound splashSound, countdownSound, swooshSound;
     // Music
-    public static Music backgroundMusic;
+    public Music backgroundMusic;
 
-    public static void load() {
+    public void load() {
         // Preferences
         prefs = Gdx.app.getPreferences("PAG6Game");
 
@@ -140,7 +152,7 @@ public class AssetLoader {
         backgroundMusic.setVolume(.5f);
     }
 
-    public static void dispose() {
+    public void dispose() {
         splashTexture1.dispose();
         splashTexture6.dispose();
         splashTexture11.dispose();
@@ -181,32 +193,32 @@ public class AssetLoader {
         backgroundMusic.dispose();
     }
 
-    public static boolean getMusicOn() {
+    public boolean getMusicOn() {
         boolean musicOn = prefs.getBoolean("music_on", true);
         prefs.flush();
         return musicOn;
     }
-    public static void setMusicOn(boolean soundOn) {
+    public void setMusicOn(boolean soundOn) {
         prefs.putBoolean("music_on", soundOn);
         prefs.flush();
     }
 
-    public static boolean getSoundOn() {
+    public boolean getSoundOn() {
         boolean soundOn = prefs.getBoolean("sound_on", true);
         prefs.flush();
         return soundOn;
     }
-    public static void setSoundOn(boolean soundOn) {
+    public void setSoundOn(boolean soundOn) {
         prefs.putBoolean("sound_on", soundOn);
         prefs.flush();
     }
 
-    public static String getHighscorePlayers() {
+    public String getHighscorePlayers() {
         String highscorePlayers = prefs.getString("highscore_players", "");
         prefs.flush();
         return highscorePlayers;
     }
-    public static void setHighscorePlayers(String highscorePlayers) {
+    public void setHighscorePlayers(String highscorePlayers) {
         if (highscorePlayers.startsWith(",")) {
             highscorePlayers = highscorePlayers.substring(1);
         }
@@ -214,12 +226,12 @@ public class AssetLoader {
         prefs.flush();
     }
 
-    public static String getHighscores() {
+    public String getHighscores() {
         String highscores = prefs.getString("highscores", "");
         prefs.flush();
         return highscores;
     }
-    public static void setHighscores(String highscores) {
+    public void setHighscores(String highscores) {
         if (highscores.startsWith(",")) {
             highscores = highscores.substring(1);
         }
@@ -227,7 +239,7 @@ public class AssetLoader {
         prefs.flush();
     }
 
-    private static TextureRegion[] initSplash() {
+    private TextureRegion[] initSplash() {
         TextureRegion[] splashFrames = new TextureRegion[60];
 
         // Frames 1 to 5
@@ -287,7 +299,7 @@ public class AssetLoader {
         return splashFrames;
     }
 
-    private static TextureRegion[] initCount() {
+    private TextureRegion[] initCount() {
         TextureRegion[] countFrames = new TextureRegion[4];
         countTexture = new Texture(Gdx.files.internal("textures/count_frames.png"));
         countTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -301,7 +313,7 @@ public class AssetLoader {
 
     }
 
-    private static void initCharacters() {
+    private void initCharacters() {
         // Blue
         characterBlueTexture = new Texture(Gdx.files.internal("textures/character_blue.png"));
         characterBlueTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
