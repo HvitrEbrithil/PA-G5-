@@ -137,7 +137,7 @@ public class AssetLoader {
         // Music
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/background.mp3"));
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(.1f);
+        backgroundMusic.setVolume(.5f);
     }
 
     public static void dispose() {
