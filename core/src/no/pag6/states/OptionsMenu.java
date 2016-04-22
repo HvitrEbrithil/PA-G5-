@@ -26,9 +26,12 @@ public class OptionsMenu extends State {
 
     // Game UI
     private SimpleButton backButton;
+    private SimpleButton musicOnButton;
+    private SimpleButton musicOffButton;
     private SimpleButton soundOnButton;
     private SimpleButton soundOffButton;
 
+    private boolean musicOn;
     private boolean soundOn;
 
     public OptionsMenu(PAG6Game game) {
@@ -41,6 +44,7 @@ public class OptionsMenu extends State {
         // Init objects and assets
         initUI();
 
+        musicOn = AssetLoader.getMusicOn();
         soundOn = AssetLoader.getSoundOn();
     }
 
@@ -64,6 +68,11 @@ public class OptionsMenu extends State {
         projected = viewport.unproject(touchPoint);
 
         backButton.isTouchDown(projected.x, projected.y);
+        if (musicOn) {
+            musicOnButton.isTouchDown(projected.x, projected.y);
+        } else {
+            musicOffButton.isTouchDown(projected.x, projected.y);
+        }
         if (soundOn) {
             soundOnButton.isTouchDown(projected.x, projected.y);
         } else {
@@ -80,14 +89,20 @@ public class OptionsMenu extends State {
 
         if (backButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
+        } else if (musicOnButton.isTouchUp(projected.x, projected.y)) {
+            AssetLoader.setMusicOn(false);
+            musicOn = false;
+            AssetLoader.backgroundMusic.pause();
+        } else if (musicOffButton.isTouchUp(projected.x, projected.y)) {
+            AssetLoader.setMusicOn(true);
+            musicOn = true;
+            AssetLoader.backgroundMusic.play();
         } else if (soundOnButton.isTouchUp(projected.x, projected.y)) {
             AssetLoader.setSoundOn(false);
             soundOn = false;
-            AssetLoader.backgroundMusic.pause();
         } else if (soundOffButton.isTouchUp(projected.x, projected.y)) {
             AssetLoader.setSoundOn(true);
             soundOn = true;
-            AssetLoader.backgroundMusic.play();
         }
 
         return true;
@@ -109,22 +124,40 @@ public class OptionsMenu extends State {
 
         float tempUIScale = UI_SCALE*.5f;
 
-        region = AssetLoader.soundOnButtonUp;
+        region = AssetLoader.onButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        musicOnButton = new SimpleButton(
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.onButtonUp, AssetLoader.onButtonDown
+        );
+
+        region = AssetLoader.offButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        musicOffButton = new SimpleButton(
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                regionWidth, regionHeight,
+                AssetLoader.offButtonUp, AssetLoader.offButtonDown
+        );
+
+        region = AssetLoader.onButtonUp;
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOnButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.soundOnButtonUp, AssetLoader.soundOnButtonDown
+                AssetLoader.onButtonUp, AssetLoader.onButtonDown
         );
 
-        region = AssetLoader.soundOffButtonUp;
+        region = AssetLoader.offButtonUp;
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOffButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.soundOffButtonUp, AssetLoader.soundOffButtonDown
+                AssetLoader.offButtonUp, AssetLoader.offButtonDown
         );
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
@@ -138,6 +171,11 @@ public class OptionsMenu extends State {
     private void drawUI() {
         backButton.draw(game.spriteBatch);
 
+        if (musicOn) {
+            musicOnButton.draw(game.spriteBatch);
+        } else {
+            musicOffButton.draw(game.spriteBatch);
+        }
         if (soundOn) {
             soundOnButton.draw(game.spriteBatch);
         } else {
@@ -146,6 +184,8 @@ public class OptionsMenu extends State {
 
         gl.setText(font, "MUSIC");
         font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*8/12 + gl.height/2);
+        gl.setText(font, "SOUND");
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*6/12 + gl.height/2);
     }
 
 }

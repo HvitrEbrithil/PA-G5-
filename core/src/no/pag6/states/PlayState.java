@@ -27,7 +27,7 @@ import java.util.List;
 
 public class PlayState extends State {
 
-    private float runTime = 0.0f;
+    private float playTime = 0.0f;
     private float countdownTime = 3.5f;
     private boolean startSoundPlayed = false;
 
@@ -119,12 +119,12 @@ public class PlayState extends State {
         }
 
         // This should be started when game starts and in case of player change
-        if (!startSoundPlayed) {
+        if (!startSoundPlayed && AssetLoader.getSoundOn()) {
             AssetLoader.countdownSound.play(0.5f);
             startSoundPlayed = true;
         }
-        if (runTime < countdownTime) {
-            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(runTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+        if (playTime < countdownTime) {
+            game.spriteBatch.draw(AssetLoader.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
         game.spriteBatch.end();
@@ -134,11 +134,13 @@ public class PlayState extends State {
 
     @Override
     public void update(float delta) {
-        runTime += delta;
+        super.update(delta);
+
+        playTime += delta;
 
         tweener.update(delta);
 
-        if (runTime > countdownTime) {
+        if (playTime > countdownTime) {
             world.step(TIME_STEP, 6, 2); // update physics
         }
 
@@ -337,13 +339,13 @@ public class PlayState extends State {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE && runTime > countdownTime) {
+        if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
             players[activePlayerIdx].switchLanes();
 
             tweenLayers();
         }
 
-        if (keycode == Input.Keys.UP && runTime > countdownTime) {
+        if (keycode == Input.Keys.UP && playTime > countdownTime) {
             players[activePlayerIdx].jump();
         }
 

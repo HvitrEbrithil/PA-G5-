@@ -22,8 +22,6 @@ import java.util.List;
 
 public class MainMenu extends State {
 
-    private boolean musicStarted = false;
-
     // Renderers
     private TweenManager tweener;
 

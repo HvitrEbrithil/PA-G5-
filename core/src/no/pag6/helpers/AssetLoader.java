@@ -16,10 +16,10 @@ public class AssetLoader {
     public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
             logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture,
             resumeButtonTexture, mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture,
-            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture, soundOnButtonTexture, soundOffButtonTexture;
+            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture, onButtonTexture, offButtonTexture;
     public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
             quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp,
-            mainMenuButtonDown, soundOnButtonUp, soundOnButtonDown, soundOffButtonUp, soundOffButtonDown;
+            mainMenuButtonDown, onButtonUp, onButtonDown, offButtonUp, offButtonDown;
 
     // Animations
     public static Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
@@ -83,15 +83,15 @@ public class AssetLoader {
         mainMenuButtonUp = new TextureRegion(mainMenuButtonTexture, 0, 0, 512, 128);
         mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
 
-        soundOnButtonTexture = new Texture(Gdx.files.internal("textures/on_button.png"));
-        soundOnButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        soundOnButtonUp = new TextureRegion(soundOnButtonTexture, 0, 0, 256, 256);
-        soundOnButtonDown = new TextureRegion(soundOnButtonTexture, 0, 257, 256, 256);
+        onButtonTexture = new Texture(Gdx.files.internal("textures/on_button.png"));
+        onButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        onButtonUp = new TextureRegion(onButtonTexture, 0, 0, 256, 256);
+        onButtonDown = new TextureRegion(onButtonTexture, 0, 257, 256, 256);
 
-        soundOffButtonTexture = new Texture(Gdx.files.internal("textures/off_button.png"));
-        soundOffButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        soundOffButtonUp = new TextureRegion(soundOffButtonTexture, 0, 0, 256, 256);
-        soundOffButtonDown = new TextureRegion(soundOffButtonTexture, 0, 257, 256, 256);
+        offButtonTexture = new Texture(Gdx.files.internal("textures/off_button.png"));
+        offButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        offButtonUp = new TextureRegion(offButtonTexture, 0, 0, 256, 256);
+        offButtonDown = new TextureRegion(offButtonTexture, 0, 257, 256, 256);
 
         // Animations
         TextureRegion[] splashFrames = initSplash();
@@ -111,6 +111,7 @@ public class AssetLoader {
         // Music
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/background.mp3"));
         backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(.1f);
     }
 
     public static void dispose() {
@@ -131,8 +132,8 @@ public class AssetLoader {
         backButtonTexture.dispose();
         resumeButtonTexture.dispose();
         mainMenuButtonTexture.dispose();
-        soundOnButtonTexture.dispose();
-        soundOffButtonTexture.dispose();
+        onButtonTexture.dispose();
+        offButtonTexture.dispose();
 
         splashSound.dispose();
         countdownSound.dispose();
@@ -140,16 +141,31 @@ public class AssetLoader {
         backgroundMusic.dispose();
     }
 
+    public static boolean getMusicOn() {
+        boolean musicOn = prefs.getBoolean("music_on", true);
+        prefs.flush();
+        return musicOn;
+    }
+    public static void setMusicOn(boolean soundOn) {
+        prefs.putBoolean("music_on", soundOn);
+        prefs.flush();
+    }
+
     public static boolean getSoundOn() {
-        return prefs.getBoolean("sound_on", true);
+        boolean soundOn = prefs.getBoolean("sound_on", true);
+        prefs.flush();
+        return soundOn;
     }
     public static void setSoundOn(boolean soundOn) {
         prefs.putBoolean("sound_on", soundOn);
+        prefs.flush();
     }
 
     public static int getHighScore(int playerNumber) {
         String key = "high_score_p" + playerNumber;
-        return prefs.getInteger(key, 0);
+        int highScore = prefs.getInteger(key, 0);
+        prefs.flush();
+        return highScore;
     }
     public static void setHighScore(int playerNumber, int val) {
         String key = "high_score_p" + playerNumber;

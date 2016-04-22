@@ -18,6 +18,8 @@ public abstract class State implements Screen, InputProcessor, Constants {
 
     public static final String TAG = "State";
 
+    protected float runTime = 0.0f;
+
     protected PAG6Game game;
     protected OrthographicCamera cam;
     protected Viewport viewport;
@@ -33,11 +35,6 @@ public abstract class State implements Screen, InputProcessor, Constants {
         cam.position.set(V_WIDTH/2, V_HEIGHT/2, 0);
 
         initBackground();
-
-        // Music
-        if (AssetLoader.getSoundOn() && !AssetLoader.backgroundMusic.isPlaying()) {
-            AssetLoader.backgroundMusic.play();
-        }
     }
 
     @Override
@@ -130,6 +127,12 @@ public abstract class State implements Screen, InputProcessor, Constants {
     }
 
     public void update(float delta) {
+        runTime += delta;
+
+        // Music
+        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying()) {
+            AssetLoader.backgroundMusic.play();
+        }
     }
 
     private void initBackground() {

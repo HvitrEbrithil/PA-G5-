@@ -168,7 +168,9 @@ public class Player extends Sprite implements Constants {
 
         onFirstLane = !onFirstLane;
 
-        AssetLoader.swooshSound.play(0.3f);
+        if (AssetLoader.getSoundOn()) {
+            AssetLoader.swooshSound.play(0.3f);
+        }
     }
 
     public void jump() {

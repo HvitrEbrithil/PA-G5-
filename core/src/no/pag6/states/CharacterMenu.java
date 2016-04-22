@@ -64,10 +64,6 @@ public class CharacterMenu extends State {
     }
 
     @Override
-    public void update(float delta) {
-    }
-
-    @Override
     public void dispose() {
         super.dispose();
 
