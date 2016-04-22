@@ -34,7 +34,7 @@ public class MyGestureListener implements GestureListener {
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
         // Update gesture
-        myGestureInput.setSwipeDirection(velocityX, velocityY);
+        myGestureInput.setSwipeDirection(velocityY);
 
         // Switch lanes
         if (myGestureInput.getSwipeDirection() == MyGestureInput.Direction.UP
@@ -47,7 +47,8 @@ public class MyGestureListener implements GestureListener {
             playState.tweenLayers();
         }
 
-        return false;
+        return !(myGestureInput.getSwipeDirection() == MyGestureInput.Direction.NONE);
+
     }
 
     @Override

@@ -5,6 +5,8 @@ import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
@@ -25,6 +27,7 @@ import no.pag6.tweenaccessors.ValueAccessor;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PlayState extends State {
@@ -97,10 +100,14 @@ public class PlayState extends State {
 
     @Override
     public void show() {
-        super.show();
-
         // Add gesture listener
-        Gdx.input.setInputProcessor(new GestureDetector(new MyGestureListener(this)));
+        InputProcessor inputProcessorOne = new GestureDetector(new MyGestureListener(this));
+        InputProcessor inputProcessorTwo = this;
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(inputProcessorOne);
+        inputMultiplexer.addProcessor(inputProcessorTwo);
+
+        Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
     @Override
@@ -263,7 +270,7 @@ public class PlayState extends State {
         // TODO: Remove before release
         // Restart PlayState
         if (keycode == Input.Keys.R) {
-            game.getGameStateManager().setScreen(new PlayState(game, 1, null, mapFileName));
+            game.getGameStateManager().setScreen(new PlayState(game, 3, Arrays.asList("SPILLER EN", "SPILLER TO", "SPILLER TRE"), mapFileName));
         }
         // Quit application
         if (keycode == Input.Keys.Q || keycode == Input.Keys.ESCAPE) {

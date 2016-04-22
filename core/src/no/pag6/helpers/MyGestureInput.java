@@ -18,8 +18,14 @@ public class MyGestureInput {
     public Direction getSwipeDirection() {
         return swipeDirection;
     }
-    public void setSwipeDirection(float velocityX, float velocityY) {
-        // TODO: Set correct direction based on velocities.
+    public void setSwipeDirection(float velocityY) {
+        if (velocityY < -1000) {
+            swipeDirection = Direction.UP;
+        } else if (velocityY > 1000) {
+            swipeDirection = Direction.DOWN;
+        } else {
+            swipeDirection = Direction.NONE;
+        }
     }
 
 }
