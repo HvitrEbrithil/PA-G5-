@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import no.pag6.game.PAG6Game;
@@ -21,6 +22,7 @@ public class HighscoreMenu extends State {
 
     // Game UI
     private SimpleButton backButton;
+    private Sprite highscoreTitle;
 
     // Highscores
     List<String> highscorePlayers;
@@ -77,14 +79,22 @@ public class HighscoreMenu extends State {
 
         // Buttons
         region = AssetLoader.backButtonUp;
+        regionWidth = region.getRegionWidth();
+        regionHeight = region.getRegionHeight();
+        backButton = new SimpleButton(
+                64, 64,
+                regionWidth, regionHeight,
+                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
+
+        // Title
+        region = AssetLoader.highscoreTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
-        backButton = new SimpleButton(
-                V_WIDTH/3 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
-                regionWidth, regionHeight,
-                AssetLoader.backButtonUp, AssetLoader.backButtonDown
-        );
+        highscoreTitle = new Sprite(region);
+        highscoreTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        highscoreTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
+        // Font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 32;
@@ -108,13 +118,15 @@ public class HighscoreMenu extends State {
         // Player highscores
         if (highscorePlayers.get(0).equals("")) {
             gl.setText(font, "NO HIGHSCORES YET");
-            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*13/14 + gl.height/2);
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT/2 + gl.height/2);
         } else {
             for (int i = 0; i < highscores.size(); i++) {
                 gl.setText(font, highscorePlayers.get(i) + ": " + highscores.get(i));
-                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(13 - i)/14 + gl.height/2);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(18 - i)/24 + gl.height/2);
             }
         }
+
+        highscoreTitle.draw(game.spriteBatch);
     }
 
 }

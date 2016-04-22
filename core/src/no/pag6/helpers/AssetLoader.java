@@ -14,12 +14,14 @@ public class AssetLoader {
 
     // Textures and TextureRegions
     public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
-            logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture,
-            resumeButtonTexture, mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture,
-            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture, onButtonTexture, offButtonTexture;
-    public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
-            quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp,
-            mainMenuButtonDown, onButtonUp, onButtonDown, offButtonUp, offButtonDown;
+            logoTexture, playerTitleTexture, playersTitleTexture, pauseTitleTexture, optionsTitleTexture, highscoreTitleTexture, gameOverTitleTexture,
+            playButtonTexture, highscoreButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture, resumeButtonTexture,
+            mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture, characterPurpleTexture,
+            characterRedTexture, characterSilverTexture, characterYellowTexture, onButtonTexture, offButtonTexture;
+    public static TextureRegion background, logo, playerTitle, playersTitle, pauseTitle, optionsTitle, highscoreTitle, gameOverTitle, playButtonUp,
+            playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown, quitButtonUp, quitButtonDown, pauseButtonUp,
+            pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp, mainMenuButtonDown, onButtonUp,
+            onButtonDown, offButtonUp, offButtonDown;
 
     // Animations
     public static Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
@@ -42,6 +44,30 @@ public class AssetLoader {
         logoTexture = new Texture(Gdx.files.internal("textures/lanerunner_logo.png"));
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new TextureRegion(logoTexture, 0, 0, 512, 512);
+
+        playerTitleTexture = new Texture(Gdx.files.internal("textures/player_title.png"));
+        playerTitleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        playerTitle = new TextureRegion(playerTitleTexture, 0, 0, 768, 128);
+
+        playersTitleTexture = new Texture(Gdx.files.internal("textures/players_title.png"));
+        playersTitleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        playersTitle = new TextureRegion(playersTitleTexture, 0, 0, 768, 128);
+
+        pauseTitleTexture = new Texture(Gdx.files.internal("textures/pause_title.png"));
+        pauseTitleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        pauseTitle = new TextureRegion(pauseTitleTexture, 0, 0, 768, 128);
+
+        optionsTitleTexture = new Texture(Gdx.files.internal("textures/options_title.png"));
+        optionsTitleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        optionsTitle = new TextureRegion(optionsTitleTexture, 0, 0, 768, 128);
+
+        highscoreTitleTexture = new Texture(Gdx.files.internal("textures/highscore_title.png"));
+        highscoreTitleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        highscoreTitle = new TextureRegion(highscoreTitleTexture, 0, 0, 768, 128);
+
+        gameOverTitleTexture = new Texture(Gdx.files.internal("textures/gameover_title.png"));
+        gameOverTitleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        gameOverTitle = new TextureRegion(gameOverTitleTexture, 0, 0, 768, 128);
 
         playButtonTexture = new Texture(Gdx.files.internal("textures/play_button.png"));
         playButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -124,6 +150,12 @@ public class AssetLoader {
         countTexture.dispose();
         backgroundTexture.dispose();
         logoTexture.dispose();
+        playersTitleTexture.dispose();
+        playersTitleTexture.dispose();
+        pauseButtonTexture.dispose();
+        optionsTitleTexture.dispose();
+        highscoreTitleTexture.dispose();
+        gameOverTitleTexture.dispose();
         playButtonTexture.dispose();
         highscoreButtonTexture.dispose();
         optionsButtonTexture.dispose();
@@ -132,6 +164,14 @@ public class AssetLoader {
         backButtonTexture.dispose();
         resumeButtonTexture.dispose();
         mainMenuButtonTexture.dispose();
+        characterBlueTexture.dispose();
+        characterGreenTexture.dispose();
+        characterOrangeTexture.dispose();
+        characterPinkTexture.dispose();
+        characterPurpleTexture.dispose();
+        characterRedTexture.dispose();
+        characterSilverTexture.dispose();
+        characterYellowTexture.dispose();
         onButtonTexture.dispose();
         offButtonTexture.dispose();
 

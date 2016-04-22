@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -25,6 +26,7 @@ public class OptionsMenu extends State {
     // Tween assets
 
     // Game UI
+    private Sprite optionsTitle;
     private SimpleButton backButton;
     private SimpleButton musicOnButton;
     private SimpleButton musicOffButton;
@@ -110,10 +112,10 @@ public class OptionsMenu extends State {
 
         // Buttons
         region = AssetLoader.backButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth();
+        regionHeight = region.getRegionHeight();
         backButton = new SimpleButton(
-                V_WIDTH/3 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
+                64, 64,
                 regionWidth, regionHeight,
                 AssetLoader.backButtonUp, AssetLoader.backButtonDown
         );
@@ -156,6 +158,15 @@ public class OptionsMenu extends State {
                 AssetLoader.offButtonUp, AssetLoader.offButtonDown
         );
 
+        // Title
+        region = AssetLoader.optionsTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        optionsTitle = new Sprite(region);
+        optionsTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        optionsTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
+
+        // Font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 42;
@@ -172,6 +183,9 @@ public class OptionsMenu extends State {
         } else {
             musicOffButton.draw(game.spriteBatch);
         }
+
+        optionsTitle.draw(game.spriteBatch);
+
         if (soundOn) {
             soundOnButton.draw(game.spriteBatch);
         } else {

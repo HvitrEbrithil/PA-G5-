@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import no.pag6.game.PAG6Game;
@@ -39,6 +40,8 @@ public class CharacterMenu extends State {
     private List<SimpleButton> characterMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton playButton;
     private SimpleButton backButton;
+    private Sprite playersTitle;
+    private Sprite playerTitle;
 
     public CharacterMenu(PAG6Game game) {
         super(game);
@@ -105,24 +108,39 @@ public class CharacterMenu extends State {
 
         // Buttons
         region = AssetLoader.playButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playButton = new SimpleButton(
-                V_WIDTH*2/3 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
+                V_WIDTH*2/3 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.playButtonUp, AssetLoader.playButtonDown
         );
         characterMenuButtons.add(playButton);
 
         region = AssetLoader.mainMenuButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         backButton = new SimpleButton(
-                V_WIDTH/3 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
+                V_WIDTH/3 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         characterMenuButtons.add(backButton);
+
+        // Titles
+        region = AssetLoader.playerTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        playerTitle = new Sprite(region);
+        playerTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        playerTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
+
+        region = AssetLoader.playersTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        playersTitle = new Sprite(region);
+        playersTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        playersTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -194,31 +212,38 @@ public class CharacterMenu extends State {
             for (SimpleButton button : characterMenuButtons) {
                 button.draw(game.spriteBatch);
             }
+
+            if (playerNames.size() > 1) {
+                playersTitle.draw(game.spriteBatch);
+            } else {
+                playerTitle.draw(game.spriteBatch);
+            }
+
         }
 
         if (playerNames != null) {
             if (playerNames.get(nofPlayers - 1) != null) {
-                String players = "PLAYER" + (playerNames.size() > 1 ? "S:\n" : ": ");
+                String players = "";
                 for (int i = 0; i < nofPlayers; i++) {
-                    players += playerNames.get(i);
-                    if (i == nofPlayers - 2) {
-                        players += " &";
-                    } else if (i < nofPlayers - 1) {
-                        players += ",";
-                    }
-                    if ((i + 1)%2 == 0) {
-                        players += "\n";
-                    } else {
-                        players += " ";
-                    }
+                    players += playerNames.get(i) + "\n";
+                    //if (i == nofPlayers - 2) {
+                    //    players += " &";
+                    //} else if (i < nofPlayers - 1) {
+                    //    players += ",";
+                    //}
+                    //if ((i + 1)%2 == 0) {
+                    //    players += "\n";
+                    //} else {
+                    //    players += " ";
+                    //}
                 }
                 players = players.trim();
                 gl.setText(font, players);
-                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
             } else if (playerNames.size() > 0 && currentPlayer - 1 >= 0) {
                 String player1NameString = "PLAYER " + (currentPlayer) + ": " + playerNames.get(currentPlayer - 1);
                 gl.setText(font, player1NameString);
-                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
             }
         }
     }

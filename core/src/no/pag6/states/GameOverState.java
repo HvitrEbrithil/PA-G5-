@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -36,6 +37,7 @@ public class GameOverState extends State {
     // Game UI
     private List<SimpleButton> gameOverButtons = new ArrayList<SimpleButton>();
     private SimpleButton mainMenuButton;
+    private Sprite gameOverTitle;
 
     public GameOverState(PAG6Game game, Player[] players) {
         super(game);
@@ -117,17 +119,23 @@ public class GameOverState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        uiScale = 0.67f;
-
         region = AssetLoader.mainMenuButtonUp;
-        regionWidth = region.getRegionWidth()*uiScale;
-        regionHeight = region.getRegionHeight()*uiScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         mainMenuButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*3/24 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         gameOverButtons.add(mainMenuButton);
+
+        // Title
+        region = AssetLoader.gameOverTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        gameOverTitle = new Sprite(region);
+        gameOverTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        gameOverTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -141,14 +149,20 @@ public class GameOverState extends State {
         for (SimpleButton button : gameOverButtons) {
             button.draw(game.spriteBatch);
         }
+
+        gameOverTitle.draw(game.spriteBatch);
     }
 
     private void drawScores() {
         // Draw name and score for each players
+        String scores = "";
+
         for (int i = 1; i <= players.length; i++) {
             String scoreString = "" + players[i-1].getName() + ": " + Integer.toString(players[i-1].getScore());
-            gl.setText(font, scoreString);
-            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(11-i)/12);
+            scores += scoreString + "\n";
         }
+
+        gl.setText(font, scores);
+        font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
     }
 }
