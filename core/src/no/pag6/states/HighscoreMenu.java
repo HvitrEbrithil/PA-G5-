@@ -79,18 +79,18 @@ public class HighscoreMenu extends State {
 
         // Buttons
         region = AssetLoader.backButtonUp;
-        regionWidth = region.getRegionWidth();
-        regionHeight = region.getRegionHeight();
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         backButton = new SimpleButton(V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
-                regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f,
+                regionWidth, regionHeight,
                 AssetLoader.backButtonUp, AssetLoader.backButtonDown);
 
         // Title
         region = AssetLoader.highscoresTitle;
-        regionWidth = region.getRegionWidth()*UI_SCALE;
-        regionHeight = region.getRegionHeight()*UI_SCALE;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         highscoresTitle = new Sprite(region);
-        highscoresTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        highscoresTitle.setSize(regionWidth, regionHeight);
         highscoresTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         // Font
