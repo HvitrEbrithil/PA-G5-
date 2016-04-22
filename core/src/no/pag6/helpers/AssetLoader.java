@@ -2,13 +2,11 @@ package no.pag6.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
-
-import java.util.ArrayList;
 
 public class AssetLoader {
 
@@ -18,17 +16,19 @@ public class AssetLoader {
     public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
             logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture,
             resumeButtonTexture, mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture,
-            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture;
+            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture, onButtonTexture, offButtonTexture;
     public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
             quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp,
-            mainMenuButtonDown;
+            mainMenuButtonDown, onButtonUp, onButtonDown, offButtonUp, offButtonDown;
 
     // Animations
     public static Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
             characterPurpleAnimation, characterRedAnimation, characterSilverAnimation, characterYellowAnimation;
 
     // Sounds
-    public static Sound splashSound, backgroundMusic, countdownSound, swooshSound;
+    public static Sound splashSound, countdownSound, swooshSound;
+    // Music
+    public static Music backgroundMusic;
 
     public static void load() {
         // Preferences
@@ -83,6 +83,16 @@ public class AssetLoader {
         mainMenuButtonUp = new TextureRegion(mainMenuButtonTexture, 0, 0, 512, 128);
         mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
 
+        onButtonTexture = new Texture(Gdx.files.internal("textures/on_button.png"));
+        onButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        onButtonUp = new TextureRegion(onButtonTexture, 0, 0, 256, 256);
+        onButtonDown = new TextureRegion(onButtonTexture, 0, 257, 256, 256);
+
+        offButtonTexture = new Texture(Gdx.files.internal("textures/off_button.png"));
+        offButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        offButtonUp = new TextureRegion(offButtonTexture, 0, 0, 256, 256);
+        offButtonDown = new TextureRegion(offButtonTexture, 0, 257, 256, 256);
+
         // Animations
         TextureRegion[] splashFrames = initSplash();
         splashAnimation = new Animation(0.033f, splashFrames);
@@ -96,14 +106,12 @@ public class AssetLoader {
 
         // Sounds
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
-        backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("sounds/background.mp3"));
         countdownSound = Gdx.audio.newSound(Gdx.files.internal("sounds/countdown.mp3"));
         swooshSound = Gdx.audio.newSound(Gdx.files.internal("sounds/swoosh.mp3"));
-
-        // Fonts
-//        font = new BitmapFont();
-//        font = new BitmapFont(Gdx.files.internal("fonts/arial_72.fnt"), Gdx.files.internal("fonts/arial_72.png"), false);
-
+        // Music
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/background.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(.1f);
     }
 
     public static void dispose() {
@@ -124,15 +132,58 @@ public class AssetLoader {
         backButtonTexture.dispose();
         resumeButtonTexture.dispose();
         mainMenuButtonTexture.dispose();
+        onButtonTexture.dispose();
+        offButtonTexture.dispose();
+
+        splashSound.dispose();
+        countdownSound.dispose();
+        swooshSound.dispose();
+        backgroundMusic.dispose();
     }
 
-    public static int getHighScore(int playerNumber) {
-        String key = "high_score_p" + playerNumber;
-        return prefs.getInteger(key, 0);
+    public static boolean getMusicOn() {
+        boolean musicOn = prefs.getBoolean("music_on", true);
+        prefs.flush();
+        return musicOn;
     }
-    public static void setHighScore(int playerNumber, int val) {
-        String key = "high_score_p" + playerNumber;
-        prefs.putInteger(key, val);
+    public static void setMusicOn(boolean soundOn) {
+        prefs.putBoolean("music_on", soundOn);
+        prefs.flush();
+    }
+
+    public static boolean getSoundOn() {
+        boolean soundOn = prefs.getBoolean("sound_on", true);
+        prefs.flush();
+        return soundOn;
+    }
+    public static void setSoundOn(boolean soundOn) {
+        prefs.putBoolean("sound_on", soundOn);
+        prefs.flush();
+    }
+
+    public static String getHighscorePlayers() {
+        String highscorePlayers = prefs.getString("highscore_players", "");
+        prefs.flush();
+        return highscorePlayers;
+    }
+    public static void setHighscorePlayers(String highscorePlayers) {
+        if (highscorePlayers.startsWith(",")) {
+            highscorePlayers = highscorePlayers.substring(1);
+        }
+        prefs.putString("highscore_players", highscorePlayers);
+        prefs.flush();
+    }
+
+    public static String getHighscores() {
+        String highscores = prefs.getString("highscores", "");
+        prefs.flush();
+        return highscores;
+    }
+    public static void setHighscores(String highscores) {
+        if (highscores.startsWith(",")) {
+            highscores = highscores.substring(1);
+        }
+        prefs.putString("highscores", highscores);
         prefs.flush();
     }
 
