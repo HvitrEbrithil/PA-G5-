@@ -135,13 +135,13 @@ public class MainMenu extends State {
         );
         mainMenuButtons.add(playButton);
 
-        region = AssetLoader.highscoreButtonUp;
+        region = AssetLoader.highscoresButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         highscoreButton = new SimpleButton(
                 V_WIDTH/2 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
+                AssetLoader.highscoresButtonUp, AssetLoader.highscoresButtonDown
         );
         mainMenuButtons.add(highscoreButton);
 
