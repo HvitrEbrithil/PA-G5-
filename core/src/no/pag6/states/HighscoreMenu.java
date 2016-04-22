@@ -96,19 +96,20 @@ public class HighscoreMenu extends State {
     private void getPlayerHighscores() {
         highscorePlayers = Arrays.asList(AssetLoader.getHighscorePlayers().split(","));
         highscores = Arrays.asList(AssetLoader.getHighscores().split(","));
-        for (int i = 0; i < (HIGHSCORES_TO_SHOW > highscores.size() ? highscores.size() : HIGHSCORES_TO_SHOW); i++) {
-            Gdx.app.log("SCORES", "Player " + highscorePlayers.get(i) + ": " + highscores.get(i));
-        }
-
     }
 
     private void drawUI() {
         backButton.draw(game.spriteBatch);
 
         // Player highscores
-        for (int i = 0; i < highscores.size(); i++) {
-            gl.setText(font, highscorePlayers.get(i) + ": " + highscores.get(i));
-            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(13 - i)/14 + gl.height/2);
+        if (highscorePlayers.get(0).equals("")) {
+            gl.setText(font, "NO HIGHSCORES YET");
+            font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*13/14 + gl.height/2);
+        } else {
+            for (int i = 0; i < highscores.size(); i++) {
+                gl.setText(font, highscorePlayers.get(i) + ": " + highscores.get(i));
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(13 - i)/14 + gl.height/2);
+            }
         }
     }
 

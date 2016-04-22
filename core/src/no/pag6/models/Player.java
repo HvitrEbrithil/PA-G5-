@@ -3,6 +3,7 @@ package no.pag6.models;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -15,6 +16,10 @@ import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Player extends Sprite implements Constants {
 
@@ -32,6 +37,7 @@ public class Player extends Sprite implements Constants {
     private int id;
     // TODO
     private int nofLives;
+    private boolean isKilled = false;
     private boolean shouldSwitchFilterBits;
 
     private float originWidth = 75/PPM;
@@ -97,12 +103,75 @@ public class Player extends Sprite implements Constants {
         return footContactCount;
     }
 
-    public void setScore(int points){
-        score = points;
+    public void kill() {
+        if (score > getHighscore()) {
+            setHighscore();
+        }
+
+        isKilled = true;
+    }
+
+    public boolean isKilled() {
+        return isKilled;
+    }
+
+    public int getHighscore() {
+        List<String> highscorePlayers = Arrays.asList(AssetLoader.getHighscorePlayers().split(","));
+        List<String> highscores = Arrays.asList(AssetLoader.getHighscores().split(","));
+        for (int i = 0; i < highscores.size(); i++) {
+            if (highscorePlayers.get(i).equals(name)) {
+                return Integer.valueOf(highscores.get(i));
+            }
+        }
+
+        return 0;
+    }
+    public void setHighscore() {
+        int playerIndex = -1;
+
+        ArrayList<String> highscorePlayers = new ArrayList<String>(Arrays.asList(AssetLoader.getHighscorePlayers().split(",")));
+        ArrayList<String> highscores = new ArrayList<String>(Arrays.asList(AssetLoader.getHighscores().split(",")));
+        Gdx.app.log("HS", highscorePlayers.toString());
+        Gdx.app.log("HS", highscores.toString());
+        for (int i = 0; i < highscores.size(); i++) {
+            if (highscorePlayers.get(i).equals(name)) {
+                playerIndex = i;
+            }
+        }
+
+        // Remove existing highscore
+        if (playerIndex >= 0) {
+            highscorePlayers.remove(playerIndex);
+            highscores.remove(playerIndex);
+        }
+
+        // Add new highscore
+        if (!highscorePlayers.get(0).equals("")) {
+            for (int i = 0; i < highscores.size(); i++) {
+                if (score > Integer.valueOf(highscores.get(i))) {
+                    highscorePlayers.add(i, name);
+                    highscores.add(i, String.valueOf(score));
+                    break;
+                }
+            }
+        } else {
+            highscorePlayers.add(name);
+            highscores.add(String.valueOf(score));
+        }
+
+        // Push to prefs
+        AssetLoader.setHighscorePlayers(String.join(",", highscorePlayers));
+        AssetLoader.setHighscores(String.join(",", highscores));
     }
 
     public int getScore() {
         return score;
+    }
+    public void incrementScore(int points) {
+        score += points;
+    }
+    public void setScore(int score){
+        this.score = score;
     }
 
     public boolean isOnFirstLane() {
@@ -124,6 +193,9 @@ public class Player extends Sprite implements Constants {
             float velChange = desiredVel - vel.x;
             float impulse = b2dBody.getMass() * velChange;
             b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
+
+            // TODO: Move to wherever when score-system is implemented
+            incrementScore(1);
         }
 
         if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {

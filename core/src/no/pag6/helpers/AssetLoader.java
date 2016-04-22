@@ -162,21 +162,27 @@ public class AssetLoader {
     }
 
     public static String getHighscorePlayers() {
-        String highscorePlayers = prefs.getString("highscore_players", "DAG ERIK,TOBIAS,DANIEL");
+        String highscorePlayers = prefs.getString("highscore_players", "");
         prefs.flush();
         return highscorePlayers;
     }
     public static void setHighscorePlayers(String highscorePlayers) {
+        if (highscorePlayers.startsWith(",")) {
+            highscorePlayers = highscorePlayers.substring(1);
+        }
         prefs.putString("highscore_players", highscorePlayers);
         prefs.flush();
     }
 
     public static String getHighscores() {
-        String highscores = prefs.getString("highscores", "666,500,250");
+        String highscores = prefs.getString("highscores", "");
         prefs.flush();
         return highscores;
     }
     public static void setHighscores(String highscores) {
+        if (highscores.startsWith(",")) {
+            highscores = highscores.substring(1);
+        }
         prefs.putString("highscores", highscores);
         prefs.flush();
     }

@@ -181,6 +181,10 @@ public class PlayState extends State {
 
         // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
+            // TODO: Move this if-loop to where the real final death of a player occurs
+            if (!players[activePlayerIdx].isKilled()) {
+                players[activePlayerIdx].kill();
+            }
             // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
