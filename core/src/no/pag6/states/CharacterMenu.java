@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 public class CharacterMenu extends State {
 
     private int nofPlayers;
-    private final String nofPlayersPattern = "^[1-8]$";
+    private final String nofPlayersPattern = "^[1-" + MAX_PLAYERS + "]$";
     private final String playerNamePattern = "^[a-zA-ZæøåÆØÅ '-]{1,15}$";
     private List<String> playerNames;
     private int currentPlayer = 0;
@@ -158,7 +158,7 @@ public class CharacterMenu extends State {
                     }
                 });
             }
-        }, "Enter number of players", "", "from 1 to 8 players");
+        }, "Enter number of players", "", "from 1 to " + MAX_PLAYERS + " players");
     }
 
     private void takePlayerName() {

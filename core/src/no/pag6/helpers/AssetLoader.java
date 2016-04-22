@@ -161,15 +161,23 @@ public class AssetLoader {
         prefs.flush();
     }
 
-    public static int getHighScore(int playerNumber) {
-        String key = "high_score_p" + playerNumber;
-        int highScore = prefs.getInteger(key, 0);
+    public static String getHighscorePlayers() {
+        String highscorePlayers = prefs.getString("highscore_players", "DAG ERIK,TOBIAS,DANIEL");
         prefs.flush();
-        return highScore;
+        return highscorePlayers;
     }
-    public static void setHighScore(int playerNumber, int val) {
-        String key = "high_score_p" + playerNumber;
-        prefs.putInteger(key, val);
+    public static void setHighscorePlayers(String highscorePlayers) {
+        prefs.putString("highscore_players", highscorePlayers);
+        prefs.flush();
+    }
+
+    public static String getHighscores() {
+        String highscores = prefs.getString("highscores", "666,500,250");
+        prefs.flush();
+        return highscores;
+    }
+    public static void setHighscores(String highscores) {
+        prefs.putString("highscores", highscores);
         prefs.flush();
     }
 

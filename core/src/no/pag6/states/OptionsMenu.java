@@ -37,10 +37,6 @@ public class OptionsMenu extends State {
     public OptionsMenu(PAG6Game game) {
         super(game);
 
-        // Set up drawer and batcher
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
-
         // Init objects and assets
         initUI();
 
