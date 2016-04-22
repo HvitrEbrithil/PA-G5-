@@ -91,6 +91,10 @@ public class Player extends Sprite implements Constants {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void incrementFootContactCount() {
         footContactCount++;
     }
