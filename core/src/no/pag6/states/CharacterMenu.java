@@ -233,7 +233,7 @@ public class CharacterMenu extends State {
             } else if (playerNames.size() > 0 && currentPlayer - 1 >= 0) {
                 String player1NameString = "PLAYER " + (currentPlayer) + ": " + playerNames.get(currentPlayer - 1);
                 gl.setText(font, player1NameString);
-                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*18/24);
+                font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*22/24);
             }
         }
     }
