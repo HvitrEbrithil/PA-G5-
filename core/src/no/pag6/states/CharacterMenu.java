@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
@@ -95,8 +94,8 @@ public class CharacterMenu extends State {
             if (backButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().popScreen();
             } else if (playButton.isTouchUp(projected.x, projected.y)) {
-                AssetLoader.backgroundMusic.pause();
-                AssetLoader.inGameMusic.play();
+                al.backgroundMusic.pause();
+                al.inGameMusic.play();
                 game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, MAP_EASY_1_NAME));
             }
         }
@@ -109,35 +108,35 @@ public class CharacterMenu extends State {
         float regionWidth, regionHeight;
 
         // Buttons
-        region = AssetLoader.playButtonUp;
+        region = al.playButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playButton = new SimpleButton(
                 V_WIDTH*2/3 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.playButtonUp, AssetLoader.playButtonDown
+                al.playButtonUp, al.playButtonDown
         );
         characterMenuButtons.add(playButton);
 
-        region = AssetLoader.mainMenuButtonUp;
+        region = al.mainMenuButtonUp;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         backButton = new SimpleButton(
                 V_WIDTH/3 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
-                AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
+                al.mainMenuButtonUp, al.mainMenuButtonDown
         );
         characterMenuButtons.add(backButton);
 
         // Titles
-        region = AssetLoader.playerTitle;
+        region = al.playerTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playerTitle = new Sprite(region);
         playerTitle.setSize(regionWidth, regionHeight);
         playerTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
-        region = AssetLoader.playersTitle;
+        region = al.playersTitle;
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         playersTitle = new Sprite(region);

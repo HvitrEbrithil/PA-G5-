@@ -3,7 +3,6 @@ package no.pag6.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 
 public class SplashScreen extends State {
 
@@ -22,15 +21,15 @@ public class SplashScreen extends State {
 
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
-        game.spriteBatch.draw(AssetLoader.splashAnimation.getKeyFrame(runTime), 0, 0, V_WIDTH, V_HEIGHT);
+        game.spriteBatch.draw(al.splashAnimation.getKeyFrame(runTime), 0, 0, V_WIDTH, V_HEIGHT);
         game.spriteBatch.end();
 
         if (runTime > 2.0f) {
             game.getGameStateManager().setScreen(new MainMenu(game));
         }
 
-        if (runTime > 1.0f && !splashSoundPlayed && AssetLoader.getSoundOn()) {
-            AssetLoader.splashSound.play(0.8f);
+        if (runTime > 1.0f && !splashSoundPlayed && al.getSoundOn()) {
+            al.splashSound.play(0.8f);
             splashSoundPlayed = true;
         }
     }
