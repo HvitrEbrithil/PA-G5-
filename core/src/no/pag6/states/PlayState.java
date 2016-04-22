@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
+import no.pag6.helpers.MyGestureListener;
 import no.pag6.models.Player;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
@@ -50,10 +52,6 @@ public class PlayState extends State {
 
     // Renderers
     private TweenManager tweener;
-
-    // Game objects
-
-    // Game assets
 
     // Tween assets
     private Value opacityLayer1 = new Value();
@@ -95,6 +93,14 @@ public class PlayState extends State {
         initGameAssets();
 
         initUI();
+    }
+
+    @Override
+    public void show() {
+        super.show();
+
+        // Add gesture listener
+        Gdx.input.setInputProcessor(new GestureDetector(new MyGestureListener(this)));
     }
 
     @Override
@@ -228,9 +234,86 @@ public class PlayState extends State {
 
         if (pauseButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new PauseState(game));
+        } else {
+            // Jump
+            if (playTime > countdownTime) {
+                players[activePlayerIdx].jump();
+            }
         }
 
         return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // Jump
+        if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
+            players[activePlayerIdx].jump();
+        }
+
+        // Switch lanes
+        if (keycode == Input.Keys.UP && players[activePlayerIdx].isOnFirstLane() && playTime > countdownTime) {
+            players[activePlayerIdx].switchLanes();
+            tweenLayers();
+        } else if (keycode == Input.Keys.DOWN && !players[activePlayerIdx].isOnFirstLane() && playTime > countdownTime) {
+            players[activePlayerIdx].switchLanes();
+            tweenLayers();
+        }
+
+        // TODO: Remove before release
+        // Restart PlayState
+        if (keycode == Input.Keys.R) {
+            game.getGameStateManager().setScreen(new PlayState(game, 1, null, mapFileName));
+        }
+        // Quit application
+        if (keycode == Input.Keys.Q || keycode == Input.Keys.ESCAPE) {
+            System.exit(0);
+        }
+        // Go to GameOver screen
+        if (keycode == Input.Keys.G) {
+            game.getGameStateManager().setScreen(new GameOverState(game, players));
+        }
+
+        return true;
+    }
+
+    public boolean isStarted() {
+        return playTime > countdownTime;
+    }
+
+    public Player getActivePlayer() {
+        return players[activePlayerIdx];
+    }
+
+    public void tweenLayers() {
+        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        if (!playerIsOnFirstLane) {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(.9f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        } else {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        }
     }
 
     private void initGameObjects() {
@@ -347,64 +430,6 @@ public class PlayState extends State {
             polygonShape.dispose();
 
             players[i] = new Player(cam, playerBody, i, playerNames.get(i), i + 1);
-        }
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
-            players[activePlayerIdx].switchLanes();
-
-            tweenLayers();
-        }
-
-        if (keycode == Input.Keys.UP && playTime > countdownTime) {
-            players[activePlayerIdx].jump();
-        }
-
-        if (keycode == Input.Keys.R) {
-            game.getGameStateManager().setScreen(new PlayState(game, 1, null, mapFileName));
-        }
-        if (keycode == Input.Keys.Q) {
-            System.exit(0);
-        }
-
-        // TODO: This shall be placed where GameOverState is the argument of setScreen and not generated by key action
-        if (keycode == Input.Keys.G) {
-            game.getGameStateManager().setScreen(new GameOverState(game, players));
-        }
-
-        return true;
-    }
-
-    private void tweenLayers() {
-        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
-        if (!playerIsOnFirstLane) {
-            Tween.to(opacityLayer1, -1, .5f)
-                    .target(.5f)
-                    .ease(TweenEquations.easeOutQuad)
-                    .start(tweener);
-            Tween.to(opacityLayer2, -1, .5f)
-                    .target(1f)
-                    .ease(TweenEquations.easeOutQuad)
-                    .start(tweener);
-            Tween.to(cameraZoom, -1, .5f)
-                    .target(.9f)
-                    .ease(TweenEquations.easeOutQuad)
-                    .start(tweener);
-        } else {
-            Tween.to(opacityLayer1, -1, .5f)
-                    .target(1f)
-                    .ease(TweenEquations.easeOutQuad)
-                    .start(tweener);
-            Tween.to(opacityLayer2, -1, .5f)
-                    .target(.5f)
-                    .ease(TweenEquations.easeOutQuad)
-                    .start(tweener);
-            Tween.to(cameraZoom, -1, .5f)
-                    .target(1f)
-                    .ease(TweenEquations.easeOutQuad)
-                    .start(tweener);
         }
     }
 
