@@ -30,7 +30,7 @@ public class MainMenu extends State {
     // Game objects
 
     // Game assets
-    BitmapFont font;
+    private BitmapFont font;
 
     // Tween assets
     private Value alpha = new Value();
@@ -55,11 +55,6 @@ public class MainMenu extends State {
     @Override
     public void render(float delta) {
         super.render(delta);
-
-        if (! musicStarted) {
-            AssetLoader.backgroundMusic.loop(0.2f);
-            musicStarted = true;
-        }
 
         // Render sprites
         game.spriteBatch.setProjectionMatrix(cam.combined);

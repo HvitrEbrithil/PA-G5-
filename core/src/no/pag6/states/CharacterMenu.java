@@ -24,12 +24,12 @@ public class CharacterMenu extends State {
     private int currentPlayer = 0;
 
     // Renderers
-    private GlyphLayout gl = new GlyphLayout();
 
     // Game objects
 
     // Game assets
-    BitmapFont font;
+    private GlyphLayout gl = new GlyphLayout();
+    private BitmapFont font;
 
     // Tween assets
 
@@ -95,8 +95,7 @@ public class CharacterMenu extends State {
         if (buttonsEnabled) {
             if (backButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().popScreen();
-            }
-            if (playButton.isTouchUp(projected.x, projected.y)) {
+            } else if (playButton.isTouchUp(projected.x, projected.y)) {
                 game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, MAP_EASY_1_NAME));
             }
         }
@@ -175,7 +174,6 @@ public class CharacterMenu extends State {
                     playerNames.set(currentPlayer, modifiedName);
                     currentPlayer++;
                 }
-                System.out.println("currentPlayer = " + currentPlayer);
                 if (currentPlayer < nofPlayers) {
                     takePlayerName();
                 } else {

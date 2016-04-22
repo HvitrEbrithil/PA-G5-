@@ -2,13 +2,11 @@ package no.pag6.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
-
-import java.util.ArrayList;
 
 public class AssetLoader {
 
@@ -18,17 +16,19 @@ public class AssetLoader {
     public static Texture splashTexture1, splashTexture6, splashTexture11, splashTexture27, splashTexture33, splashTexture38, countTexture, backgroundTexture,
             logoTexture, playButtonTexture, highscoreButtonTexture, optionsButtonTexture, quitButtonTexture, pauseButtonTexture, backButtonTexture,
             resumeButtonTexture, mainMenuButtonTexture, characterBlueTexture, characterGreenTexture, characterOrangeTexture, characterPinkTexture,
-            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture;
+            characterPurpleTexture, characterRedTexture, characterSilverTexture, characterYellowTexture, soundOnButtonTexture, soundOffButtonTexture;
     public static TextureRegion background, logo, playButtonUp, playButtonDown, highscoreButtonUp, highscoreButtonDown, optionsButtonUp, optionsButtonDown,
             quitButtonUp, quitButtonDown, pauseButtonUp, pauseButtonDown, backButtonUp, backButtonDown, resumeButtonUp, resumeButtonDown, mainMenuButtonUp,
-            mainMenuButtonDown;
+            mainMenuButtonDown, soundOnButtonUp, soundOnButtonDown, soundOffButtonUp, soundOffButtonDown;
 
     // Animations
     public static Animation splashAnimation, countAnimation, characterBlueAnimation, characterGreenAnimation, characterOrangeAnimation, characterPinkAnimation,
             characterPurpleAnimation, characterRedAnimation, characterSilverAnimation, characterYellowAnimation;
 
     // Sounds
-    public static Sound splashSound, backgroundMusic, countdownSound, swooshSound;
+    public static Sound splashSound, countdownSound, swooshSound;
+    // Music
+    public static Music backgroundMusic;
 
     public static void load() {
         // Preferences
@@ -83,6 +83,16 @@ public class AssetLoader {
         mainMenuButtonUp = new TextureRegion(mainMenuButtonTexture, 0, 0, 512, 128);
         mainMenuButtonDown = new TextureRegion(mainMenuButtonTexture, 0, 129, 512, 128);
 
+        soundOnButtonTexture = new Texture(Gdx.files.internal("textures/on_button.png"));
+        soundOnButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        soundOnButtonUp = new TextureRegion(soundOnButtonTexture, 0, 0, 256, 256);
+        soundOnButtonDown = new TextureRegion(soundOnButtonTexture, 0, 257, 256, 256);
+
+        soundOffButtonTexture = new Texture(Gdx.files.internal("textures/off_button.png"));
+        soundOffButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        soundOffButtonUp = new TextureRegion(soundOffButtonTexture, 0, 0, 256, 256);
+        soundOffButtonDown = new TextureRegion(soundOffButtonTexture, 0, 257, 256, 256);
+
         // Animations
         TextureRegion[] splashFrames = initSplash();
         splashAnimation = new Animation(0.033f, splashFrames);
@@ -96,14 +106,11 @@ public class AssetLoader {
 
         // Sounds
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
-        backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("sounds/background.mp3"));
         countdownSound = Gdx.audio.newSound(Gdx.files.internal("sounds/countdown.mp3"));
         swooshSound = Gdx.audio.newSound(Gdx.files.internal("sounds/swoosh.mp3"));
-
-        // Fonts
-//        font = new BitmapFont();
-//        font = new BitmapFont(Gdx.files.internal("fonts/arial_72.fnt"), Gdx.files.internal("fonts/arial_72.png"), false);
-
+        // Music
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/background.mp3"));
+        backgroundMusic.setLooping(true);
     }
 
     public static void dispose() {
@@ -124,6 +131,20 @@ public class AssetLoader {
         backButtonTexture.dispose();
         resumeButtonTexture.dispose();
         mainMenuButtonTexture.dispose();
+        soundOnButtonTexture.dispose();
+        soundOffButtonTexture.dispose();
+
+        splashSound.dispose();
+        countdownSound.dispose();
+        swooshSound.dispose();
+        backgroundMusic.dispose();
+    }
+
+    public static boolean getSoundOn() {
+        return prefs.getBoolean("sound_on", true);
+    }
+    public static void setSoundOn(boolean soundOn) {
+        prefs.putBoolean("sound_on", soundOn);
     }
 
     public static int getHighScore(int playerNumber) {
