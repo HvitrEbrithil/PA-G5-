@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
+import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.helpers.MyGestureListener;
 import no.pag6.models.Player;
@@ -114,7 +115,7 @@ public class PlayState extends State {
         update(delta);
 
         // Clear drawings
-        Gdx.gl.glClearColor(208/255f, 244/255f, 247/255f, 1);
+        Gdx.gl.glClearColor(208 / 255f, 244 / 255f, 247 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         drawTiled();
@@ -163,13 +164,13 @@ public class PlayState extends State {
 
         // update camera
         Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
-        if (playerPos.x < A_WIDTH/2) {
-            cam.position.x = A_WIDTH/2;
+        if (playerPos.x < A_WIDTH / 2) {
+            cam.position.x = A_WIDTH / 2;
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
-        if (playerPos.y < A_HEIGHT*1.8f) {
-            cam.position.y = A_HEIGHT*1.8f;
+        if (playerPos.y < A_HEIGHT * 1.8f) {
+            cam.position.y = A_HEIGHT * 1.8f;
         } else {
             cam.position.y = playerPos.y; // center the camera around the activePlayer
         }
@@ -181,8 +182,8 @@ public class PlayState extends State {
 
 
         // Update UI
-        pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
-        pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
+        pauseButton.setX(cam.position.x - A_WIDTH / 2 + 8 / PPM);
+        pauseButton.setY(cam.position.y + A_HEIGHT / 2 - 8 / PPM);
 
         // Layer-change
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
@@ -198,9 +199,11 @@ public class PlayState extends State {
 
         // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
-            // TODO: Move this if-loop to where the real final death of a player occurs
+            // TODO: Move this if-loop to where the real final death of a players occurs
             if (!players[activePlayerIdx].isKilled()) {
                 players[activePlayerIdx].kill();
+                playTime = 0.0f;
+                al.countdownSound.play();
             }
             // TODO: implement proper death
             players[activePlayerIdx].active = false;
@@ -239,6 +242,9 @@ public class PlayState extends State {
         projected = viewport.unproject(touchPoint);
 
         if (pauseButton.isTouchUp(projected.x, projected.y)) {
+            al.countdownSound.pause();
+            al.inGameMusic.pause();
+            al.backgroundMusic.play();
             game.getGameStateManager().pushScreen(new PauseState(game));
         } else {
             // Jump
@@ -275,8 +281,9 @@ public class PlayState extends State {
         if (keycode == Input.Keys.Q || keycode == Input.Keys.ESCAPE) {
             System.exit(0);
         }
-        // Go to GameOver screen
+        // Go to GameOver screen (should be placed where GameOverState is the argument of setScreen in PlayState)
         if (keycode == Input.Keys.G) {
+            AssetLoader.backgroundMusic.play();
             game.getGameStateManager().setScreen(new GameOverState(game, players));
         }
 
@@ -345,10 +352,12 @@ public class PlayState extends State {
 
         // Buttons
         region = al.pauseButtonUp;
-        regionWidth = region.getRegionWidth()*.22f*UI_SCALE/PPM;;
-        regionHeight = region.getRegionHeight()*.22f*UI_SCALE/PPM;;
+        regionWidth = region.getRegionWidth() * .22f * UI_SCALE / PPM;
+        ;
+        regionHeight = region.getRegionHeight() * .22f * UI_SCALE / PPM;
+        ;
         pauseButton = new SimpleButton(
-                0, 500/PPM + A_HEIGHT/2 - 8/PPM,
+                0, 500 / PPM + A_HEIGHT / 2 - 8 / PPM,
                 regionWidth, regionHeight,
                 al.pauseButtonUp, al.pauseButtonDown
         );
@@ -383,7 +392,7 @@ public class PlayState extends State {
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
                 for (int j = 0; j < worldVertices.length; j++) {
-                    worldVertices[j] = new Vector2(vertices[j*2] / PPM, vertices[j*2+1] / PPM);
+                    worldVertices[j] = new Vector2(vertices[j * 2] / PPM, vertices[j * 2 + 1] / PPM);
                 }
 
                 ChainShape chainShape = new ChainShape();
@@ -438,5 +447,4 @@ public class PlayState extends State {
             players[i] = new Player(cam, playerBody, i, playerNames.get(i), i + 1);
         }
     }
-
 }

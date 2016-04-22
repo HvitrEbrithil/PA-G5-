@@ -83,12 +83,18 @@ public class PauseState extends State {
         projected = viewport.unproject(touchPoint);
 
         if (resumeButton.isTouchUp(projected.x, projected.y)) {
+            al.countdownSound.resume();
+            al.inGameMusic.play();
+            al.backgroundMusic.pause();
             game.getGameStateManager().popScreen();
         } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new HighscoreMenu(game));
         } else if (optionsButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
         } else if (mainMenuButton.isTouchUp(projected.x, projected.y)) {
+            al.countdownSound.stop();
+            al.inGameMusic.stop();
+            al.backgroundMusic.play();
             game.getGameStateManager().popScreen();
             game.getGameStateManager().setScreen(new MainMenu(game));
         }
@@ -161,7 +167,7 @@ public class PauseState extends State {
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         pauseTitle = new Sprite(region);
-        pauseTitle.setSize(regionWidth*UI_SCALE, regionHeight*UI_SCALE);
+        pauseTitle.setSize(regionWidth, regionHeight);
         pauseTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
     }
 

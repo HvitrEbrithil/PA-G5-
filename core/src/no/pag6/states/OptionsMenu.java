@@ -123,7 +123,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         musicOnButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*15/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.onButtonUp, al.onButtonDown
         );
@@ -132,7 +132,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         musicOffButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*15/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.offButtonUp, al.offButtonDown
         );
@@ -141,7 +141,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOnButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*11/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.onButtonUp, al.onButtonDown
         );
@@ -150,7 +150,7 @@ public class OptionsMenu extends State {
         regionWidth = region.getRegionWidth()*tempUIScale;
         regionHeight = region.getRegionHeight()*tempUIScale;
         soundOffButton = new SimpleButton(
-                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*11/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 al.offButtonUp, al.offButtonDown
         );
@@ -190,9 +190,9 @@ public class OptionsMenu extends State {
         }
 
         gl.setText(font, "MUSIC");
-        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*14/24 + gl.height/2);
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*15/24 + gl.height/2);
         gl.setText(font, "SOUND");
-        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*10/24 + gl.height/2);
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*11/24 + gl.height/2);
     }
 
 }

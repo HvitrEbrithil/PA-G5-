@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenu extends State {
-
     // Renderers
     private TweenManager tweener;
 
