@@ -163,7 +163,7 @@ public class PauseState extends State {
         regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
         regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
         pauseTitle = new Sprite(region);
-        pauseTitle.setSize(regionWidth*UI_SCALE, regionHeight*UI_SCALE);
+        pauseTitle.setSize(regionWidth, regionHeight);
         pauseTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
     }
 
