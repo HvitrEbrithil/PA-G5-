@@ -11,7 +11,7 @@ public interface Constants {
     float TIME_STEP = 1/60f;
 
     // UI
-    float UI_SCALE = 0.6f;
+    float UI_SCALE = 0.9f;
 
     // Play state
     Vector2 GRAVITY = new Vector2(0, -10),

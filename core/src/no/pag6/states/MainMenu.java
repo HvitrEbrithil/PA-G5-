@@ -133,10 +133,10 @@ public class MainMenu extends State {
 
         // Buttons
         region = AssetLoader.playButtonUp;
-        regionWidth = region.getRegionWidth()*UI_SCALE*1.5f;
-        regionHeight = region.getRegionHeight()*UI_SCALE*1.5f;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.3f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.3f;
         playButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*8/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*14/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.playButtonUp, AssetLoader.playButtonDown
         );
@@ -146,7 +146,7 @@ public class MainMenu extends State {
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         highscoreButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*6/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*10/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.highscoreButtonUp, AssetLoader.highscoreButtonDown
         );
@@ -156,7 +156,7 @@ public class MainMenu extends State {
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         optionsButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*7/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.optionsButtonUp, AssetLoader.optionsButtonDown
         );
@@ -166,25 +166,23 @@ public class MainMenu extends State {
         regionWidth = region.getRegionWidth()*UI_SCALE;
         regionHeight = region.getRegionHeight()*UI_SCALE;
         quitButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.quitButtonUp, AssetLoader.quitButtonDown
         );
         mainMenuButtons.add(quitButton);
 
         // Logo and copyright
-        float tempUIScale = 0.04f;
-
         region = AssetLoader.logo;
-        regionWidth = region.getRegionWidth()*tempUIScale;
-        regionHeight = region.getRegionHeight()*tempUIScale;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
         logo = new Sprite(region);
-        logo.setSize(regionWidth, regionHeight);
-        logo.setPosition(8, 2);
+        logo.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        logo.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 9;
+        parameter.size = ((int) ((12.0f * UI_SCALE)));
         parameter.color = Color.BLACK;
         font = generator.generateFont(parameter);
         generator.dispose();
@@ -196,7 +194,7 @@ public class MainMenu extends State {
         }
 
         logo.draw(game.spriteBatch);
-        font.draw(game.spriteBatch, "COPYRIGHT 2016, PROG ARK GRUPPE 6", V_WIDTH/22, V_HEIGHT/26);
+        font.draw(game.spriteBatch, "PAG6 © 2016", V_WIDTH/50, V_HEIGHT/26);
     }
 
     private void drawTransition(float delta) {
