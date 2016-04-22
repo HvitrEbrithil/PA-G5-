@@ -65,8 +65,8 @@ public class GameOverState extends State {
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
 
-        drawScores();
         drawUI();
+        drawScores();
 
         game.spriteBatch.end();
     }
@@ -123,7 +123,7 @@ public class GameOverState extends State {
         regionWidth = region.getRegionWidth()*uiScale;
         regionHeight = region.getRegionHeight()*uiScale;
         mainMenuButton = new SimpleButton(
-                V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/12 - regionHeight/2,
+                V_WIDTH/2 - regionWidth/2, V_HEIGHT*2/12 - regionHeight/2,
                 regionWidth, regionHeight,
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
@@ -144,9 +144,13 @@ public class GameOverState extends State {
     }
 
     private void drawScores() {
-        //for (int i = 1; i <= players.length; i++) {
-          //  String playerScore = players[i-1].get        }
-        //gl.setText(font, players);
-        //font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*5/6);
+        // Draw name and score for each players
+        String scores = "";
+        for (int i = 1; i <= players.length; i++) {
+            String scoreString = "" + players[i-1].getName() + ": " + Integer.toString(players[i-1].getScore());
+            scores += scoreString + "\n";
+        }
+        gl.setText(font, scores);
+        font.draw(game.spriteBatch, gl, V_WIDTH/2 - gl.width/2, V_HEIGHT*(6/12));
     }
 }

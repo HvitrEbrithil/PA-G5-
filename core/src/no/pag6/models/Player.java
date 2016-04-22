@@ -31,10 +31,11 @@ public class Player extends Sprite implements Constants {
     private boolean shouldSwitchFilterBits;
     private boolean finished;
 
-    public Player(OrthographicCamera cam, Body b2dBody, int id, int characterType) {
+    public Player(OrthographicCamera cam, Body b2dBody, int id, String name, int characterType) {
         this.cam = cam;
         this.b2dBody = b2dBody;
         this.id = id;
+        this.name = name;
         nofLives = 3;
 
         score = 0;
@@ -59,6 +60,10 @@ public class Player extends Sprite implements Constants {
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void incrementFootContactCount() {

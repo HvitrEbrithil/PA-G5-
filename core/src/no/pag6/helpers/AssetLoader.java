@@ -39,7 +39,7 @@ public class AssetLoader {
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         background = new TextureRegion(backgroundTexture, 0, 0, 2560, 1440);
 
-        logoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
+        logoTexture = new Texture(Gdx.files.internal("textures/lanerunner_logo.png"));
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new TextureRegion(logoTexture, 0, 0, 512, 512);
 
@@ -303,7 +303,7 @@ public class AssetLoader {
         characterSilverAnimation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
 
         // Yellow
-        characterYellowTexture = new Texture(Gdx.files.internal("textures/character_silver.png"));
+        characterYellowTexture = new Texture(Gdx.files.internal("textures/character_yellow.png"));
         characterYellowTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         TextureRegion[] characterYellowFrames = new TextureRegion[5];
