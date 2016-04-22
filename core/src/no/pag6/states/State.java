@@ -130,8 +130,12 @@ public abstract class State implements Screen, InputProcessor, Constants {
         runTime += delta;
 
         // Music
-        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying() && ! (game.getGameStateManager().getScreen() instanceof PlayState)) {
+        if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.backgroundMusic.isPlaying() && !(game.getGameStateManager().getScreen() instanceof PlayState)) {
             AssetLoader.backgroundMusic.play();
+            AssetLoader.inGameMusic.pause();
+        } else if (runTime > 2f && AssetLoader.getMusicOn() && !AssetLoader.inGameMusic.isPlaying() && game.getGameStateManager().getScreen() instanceof PlayState) {
+            AssetLoader.inGameMusic.play();
+            AssetLoader.backgroundMusic.pause();
         }
     }
 

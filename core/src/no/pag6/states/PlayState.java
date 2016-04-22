@@ -186,9 +186,11 @@ public class PlayState extends State {
 
         // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
-            // TODO: Move this if-loop to where the real final death of a player occurs
+            // TODO: Move this if-loop to where the real final death of a players occurs
             if (!players[activePlayerIdx].isKilled()) {
                 players[activePlayerIdx].kill();
+                playTime = 0.0f;
+                AssetLoader.countdownSound.play();
             }
             // TODO: implement proper death
             players[activePlayerIdx].active = false;
@@ -227,8 +229,9 @@ public class PlayState extends State {
         projected = viewport.unproject(touchPoint);
 
         if (pauseButton.isTouchUp(projected.x, projected.y)) {
-            AssetLoader.backgroundMusic.play();
             AssetLoader.countdownSound.pause();
+            AssetLoader.inGameMusic.pause();
+            AssetLoader.backgroundMusic.play();
             game.getGameStateManager().pushScreen(new PauseState(game));
         }
 

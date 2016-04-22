@@ -30,7 +30,7 @@ public class AssetLoader {
     // Sounds
     public static Sound splashSound, countdownSound, swooshSound;
     // Music
-    public static Music backgroundMusic;
+    public static Music backgroundMusic, inGameMusic;
 
     public static void load() {
         // Preferences
@@ -134,10 +134,15 @@ public class AssetLoader {
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash_screen_sound.mp3"));
         countdownSound = Gdx.audio.newSound(Gdx.files.internal("sounds/countdown.mp3"));
         swooshSound = Gdx.audio.newSound(Gdx.files.internal("sounds/swoosh.mp3"));
+
         // Music
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/background.mp3"));
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(.5f);
+
+        inGameMusic = Gdx.audio.newMusic(Gdx.files.internal("music/in_game.mp3"));
+        inGameMusic.setLooping(true);
+        inGameMusic.setVolume(.5f);
     }
 
     public static void dispose() {
