@@ -1,6 +1,9 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -24,6 +27,7 @@ public class HighscoreMenu extends State {
     // Game UI
     private List<SimpleButton> highscoreMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton backButton;
+    private Sprite highscoreTitle;
 
     public HighscoreMenu(PAG6Game game) {
         super(game);
@@ -96,16 +100,30 @@ public class HighscoreMenu extends State {
     }
 
     private void initUI() {
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
         backButton = new SimpleButton(64, 64,
                 AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonDown.getRegionHeight(),
                 AssetLoader.backButtonUp, AssetLoader.backButtonDown);
         highscoreMenuButtons.add(backButton);
+
+        // Title
+        region = AssetLoader.highscoreTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        highscoreTitle = new Sprite(region);
+        highscoreTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        highscoreTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
     }
 
     private void drawUI() {
         for (SimpleButton button : highscoreMenuButtons) {
             button.draw(game.spriteBatch);
         }
+
+        highscoreTitle.draw(game.spriteBatch);
     }
 
 }

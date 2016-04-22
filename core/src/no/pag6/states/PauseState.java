@@ -1,6 +1,8 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
@@ -28,6 +30,7 @@ public class PauseState extends State {
     private SimpleButton highscoreButton;
     private SimpleButton optionsButton;
     private SimpleButton mainMenuButton;
+    private Sprite pauseTitle;
 
     public PauseState(PAG6Game game) {
         super(game);
@@ -156,12 +159,22 @@ public class PauseState extends State {
                 AssetLoader.mainMenuButtonUp, AssetLoader.mainMenuButtonDown
         );
         pauseButtons.add(mainMenuButton);
+
+        // Title
+        region = AssetLoader.pauseTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        pauseTitle = new Sprite(region);
+        pauseTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        pauseTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
     }
 
     private void drawUI() {
         for (SimpleButton button : pauseButtons) {
             button.draw(game.spriteBatch);
         }
+
+        pauseTitle.draw(game.spriteBatch);
     }
 
 }

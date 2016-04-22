@@ -1,6 +1,9 @@
 package no.pag6.states;
 
 import aurelienribon.tweenengine.TweenManager;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
@@ -24,6 +27,7 @@ public class OptionsMenu extends State {
     // Game UI
     private List<SimpleButton> optionsMenuButtons = new ArrayList<SimpleButton>();
     private SimpleButton backButtonOptions;
+    private Sprite optionsTitle;
 
     public OptionsMenu(PAG6Game game) {
         super(game);
@@ -96,16 +100,30 @@ public class OptionsMenu extends State {
     }
 
     private void initUI() {
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
         backButtonOptions = new SimpleButton(64, 64,
                 AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonUp.getRegionHeight(),
                 AssetLoader.backButtonUp, AssetLoader.backButtonDown);
         optionsMenuButtons.add(backButtonOptions);
+
+        // Title
+        region = AssetLoader.optionsTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE;
+        regionHeight = region.getRegionHeight()*UI_SCALE;
+        optionsTitle = new Sprite(region);
+        optionsTitle.setSize(regionWidth*UI_SCALE*1.1f, regionHeight*UI_SCALE*1.1f);
+        optionsTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
     }
 
     private void drawUI() {
         for (SimpleButton button : optionsMenuButtons) {
             button.draw(game.spriteBatch);
         }
+
+        optionsTitle.draw(game.spriteBatch);
     }
 
 }
