@@ -12,6 +12,7 @@ public interface Constants {
 
     // UI
     float UI_SCALE = 0.4f;
+    float FONT_SCALE = 3.4f;
 
     // Play state
     Vector2 GRAVITY = new Vector2(0, -10),

@@ -7,6 +7,8 @@ import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -24,9 +26,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.sun.prism.image.ViewPort;
 
@@ -79,8 +85,8 @@ public class PlayState extends State {
 
     float tempUIScale = .2f/PPM;
 
-    private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
-    private SimpleButton pauseButton;
+
+    private Button pauseButton;
 
 
     public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
@@ -160,9 +166,6 @@ public class PlayState extends State {
         for (Player player : players) {
             player.update(delta);
         }
-        // Update UI
-        pauseButton.setX(cam.position.x - A_WIDTH/2 + 8/PPM);
-        pauseButton.setY(cam.position.y + A_HEIGHT/2 - 8/PPM);
 
         for (int i=0; i<nofPlayers; i++){
             scores[i].setText(""+players[i].getScore());
@@ -193,7 +196,7 @@ public class PlayState extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        pauseButton.isTouchDown(projected.x, projected.y);
+        //pauseButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -203,9 +206,9 @@ public class PlayState extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        if (pauseButton.isTouchUp(projected.x, projected.y)) {
-            game.getGameStateManager().pushScreen(new PauseState(game));
-        }
+        //if (pauseButton.isTouchUp(projected.x, projected.y)) {
+        //    game.getGameStateManager().pushScreen(new PauseState(game));
+        //}
 
         return true;
     }
@@ -236,44 +239,49 @@ public class PlayState extends State {
 
         // Buttons
         region = AssetLoader.pauseButtonUp;
-        regionWidth = region.getRegionWidth()*tempUIScale;
-        regionHeight = region.getRegionHeight()*tempUIScale;
-        pauseButton = new SimpleButton(
-                0, 500/PPM + A_HEIGHT/2 - 8/PPM,
-                regionWidth, regionHeight,
-                AssetLoader.pauseButtonUp, AssetLoader.pauseButtonDown
-        );
-        playButtons.add(pauseButton);
+        regionWidth = region.getRegionWidth() * UI_SCALE;
+        regionHeight = region.getRegionHeight() * UI_SCALE;
+        pauseButton = new Button(new TextureRegionDrawable(AssetLoader.pauseButtonUp), new TextureRegionDrawable(AssetLoader.pauseButtonDown));
+        pauseButton.addListener(new InputListener() {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.log("Example", "touch started at (" + x + ", " + y + ")");
+                return false;
+            }
+
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.log("Example", "touch done at (" + x + ", " + y + ")");
+            }
+        });
+
 
         // Player score
         scores = new Label[nofPlayers];
-        for(int i=0; i<nofPlayers; i++){
+        for (int i = 0; i < nofPlayers; i++) {
             scores[i] = new Label("" + players[i].getScore(), new Label.LabelStyle(new BitmapFont(), Color.RED));
+            scores[i].setFontScale(FONT_SCALE, FONT_SCALE);
+            //scores[i].setSize(region.getRegionWidth()*UI_SCALE, region.getRegionHeight()*UI_SCALE);
         }
+        ;
 
         Table table = new Table();
         table.top();
         table.setFillParent(true);
-        table.add(scores[0]).expandX().padTop(40);
-        if (nofPlayers==2){
-            table.row();
-            table.add(scores[1]).expandX().padTop(40);
-        }
+        table.add(scores[0]).height(regionHeight).width(regionWidth).expandX().padTop(40);
+        table.add(pauseButton).height(regionHeight).width(regionWidth).expandX().padTop(40);
+
         uiStage.addActor(table);
 
-    }
+        InputMultiplexer imp = new InputMultiplexer();
+        imp.addProcessor(uiStage);
+
+
+
+
 
     private void drawTiled() {
         mapRenderer.render();
     }
 
-    private void drawUI() {
-        for (SimpleButton button : playButtons) {
-            button.draw(game.spriteBatch);
-        }
-
-        //.draw(game.spriteBatch, players[0].toString(), V_WIDTH/22, V_HEIGHT/26);
-    }
 
     private void addMapBodies() {
         BodyDef bodyDef = new BodyDef();
