@@ -95,7 +95,6 @@ public class CharacterMenu extends State {
                 game.getGameStateManager().popScreen();
             } else if (playButton.isTouchUp(projected.x, projected.y)) {
                 al.backgroundMusic.pause();
-                al.inGameMusic.play();
                 game.getGameStateManager().pushScreen(new PlayState(game, nofPlayers, playerNames, MAP_EASY_1_NAME));
             }
         }

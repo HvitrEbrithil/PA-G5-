@@ -1,5 +1,6 @@
 package no.pag6.models;
 
+// TODO: Is this class used at all?
 public class GameMap {
     GameLayer activeLayer;
     GameLayer inactiveLayer;
