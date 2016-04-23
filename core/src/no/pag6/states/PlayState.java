@@ -7,8 +7,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -18,7 +23,6 @@ import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.helpers.MyGestureListener;
 import no.pag6.models.Player;
@@ -35,6 +39,8 @@ public class PlayState extends State {
     private float playTime = 0.0f;
     private float countdownTime = 3.5f;
     private boolean startSoundPlayed = false;
+    private boolean inGameMusicPlaying = false;
+    private Music activeInGameMusic = al.inGameEasyMusic;
 
     // Player stats
     private int nofPlayers;
@@ -46,6 +52,7 @@ public class PlayState extends State {
     // map stuff
     private String mapFileName;
     private TiledMap map;
+    private float mapDifficulty = 1.0f;
     private OrthogonalTiledMapRenderer mapRenderer;
 
     // box2d stuff
@@ -60,6 +67,10 @@ public class PlayState extends State {
     private Value opacityLayer1 = new Value();
     private Value opacityLayer2 = new Value();
     private Value cameraZoom = new Value();
+
+    //Game assets
+    private GlyphLayout gl = new GlyphLayout();
+    private BitmapFont font;
 
     // Game UI
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
@@ -77,8 +88,7 @@ public class PlayState extends State {
         viewport.setWorldSize(A_WIDTH, A_HEIGHT);
 
         // load the map
-        map = new TmxMapLoader().load("maps/" + mapFileName);
-        mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
+        loadMap(mapFileName);
 
         // set up box2d
         world = new World(GRAVITY, true);
@@ -96,6 +106,11 @@ public class PlayState extends State {
         initGameAssets();
 
         initUI();
+
+        // Set in game music
+        if (al.getMusicOn()) {
+            setInGameMusic(mapFileName);
+        }
     }
 
     @Override
@@ -141,8 +156,18 @@ public class PlayState extends State {
             al.countdownSound.play(0.5f);
             startSoundPlayed = true;
         }
+
+        if (!inGameMusicPlaying && al.getMusicOn()) {
+            activeInGameMusic.play();
+            inGameMusicPlaying = true;
+        }
+
         if (playTime < countdownTime) {
             game.spriteBatch.draw(al.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+
+            // TODO: Set playername of the active player on Countdown screen
+            //gl.setText(font, players[activePlayerIdx].getName());
+            //font.draw(game.spriteBatch, gl, x, y);
         }
 
         game.spriteBatch.end();
@@ -157,6 +182,8 @@ public class PlayState extends State {
         playTime += delta;
 
         tweener.update(delta);
+
+
 
         if (playTime > countdownTime) {
             world.step(TIME_STEP, 6, 2); // update physics
@@ -198,21 +225,12 @@ public class PlayState extends State {
         mapRenderer.setView(cam);
 
         // check death
-        if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
-            // TODO: Move this if-loop to where the real final death of a players occurs
+        if (players[activePlayerIdx].getB2dBody().getPosition().y < 0 && ! players[activePlayerIdx].isFinished()) {
+            // TODO: Move this if-loop to where the real final death of a player occurs
             if (!players[activePlayerIdx].isKilled()) {
                 players[activePlayerIdx].kill();
-                playTime = 0.0f;
-                al.countdownSound.play();
             }
-            // TODO: implement proper death
-            players[activePlayerIdx].active = false;
-            activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
-            players[activePlayerIdx].active = true;
-            if (nofPlayers > 1) {
-                players[activePlayerIdx].incrementFootContactCount();
-            }
-            cl.setPlayer(players[activePlayerIdx]);
+            setActivePlayer();
 
             // Tween values
             opacityLayer1.setValue(1f);
@@ -223,6 +241,8 @@ public class PlayState extends State {
         // check finish
         if (players[activePlayerIdx].isFinished()) {
             System.out.println("finish");
+            players[activePlayerIdx].setFinished(false);
+            setActivePlayer();
         }
     }
 
@@ -242,9 +262,12 @@ public class PlayState extends State {
         projected = viewport.unproject(touchPoint);
 
         if (pauseButton.isTouchUp(projected.x, projected.y)) {
+            activeInGameMusic.pause();
+            inGameMusicPlaying = false;
             al.countdownSound.pause();
-            al.inGameMusic.pause();
-            al.backgroundMusic.play();
+            if (al.getMusicOn()) {
+                al.backgroundMusic.play();
+            }
             game.getGameStateManager().pushScreen(new PauseState(game));
         } else {
             // Jump
@@ -283,7 +306,7 @@ public class PlayState extends State {
         }
         // Go to GameOver screen (should be placed where GameOverState is the argument of setScreen in PlayState)
         if (keycode == Input.Keys.G) {
-            AssetLoader.backgroundMusic.play();
+            al.backgroundMusic.play();
             game.getGameStateManager().setScreen(new GameOverState(game, players));
         }
 
@@ -329,6 +352,65 @@ public class PlayState extends State {
         }
     }
 
+    private void loadMap(String mapFileName) {
+        map = new TmxMapLoader().load("maps/" + mapFileName);
+        mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
+    }
+
+    private void setInGameMusic(String mapFileName) {
+        activeInGameMusic.pause();
+
+        if (mapFileName.equals(MAP_HARD_1_NAME)) {
+            activeInGameMusic = al.inGameHardMusic;
+        } else if (mapFileName.equals(MAP_MED_1_NAME)) {
+            activeInGameMusic = al.inGameMediumMusic;
+        } else {
+            activeInGameMusic = al.inGameEasyMusic;
+        }
+
+        activeInGameMusic.play();
+    }
+
+    private void setActivePlayer() {
+        playTime = 0.0f;
+
+        players[activePlayerIdx].active = false;
+
+        // Check if there are more players alive
+        Boolean playersLeft = false;
+        for (Player player : players) {
+            if (player.getNofLives() > 0) {
+                playersLeft = true;
+                break;
+            }
+        }
+        if (playersLeft) {
+            activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
+            Player activePlayer = players[activePlayerIdx];
+            activePlayer.active = true;
+            this.mapFileName = activePlayer.getMap();
+            this.mapDifficulty = activePlayer.getMapDifficulty();
+            cl.setPlayer(players[activePlayerIdx]);
+
+            map.dispose();
+            mapRenderer.dispose();
+            loadMap(mapFileName);
+
+            if (al.getMusicOn()) {
+                setInGameMusic(mapFileName);
+            }
+
+            al.countdownSound.play();
+
+            if (nofPlayers > 1) {
+                players[activePlayerIdx].incrementFootContactCount();
+            }
+        } else {
+            activeInGameMusic.stop();
+            game.getGameStateManager().setScreen(new GameOverState(game, players));
+        }
+    }
+
     private void initGameObjects() {
     }
 
@@ -353,9 +435,9 @@ public class PlayState extends State {
         // Buttons
         region = al.pauseButtonUp;
         regionWidth = region.getRegionWidth() * .22f * UI_SCALE / PPM;
-        ;
+
         regionHeight = region.getRegionHeight() * .22f * UI_SCALE / PPM;
-        ;
+
         pauseButton = new SimpleButton(
                 0, 500 / PPM + A_HEIGHT / 2 - 8 / PPM,
                 regionWidth, regionHeight,

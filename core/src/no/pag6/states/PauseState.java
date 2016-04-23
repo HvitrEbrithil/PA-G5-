@@ -84,7 +84,6 @@ public class PauseState extends State {
 
         if (resumeButton.isTouchUp(projected.x, projected.y)) {
             al.countdownSound.resume();
-            al.inGameMusic.play();
             al.backgroundMusic.pause();
             game.getGameStateManager().popScreen();
         } else if (highscoreButton.isTouchUp(projected.x, projected.y)) {
@@ -93,8 +92,13 @@ public class PauseState extends State {
             game.getGameStateManager().pushScreen(new OptionsMenu(game));
         } else if (mainMenuButton.isTouchUp(projected.x, projected.y)) {
             al.countdownSound.stop();
-            al.inGameMusic.stop();
-            al.backgroundMusic.play();
+            al.inGameEasyMusic.stop();
+            al.inGameMediumMusic.stop();
+            al.inGameHardMusic.stop();
+            if (al.getMusicOn()) {
+                al.backgroundMusic.play();
+            }
+
             game.getGameStateManager().popScreen();
             game.getGameStateManager().setScreen(new MainMenu(game));
         }

@@ -25,6 +25,8 @@ public class Player extends Sprite implements Constants {
     private String name;
     private float playtime = 0.0f;
     private int score;
+    private String map;
+    private int mapDifficulty = 1;
     private boolean onFirstLane;
     private PlayerCharacter playerCharacter;
     private Texture playerTexture;
@@ -53,6 +55,7 @@ public class Player extends Sprite implements Constants {
         this.id = id;
         this.name = name;
         nofLives = 3;
+        this.map = MAP_EASY_1_NAME;
 
         score = 0;
         onFirstLane = true;
@@ -79,6 +82,8 @@ public class Player extends Sprite implements Constants {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+        setMap();
+        setPosition(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
     }
 
     public boolean isFinished() {
@@ -109,6 +114,11 @@ public class Player extends Sprite implements Constants {
         if (score > getHighscore()) {
             setHighscore();
         }
+
+        nofLives -= 1;
+
+        // Set position to intial position
+        setPosition(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
 
         isKilled = true;
     }
@@ -177,6 +187,10 @@ public class Player extends Sprite implements Constants {
         this.score = score;
     }
 
+    public int getNofLives() {
+        return nofLives;
+    }
+
     public boolean isOnFirstLane() {
         return onFirstLane;
     }
@@ -193,12 +207,12 @@ public class Player extends Sprite implements Constants {
         if (active) {
             Vector2 vel = b2dBody.getLinearVelocity();
             float desiredVel = PLAYER_MAX_VELOCITY;
-            float velChange = desiredVel - vel.x;
+            float velChange = (desiredVel - vel.x)*(0.9f + ((float)(mapDifficulty)*0.1f));
             float impulse = b2dBody.getMass() * velChange;
             b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
 
             // TODO: Move to wherever when score-system is implemented
-            incrementScore(1);
+            incrementScore(1*mapDifficulty);
         }
 
         if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
@@ -255,7 +269,26 @@ public class Player extends Sprite implements Constants {
         }
     }
 
-//    // TODO: Fix this function if we have the time
+    public void setMap() {
+        if (this.map == MAP_EASY_1_NAME) {
+            this.map = MAP_MED_1_NAME;
+        } else if (this.map == MAP_MED_1_NAME) {
+            this.map = MAP_HARD_1_NAME;
+        } else if (this.map == MAP_HARD_1_NAME) {
+            this.map = MAP_EASY_1_NAME;
+        }
+        this.mapDifficulty += 2;
+    }
+
+    public String getMap() {
+        return map;
+    }
+
+    public float getMapDifficulty() {
+        return mapDifficulty;
+    }
+
+    //    // TODO: Fix this function if we have the time
 //    // Current bug: Switching two times fast with this function messes with the maskBits
 //    private void scaleFixtures(float scale) {
 //        // Remove old fixtures
