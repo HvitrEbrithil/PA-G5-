@@ -22,7 +22,7 @@ public class SplashScreen extends State {
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
 
-        game.spriteBatch.draw(al.splashAnimation.getKeyFrame(runTime - 1), 0, 0, V_WIDTH, V_HEIGHT);
+        game.spriteBatch.draw(al.splashAnimation.getKeyFrame((runTime - 1) < 0 ? 0 : (runTime - 1)), 0, 0, V_WIDTH, V_HEIGHT);
 
         game.spriteBatch.end();
 

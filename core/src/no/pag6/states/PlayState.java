@@ -209,7 +209,7 @@ public class PlayState extends State {
             player.update(delta);
         }
 
-        playerNameLabel.setText(players[activePlayerIdx].getName());
+        playerNameLabel.setText(" " + players[activePlayerIdx].getName());
         livesLabel.setText(" LIVES: " + players[activePlayerIdx].getNofLives());
         scoreLabel.setText(" SCORE: " + players[activePlayerIdx].getScore());
 
@@ -378,7 +378,13 @@ public class PlayState extends State {
                 setInGameMusic(mapFileName);
             }
 
-            al.countdownSound.play();
+            if (al.getSoundOn()) {
+                al.countdownSound.play();
+            }
+
+            if (nofPlayers > 1) {
+                players[activePlayerIdx].incrementFootContactCount();
+            }
         } else {
             activeInGameMusic.stop();
             game.getGameStateManager().setScreen(new GameOverState(game, players));
@@ -429,6 +435,12 @@ public class PlayState extends State {
                 projected = viewport.unproject(touchPoint);
 
                 game.getGameStateManager().pushScreen(new PauseState(game));
+                al.countdownSound.pause();
+                activeInGameMusic.pause();
+                inGameMusicPlaying = false;
+                if(al.getMusicOn()){
+                    al.backgroundMusic.play();
+                }
             }
         });
 
