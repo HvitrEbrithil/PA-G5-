@@ -107,15 +107,8 @@ public class PlayState extends State {
 
     //Game assets
 
-    private GlyphLayout gl = new GlyphLayout();
-    private BitmapFont countDownNameFont;
-    private BitmapFont playerStatsFont;
 
     // Game UI
-
-
-    private Label[] scoreLabels;
-    private Label[] playerNameLabels;
     private Label scoreLabel;
     private Label playerNameLabel;
     private Label numberOfLives;
@@ -221,10 +214,6 @@ public class PlayState extends State {
 
         if (playTime < countdownTime) {
             game.spriteBatch.draw(al.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH/2, cam.position.y - A_HEIGHT/2, A_WIDTH, A_HEIGHT);
-
-            // TODO: Set playername of the active player on Countdown screen (what is correct x- and y-value?)
-            gl.setText(countDownNameFont, players[activePlayerIdx].getName().toUpperCase());
-            countDownNameFont.draw(game.spriteBatch, gl, 0, 0);
         }
 
         game.spriteBatch.end();
@@ -272,10 +261,8 @@ public class PlayState extends State {
         }
 
 
-
-
-        scoreLabel.setText("   " + players[activePlayerIdx].getScore());
-        numberOfLives.setText("   " + players[activePlayerIdx].getNofLives());
+        scoreLabel.setText("   SCORE: " + players[activePlayerIdx].getScore());
+        numberOfLives.setText("   LIVES: " + players[activePlayerIdx].getNofLives());
         playerNameLabel.setText("   " + players[activePlayerIdx].getName());
 
 
@@ -495,7 +482,9 @@ public class PlayState extends State {
                 setInGameMusic(mapFileName);
             }
 
-            al.countdownSound.play();
+            if (al.getSoundOn()) {
+                al.countdownSound.play();
+            }
 
             if (nofPlayers > 1) {
                 players[activePlayerIdx].incrementFootContactCount();
@@ -551,15 +540,6 @@ public class PlayState extends State {
             }
         });
 
-        // Font
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 38;
-        parameter.color = Color.BLACK;
-        countDownNameFont = generator.generateFont(parameter);
-        generator.dispose();
-
-
 
         // Player score
 
@@ -577,7 +557,6 @@ public class PlayState extends State {
         UItable.setFillParent(true);
         UItable.add(playerNameLabel, scoreLabel, numberOfLives );
         UItable.add(pauseButton).right().height(regionWidth/2).width(regionWidth/2).expandX().padTop(10).padRight(50);
-        UItable.setDebug(true);
         uiStage.addActor(UItable);
 
 
