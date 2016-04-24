@@ -43,7 +43,7 @@ public class AssetLoader {
     public Sound splashSound, countdownSound, swooshSound;
 
     // Music
-    public static Music backgroundMusic, inGameMusic;
+    public static Music backgroundMusic, inGameEasyMusic, inGameMediumMusic, inGameHardMusic;
 
 
     public void load() {
@@ -154,9 +154,17 @@ public class AssetLoader {
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(.5f);
 
-        inGameMusic = Gdx.audio.newMusic(Gdx.files.internal("music/in_game.mp3"));
-        inGameMusic.setLooping(true);
-        inGameMusic.setVolume(.5f);
+        inGameEasyMusic = Gdx.audio.newMusic(Gdx.files.internal("music/in_game_easy.mp3"));
+        inGameEasyMusic.setLooping(true);
+        inGameEasyMusic.setVolume(.3f);
+
+        inGameMediumMusic = Gdx.audio.newMusic(Gdx.files.internal("music/in_game_medium.mp3"));
+        inGameMediumMusic.setLooping(true);
+        inGameMediumMusic.setVolume(.3f);
+
+        inGameHardMusic = Gdx.audio.newMusic(Gdx.files.internal("music/in_game_hard.mp3"));
+        inGameHardMusic.setLooping(true);
+        inGameHardMusic.setVolume(.3f);
     }
 
     public void dispose() {

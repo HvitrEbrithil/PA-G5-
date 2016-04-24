@@ -25,6 +25,8 @@ public class Player extends Sprite implements Constants {
     private String name;
     private float playtime = 0.0f;
     private int score;
+    private String map;
+    private int mapDifficulty = 1;
     private boolean onFirstLane;
     private PlayerCharacter playerCharacter;
     private Texture playerTexture;
@@ -35,7 +37,6 @@ public class Player extends Sprite implements Constants {
     private int id;
     // TODO
     private int nofLives;
-    private boolean isKilled = false;
     private boolean shouldSwitchFilterBits;
 
     private float originWidth = 75/PPM;
@@ -46,6 +47,7 @@ public class Player extends Sprite implements Constants {
     private Value playerScale = new Value();
 
     private boolean finished;
+    private final static Vector2 MOVEMENT_IMPULSE = new Vector2(0, 0);
 
     public Player(OrthographicCamera cam, Body b2dBody, int id, String name, int characterType) {
         this.cam = cam;
@@ -53,6 +55,7 @@ public class Player extends Sprite implements Constants {
         this.id = id;
         this.name = name;
         nofLives = 3;
+        this.map = MAP_EASY_1_NAME;
 
         score = 0;
         onFirstLane = true;
@@ -75,6 +78,10 @@ public class Player extends Sprite implements Constants {
         tweener = new TweenManager();
 
         playerScale.setValue(1f);
+    }
+
+    public void setB2dBody(Body b2dBody) {
+        this.b2dBody = b2dBody;
     }
 
     public void setFinished(boolean finished) {
@@ -110,11 +117,15 @@ public class Player extends Sprite implements Constants {
             setHighscore();
         }
 
-        isKilled = true;
-    }
+        nofLives -= 1;
 
-    public boolean isKilled() {
-        return isKilled;
+        // reset filter bits
+        Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
+        filter.maskBits = FIRST_LAYER_BITS;
+        b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+        filter.maskBits |= GOAL_LAYER_BITS; // make sure the player can collide with goal layer
+        b2dBody.getFixtureList().get(0).setFilterData(filter);
+        onFirstLane = true;
     }
 
     public int getHighscore() {
@@ -177,6 +188,10 @@ public class Player extends Sprite implements Constants {
         this.score = score;
     }
 
+    public int getNofLives() {
+        return nofLives;
+    }
+
     public boolean isOnFirstLane() {
         return onFirstLane;
     }
@@ -191,11 +206,9 @@ public class Player extends Sprite implements Constants {
         tweener.update(delta);
 
         if (active) {
-            Vector2 vel = b2dBody.getLinearVelocity();
-            float desiredVel = PLAYER_MAX_VELOCITY;
-            float velChange = desiredVel - vel.x;
-            float impulse = b2dBody.getMass() * velChange;
-            b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
+            float velChange = (PLAYER_MAX_VELOCITY - b2dBody.getLinearVelocity().x)*(0.9f + ((float)(mapDifficulty)*0.1f));
+            MOVEMENT_IMPULSE.x = b2dBody.getMass() * velChange;
+            b2dBody.applyLinearImpulse(MOVEMENT_IMPULSE, b2dBody.getWorldCenter(), true);
 
 
         }
@@ -260,7 +273,26 @@ public class Player extends Sprite implements Constants {
         }
     }
 
-//    // TODO: Fix this function if we have the time
+    public void setMap() {
+        if (this.map == MAP_EASY_1_NAME) {
+            this.map = MAP_MED_1_NAME;
+        } else if (this.map == MAP_MED_1_NAME) {
+            this.map = MAP_HARD_1_NAME;
+        } else if (this.map == MAP_HARD_1_NAME) {
+            this.map = MAP_EASY_1_NAME;
+        }
+        this.mapDifficulty += 2;
+    }
+
+    public String getMap() {
+        return map;
+    }
+
+    public float getMapDifficulty() {
+        return mapDifficulty;
+    }
+
+    //    // TODO: Fix this function if we have the time
 //    // Current bug: Switching two times fast with this function messes with the maskBits
 //    private void scaleFixtures(float scale) {
 //        // Remove old fixtures
