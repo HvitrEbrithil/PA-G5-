@@ -1,44 +1,48 @@
 package no.pag6.states;
 
-import aurelienribon.tweenengine.TweenManager;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.ui.SimpleButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OptionsMenu extends State {
 
     // Renderers
     private ShapeRenderer drawer;
-    private TweenManager tweener;
 
     // Game objects
 
     // Game assets
+    private GlyphLayout gl = new GlyphLayout();
+    private BitmapFont font;
 
     // Tween assets
 
     // Game UI
-    private List<SimpleButton> optionsMenuButtons = new ArrayList<SimpleButton>();
-    private SimpleButton backButtonOptions;
+    private Sprite optionsTitle;
+    private SimpleButton backButton;
+    private SimpleButton musicOnButton;
+    private SimpleButton musicOffButton;
+    private SimpleButton soundOnButton;
+    private SimpleButton soundOffButton;
+
+    private boolean musicOn;
+    private boolean soundOn;
 
     public OptionsMenu(PAG6Game game) {
         super(game);
 
-        // Set up drawer and batcher
-        drawer = new ShapeRenderer();
-        drawer.setProjectionMatrix(cam.combined);
-
         // Init objects and assets
-        initTweenAssets();
-
-        initGameObjects();
-        initGameAssets();
-
         initUI();
+
+        musicOn = al.getMusicOn();
+        soundOn = al.getSoundOn();
     }
 
     @Override
@@ -56,15 +60,21 @@ public class OptionsMenu extends State {
     }
 
     @Override
-    public void update(float delta) {
-    }
-
-    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        backButtonOptions.isTouchDown(projected.x, projected.y);
+        backButton.isTouchDown(projected.x, projected.y);
+        if (musicOn) {
+            musicOnButton.isTouchDown(projected.x, projected.y);
+        } else {
+            musicOffButton.isTouchDown(projected.x, projected.y);
+        }
+        if (soundOn) {
+            soundOnButton.isTouchDown(projected.x, projected.y);
+        } else {
+            soundOffButton.isTouchDown(projected.x, projected.y);
+        }
 
         return true;
     }
@@ -74,38 +84,115 @@ public class OptionsMenu extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        if (backButtonOptions.isTouchUp(projected.x, projected.y)) {
+        if (backButton.isTouchUp(projected.x, projected.y)) {
             game.getGameStateManager().popScreen();
+        } else if (musicOnButton.isTouchUp(projected.x, projected.y)) {
+            al.setMusicOn(false);
+            musicOn = false;
+            al.backgroundMusic.pause();
+        } else if (musicOffButton.isTouchUp(projected.x, projected.y)) {
+            al.setMusicOn(true);
+            musicOn = true;
+            al.backgroundMusic.play();
+        } else if (soundOnButton.isTouchUp(projected.x, projected.y)) {
+            al.setSoundOn(false);
+            soundOn = false;
+        } else if (soundOffButton.isTouchUp(projected.x, projected.y)) {
+            al.setSoundOn(true);
+            soundOn = true;
         }
 
         return true;
     }
 
-    private void initTweenAssets() {
-        // Register Tween Assets
-
-        tweener = new TweenManager();
-
-        // Tween animations
-    }
-
-    private void initGameObjects() {
-    }
-
-    private void initGameAssets() {
-    }
-
     private void initUI() {
-        backButtonOptions = new SimpleButton(64, 64,
-                AssetLoader.backButtonUp.getRegionWidth(), AssetLoader.backButtonUp.getRegionHeight(),
-                AssetLoader.backButtonUp, AssetLoader.backButtonDown);
-        optionsMenuButtons.add(backButtonOptions);
+        TextureRegion region;
+        float regionWidth, regionHeight;
+
+        // Buttons
+        region = al.backButtonUp;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
+        backButton = new SimpleButton(V_WIDTH/2 - regionWidth/2, V_HEIGHT*4/24 - regionHeight/2,
+                regionWidth, regionHeight,
+                al.backButtonUp, al.backButtonDown);
+
+        float tempUIScale = UI_SCALE*.5f;
+
+        region = al.onButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        musicOnButton = new SimpleButton(
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*15/24 - regionHeight/2,
+                regionWidth, regionHeight,
+                al.onButtonUp, al.onButtonDown
+        );
+
+        region = al.offButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        musicOffButton = new SimpleButton(
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*15/24 - regionHeight/2,
+                regionWidth, regionHeight,
+                al.offButtonUp, al.offButtonDown
+        );
+
+        region = al.onButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        soundOnButton = new SimpleButton(
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*11/24 - regionHeight/2,
+                regionWidth, regionHeight,
+                al.onButtonUp, al.onButtonDown
+        );
+
+        region = al.offButtonUp;
+        regionWidth = region.getRegionWidth()*tempUIScale;
+        regionHeight = region.getRegionHeight()*tempUIScale;
+        soundOffButton = new SimpleButton(
+                V_WIDTH*4/7 - regionWidth/2, V_HEIGHT*11/24 - regionHeight/2,
+                regionWidth, regionHeight,
+                al.offButtonUp, al.offButtonDown
+        );
+
+        // Title
+        region = al.optionsTitle;
+        regionWidth = region.getRegionWidth()*UI_SCALE*1.1f;
+        regionHeight = region.getRegionHeight()*UI_SCALE*1.1f;
+        optionsTitle = new Sprite(region);
+        optionsTitle.setSize(regionWidth, regionHeight);
+        optionsTitle.setPosition(V_WIDTH/2 - regionWidth/2, V_HEIGHT*20/24 - regionHeight/2);
+
+        // Font
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 42;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void drawUI() {
-        for (SimpleButton button : optionsMenuButtons) {
-            button.draw(game.spriteBatch);
+        backButton.draw(game.spriteBatch);
+
+        if (musicOn) {
+            musicOnButton.draw(game.spriteBatch);
+        } else {
+            musicOffButton.draw(game.spriteBatch);
         }
+
+        optionsTitle.draw(game.spriteBatch);
+
+        if (soundOn) {
+            soundOnButton.draw(game.spriteBatch);
+        } else {
+            soundOffButton.draw(game.spriteBatch);
+        }
+
+        gl.setText(font, "MUSIC");
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*15/24 + gl.height/2);
+        gl.setText(font, "SOUND");
+        font.draw(game.spriteBatch, gl, V_WIDTH*3/7 - gl.width/2, V_HEIGHT*11/24 + gl.height/2);
     }
 
 }

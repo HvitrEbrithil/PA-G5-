@@ -11,12 +11,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import no.pag6.game.PAG6Game;
-import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.Constants;
 
-public class State implements Screen, InputProcessor, Constants {
+public abstract class State implements Screen, InputProcessor, Constants {
 
     public static final String TAG = "State";
+
+    protected float runTime = 0.0f;
 
     protected PAG6Game game;
     protected OrthographicCamera cam;
@@ -24,7 +25,7 @@ public class State implements Screen, InputProcessor, Constants {
     protected Vector3 projected, touchPoint = new Vector3(0, 0, 0);
 
     // Background
-    private Sprite background;
+    private  Sprite background;
 
     public State(PAG6Game game) {
         this.game = game;
@@ -37,8 +38,6 @@ public class State implements Screen, InputProcessor, Constants {
 
     @Override
     public void show() {
-        Gdx.app.log(TAG, "show called");
-
         Gdx.input.setInputProcessor(this);
     }
 
@@ -63,7 +62,6 @@ public class State implements Screen, InputProcessor, Constants {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log(TAG, "resize called");
         viewport.update(width, height);
     }
 
@@ -128,10 +126,20 @@ public class State implements Screen, InputProcessor, Constants {
     }
 
     public void update(float delta) {
+        runTime += delta;
+
+        // Music
+        if (runTime > 2f && al.getMusicOn() && !al.backgroundMusic.isPlaying() && !(game.getGameStateManager().getScreen() instanceof PlayState)) {
+            al.backgroundMusic.play();
+            al.inGameMusic.pause();
+        } else if (runTime > 2f && al.getMusicOn() && !al.inGameMusic.isPlaying() && game.getGameStateManager().getScreen() instanceof PlayState) {
+            al.inGameMusic.play();
+            al.backgroundMusic.pause();
+        }
     }
 
     private void initBackground() {
-        TextureRegion region = AssetLoader.background;
+        TextureRegion region = al.background;
         background = new Sprite(region);
         background.setSize(V_WIDTH, V_HEIGHT);
         background.setPosition(0, 0);

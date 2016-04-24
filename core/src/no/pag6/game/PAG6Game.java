@@ -4,11 +4,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import no.pag6.helpers.AssetLoader;
+import no.pag6.helpers.Constants;
 import no.pag6.helpers.GameStateManager;
-import no.pag6.states.MainMenu;
+import no.pag6.states.SplashScreen;
 
-public class PAG6Game extends Game {
+public class PAG6Game extends Game implements Constants {
 
     public static final String TAG = "PAG6Game";
 
@@ -24,15 +24,17 @@ public class PAG6Game extends Game {
 
         Gdx.app.log(TAG, "created");
 
-        AssetLoader.load();
+        al.load();
 
-        gameStateManager.pushScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
+//        gameStateManager.pushScreen(new PlayState(this, 3, Arrays.asList("SPILLER EN", "SPILLER TO", "SPILLER TRE"), MAP_EASY_1_NAME)); // TODO: Set to SS when done debugging
+//        gameStateManager.pushScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
+        gameStateManager.pushScreen(new SplashScreen(this));
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        AssetLoader.dispose();
+        al.dispose();
     }
 
     public GameStateManager getGameStateManager() {

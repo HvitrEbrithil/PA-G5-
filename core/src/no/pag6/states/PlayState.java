@@ -15,10 +15,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+
+import com.badlogic.gdx.input.GestureDetector;
+
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -39,23 +45,34 @@ import com.sun.prism.image.ViewPort;
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.AssetLoader;
 import no.pag6.helpers.MyContactListener;
+import no.pag6.helpers.MyGestureListener;
 import no.pag6.models.Player;
 import no.pag6.tweenaccessors.Value;
 import no.pag6.tweenaccessors.ValueAccessor;
 import no.pag6.ui.SimpleButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PlayState extends State {
+
+    //Input-handling
+    private InputMultiplexer inputMultiplexer;
+
+    private float playTime = 0.0f;
+    private float countdownTime = 3.5f;
+    private boolean startSoundPlayed = false;
 
     // Player stats
     private int nofPlayers;
 
     private Player[] players;
+    private List<String> playerNames;
     private int activePlayerIdx;
 
     // map stuff
+    private String mapFileName;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
 
@@ -67,36 +84,40 @@ public class PlayState extends State {
     // Renderers
     private TweenManager tweener;
 
-    // Game objects
-
-    // Game assets
-    //BitmapFont font;
 
     // Tween assets
     private Value opacityLayer1 = new Value();
     private Value opacityLayer2 = new Value();
+    private Value cameraZoom = new Value();
 
     // Game UI
 
-    private Label[] scores;
-    private Label scorePlayer1;
-    private Label scorePlayer2;
+
+    private Label[] scoreLabels;
+    private Label[] playerNameLabels;
+    private Label scoreLabel;
+    private Label playerNameLabel;
+    private Label numberOfLives;
+    private Table UItable;
     private Stage uiStage;
 
     float tempUIScale = .2f/PPM;
 
-
     private Button pauseButton;
+
+
 
 
     public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
         this.nofPlayers = nofPlayers;
+        this.playerNames = playerNames;
+        this.mapFileName = mapFileName;
+
         players = new Player[nofPlayers];
         activePlayerIdx = 0;
 
         viewport.setWorldSize(A_WIDTH, A_HEIGHT);
-
         // load the map
         map = new TmxMapLoader().load("maps/" + mapFileName);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
@@ -116,7 +137,25 @@ public class PlayState extends State {
         initGameObjects();
         initGameAssets();
 
+        //UI view-stage
+        FitViewport uiViewPort = new FitViewport(V_WIDTH, V_HEIGHT, new OrthographicCamera());
+        uiStage = new Stage(uiViewPort, super.game.spriteBatch);
         initUI();
+    }
+
+    @Override
+    public void show() {
+        // Add gesture listener
+
+        InputProcessor inputProcessorOne = new GestureDetector(new MyGestureListener(this));
+        InputProcessor inputProcessorTwo = this;
+        inputMultiplexer = new InputMultiplexer();
+        //UI-stage receives input first when its added first to the multiplexer
+        inputMultiplexer.addProcessor(uiStage);
+        inputMultiplexer.addProcessor(inputProcessorOne);
+        inputMultiplexer.addProcessor(inputProcessorTwo);
+
+        Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
     @Override
@@ -124,7 +163,7 @@ public class PlayState extends State {
         update(delta);
 
         // Clear drawings
-        Gdx.gl.glClearColor(208/255f, 244/255f, 247/255f, 1);
+        Gdx.gl.glClearColor(208 / 255f, 244 / 255f, 247 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         drawTiled();
@@ -135,13 +174,32 @@ public class PlayState extends State {
         game.spriteBatch.enableBlending();
 
         for (Player player : players) {
-            player.draw(game.spriteBatch);
+            if (player != players[activePlayerIdx]) {
+                game.spriteBatch.setColor(1, 1, 1, .2f);
+                player.draw(game.spriteBatch);
+                game.spriteBatch.setColor(1, 1, 1, 1);
+            } else {
+                player.draw(game.spriteBatch);
+            }
+        }
+
+        // This should be started when game starts and in case of player change
+        if (!startSoundPlayed && al.getSoundOn()) {
+            al.countdownSound.play(0.5f);
+            startSoundPlayed = true;
+        }
+        if (playTime < countdownTime) {
+            game.spriteBatch.draw(al.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
         }
 
         game.spriteBatch.end();
 
+
         game.spriteBatch.setProjectionMatrix(uiStage.getCamera().combined);
         uiStage.draw();
+
+
+        // TODO: Remove before release
 
         b2dr.render(world, cam.combined);
 
@@ -149,44 +207,80 @@ public class PlayState extends State {
 
     @Override
     public void update(float delta) {
+        super.update(delta);
+
+        playTime += delta;
+
         tweener.update(delta);
 
-        world.step(TIME_STEP, 6, 2); // update physics
+        if (playTime > countdownTime) {
+            world.step(TIME_STEP, 6, 2); // update physics
+        }
 
         // update camera
         Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
-        if (playerPos.x < A_WIDTH/2) {
-            cam.position.x = A_WIDTH/2;
+        if (playerPos.x < A_WIDTH / 2) {
+            cam.position.x = A_WIDTH / 2;
         } else {
             cam.position.x = playerPos.x; // center the camera around the activePlayer
         }
-        cam.position.y = playerPos.y; // center the camera around the activePlayer
+        if (playerPos.y < A_HEIGHT * 1.8f) {
+            cam.position.y = A_HEIGHT * 1.8f;
+        } else {
+            cam.position.y = playerPos.y; // center the camera around the activePlayer
+        }
         cam.update();
         // update the players
         for (Player player : players) {
             player.update(delta);
         }
 
-        for (int i=0; i<nofPlayers; i++){
-            scores[i].setText(""+players[i].getScore());
-        }
 
+
+        scoreLabel.setText(""+players[activePlayerIdx].getScore());
+        playerNameLabel.setText(players[activePlayerIdx].getName());
+
+
+
+
+        // Layer-change
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
         map.getLayers().get(FIRST_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
 
         map.getLayers().get(SECOND_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
         map.getLayers().get(SECOND_SECOND_GFX_LAYER_NAME).setOpacity(opacityLayer2.getValue());
 
+        cam.zoom = cameraZoom.getValue();
+
         // update the Tiled map renderer
         mapRenderer.setView(cam);
 
+        // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0) {
+            // TODO: Move this if-loop to where the real final death of a players occurs
+            if (!players[activePlayerIdx].isKilled()) {
+                players[activePlayerIdx].kill();
+                playTime = 0.0f;
+                al.countdownSound.play();
+            }
             // TODO: implement proper death
             players[activePlayerIdx].active = false;
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             players[activePlayerIdx].active = true;
-            players[activePlayerIdx].incrementFootContactCount();
+            if (nofPlayers > 1) {
+                players[activePlayerIdx].incrementFootContactCount();
+            }
             cl.setPlayer(players[activePlayerIdx]);
+
+            // Tween values
+            opacityLayer1.setValue(1f);
+            opacityLayer2.setValue(.5f);
+            cameraZoom.setValue(1f);
+        }
+
+        // check finish
+        if (players[activePlayerIdx].isFinished()) {
+            System.out.println("finish");
         }
 
     }
@@ -206,11 +300,82 @@ public class PlayState extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        //if (pauseButton.isTouchUp(projected.x, projected.y)) {
-        //    game.getGameStateManager().pushScreen(new PauseState(game));
-        //}
+
 
         return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // Jump
+        if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
+            players[activePlayerIdx].jump();
+        }
+
+        // Switch lanes
+        if (keycode == Input.Keys.UP && players[activePlayerIdx].isOnFirstLane() && playTime > countdownTime) {
+            players[activePlayerIdx].switchLanes();
+            tweenLayers();
+        } else if (keycode == Input.Keys.DOWN && !players[activePlayerIdx].isOnFirstLane() && playTime > countdownTime) {
+            players[activePlayerIdx].switchLanes();
+            tweenLayers();
+        }
+
+        // TODO: Remove before release
+        // Restart PlayState
+        if (keycode == Input.Keys.R) {
+            game.getGameStateManager().setScreen(new PlayState(game, 3, Arrays.asList("SPILLER EN", "SPILLER TO", "SPILLER TRE"), mapFileName));
+        }
+        // Quit application
+        if (keycode == Input.Keys.Q || keycode == Input.Keys.ESCAPE) {
+            System.exit(0);
+        }
+        // Go to GameOver screen (should be placed where GameOverState is the argument of setScreen in PlayState)
+        if (keycode == Input.Keys.G) {
+            AssetLoader.backgroundMusic.play();
+            game.getGameStateManager().setScreen(new GameOverState(game, players));
+        }
+
+        return true;
+    }
+
+    public boolean isStarted() {
+        return playTime > countdownTime;
+    }
+
+    public Player getActivePlayer() {
+        return players[activePlayerIdx];
+    }
+
+    public void tweenLayers() {
+        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        if (!playerIsOnFirstLane) {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(.9f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        } else {
+            Tween.to(opacityLayer1, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(opacityLayer2, -1, .5f)
+                    .target(.5f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+            Tween.to(cameraZoom, -1, .5f)
+                    .target(1f)
+                    .ease(TweenEquations.easeOutQuad)
+                    .start(tweener);
+        }
     }
 
     private void initGameObjects() {
@@ -227,54 +392,55 @@ public class PlayState extends State {
 
         opacityLayer1.setValue(1f);
         opacityLayer2.setValue(.5f);
+        cameraZoom.setValue(1f);
     }
 
     private void initUI() {
         TextureRegion region;
         float regionWidth, regionHeight;
 
-        //The UI view
-        FitViewport uiViewPort = new FitViewport(V_WIDTH, V_HEIGHT, new OrthographicCamera());
-        uiStage = new Stage(uiViewPort, super.game.spriteBatch);
-
         // Buttons
-        region = AssetLoader.pauseButtonUp;
+
+        region = al.pauseButtonUp;
         regionWidth = region.getRegionWidth() * UI_SCALE;
         regionHeight = region.getRegionHeight() * UI_SCALE;
-        pauseButton = new Button(new TextureRegionDrawable(AssetLoader.pauseButtonUp), new TextureRegionDrawable(AssetLoader.pauseButtonDown));
+        pauseButton = new Button(new TextureRegionDrawable(al.pauseButtonUp), new TextureRegionDrawable(al.pauseButtonDown));
+        //Detect input on pause-button
         pauseButton.addListener(new InputListener() {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Example", "touch started at (" + x + ", " + y + ")");
-                return false;
+                game.getGameStateManager().pushScreen(new PauseState(game));
+                return true;
             }
 
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Example", "touch done at (" + x + ", " + y + ")");
+
             }
         });
 
 
+
         // Player score
-        scores = new Label[nofPlayers];
-        for (int i = 0; i < nofPlayers; i++) {
-            scores[i] = new Label("" + players[i].getScore(), new Label.LabelStyle(new BitmapFont(), Color.RED));
-            scores[i].setFontScale(FONT_SCALE, FONT_SCALE);
-            //scores[i].setSize(region.getRegionWidth()*UI_SCALE, region.getRegionHeight()*UI_SCALE);
-        }
-        ;
-
-        Table table = new Table();
-        table.top();
-        table.setFillParent(true);
-        table.add(scores[0]).height(regionHeight).width(regionWidth).expandX().padTop(40);
-        table.add(pauseButton).height(regionHeight).width(regionWidth).expandX().padTop(40);
-
-        uiStage.addActor(table);
-
-        InputMultiplexer imp = new InputMultiplexer();
-        imp.addProcessor(uiStage);
 
 
+        playerNameLabel = new Label(playerNames.get(activePlayerIdx) , new Label.LabelStyle(new BitmapFont(), Color.RED));
+        scoreLabel = new Label("" + players[activePlayerIdx].getScore(), new Label.LabelStyle(new BitmapFont(), Color.RED));
+
+        playerNameLabel.setFontScale(FONT_SCALE);
+        scoreLabel.setFontScale(FONT_SCALE);
+
+        UItable = new Table();
+        UItable.top();
+        UItable.setFillParent(true);
+        UItable.add(playerNameLabel).left().height(regionHeight).width(regionWidth).expandX().padRight(40).padTop(10);
+        UItable.add();
+        UItable.add(pauseButton).right().height(regionWidth/2).width(regionWidth/2).expandX().padTop(10);
+        UItable.add(scoreLabel).left().height(regionHeight).width(regionWidth).expandX().top().padLeft(50);
+        UItable.setDebug(true);
+        uiStage.addActor(UItable);
+
+
+
+    }
 
 
 
@@ -301,7 +467,7 @@ public class PlayState extends State {
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
                 for (int j = 0; j < worldVertices.length; j++) {
-                    worldVertices[j] = new Vector2(vertices[j*2] / PPM, vertices[j*2+1] / PPM);
+                    worldVertices[j] = new Vector2(vertices[j * 2] / PPM, vertices[j * 2 + 1] / PPM);
                 }
 
                 ChainShape chainShape = new ChainShape();
@@ -314,7 +480,13 @@ public class PlayState extends State {
                 body = world.createBody(bodyDef);
                 fixtureDef.shape = chainShape;
                 fixtureDef.filter.categoryBits = FILTER_BITS[i];
-                body.createFixture(fixtureDef);
+                if (LAYERS[i].equals(GOAL_COLLISION_NAME)) {
+                    fixtureDef.isSensor = true;
+                }
+                Fixture fixture = body.createFixture(fixtureDef);
+                if (LAYERS[i].equals(GOAL_COLLISION_NAME)) {
+                    fixture.setUserData("goal");
+                }
             }
         }
 
@@ -334,7 +506,7 @@ public class PlayState extends State {
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
-            fixtureDef.filter.maskBits = FIRST_LAYER_BITS; // the activePlayer starts in lane 1
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS | GOAL_LAYER_BITS; // the activePlayer starts in lane 1
             playerBody.createFixture(fixtureDef);
             shape.dispose();
 
@@ -343,48 +515,11 @@ public class PlayState extends State {
             polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
             fixtureDef.shape = polygonShape;
             fixtureDef.isSensor = true;
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS;
             playerBody.createFixture(fixtureDef).setUserData("player" + i + "foot");
             polygonShape.dispose();
 
-            players[i] = new Player(playerBody, i);
+            players[i] = new Player(cam, playerBody, i, playerNames.get(i), i + 1);
         }
-
     }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE) {
-            players[activePlayerIdx].switchLanes();
-
-            boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
-
-            // Tween animations
-            if (!playerIsOnFirstLane) {
-                Tween.to(opacityLayer1, -1, .5f)
-                        .target(.5f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-                Tween.to(opacityLayer2, -1, .5f)
-                        .target(1f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-            } else {
-                Tween.to(opacityLayer1, -1, .5f)
-                        .target(1f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-                Tween.to(opacityLayer2, -1, .5f)
-                        .target(.5f)
-                        .ease(TweenEquations.easeOutQuad)
-                        .start(tweener);
-            }
-        }
-
-        if (keycode == Input.Keys.R) {
-            game.getGameStateManager().setScreen(new PlayState(game, 1, null, "Map1.tmx"));
-        }
-
-        return true;
-    }
-
 }
