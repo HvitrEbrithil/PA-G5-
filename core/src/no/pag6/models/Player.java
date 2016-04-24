@@ -210,8 +210,7 @@ public class Player extends Sprite implements Constants {
             MOVEMENT_IMPULSE.x = b2dBody.getMass() * velChange;
             b2dBody.applyLinearImpulse(MOVEMENT_IMPULSE, b2dBody.getWorldCenter(), true);
 
-            // TODO: Move to wherever when score-system is implemented
-            incrementScore(1*mapDifficulty);
+
         }
 
         if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
@@ -225,6 +224,11 @@ public class Player extends Sprite implements Constants {
             shouldSwitchFilterBits = false;
         }
 
+
+
+
+        setScore((- (int) 1155/100 + (int)b2dBody.getPosition().x)*10);
+
         // Scale player
         float scaledWidth = originWidth*playerScale.getValue();
         float scaledHeight = originHeight*playerScale.getValue();
@@ -236,6 +240,7 @@ public class Player extends Sprite implements Constants {
         // Update position
         setPosition(b2dBody.getPosition().x - scaledWidth/2, b2dBody.getPosition().y - scaledHeight/2);
 //        setPosition(b2dBody.getPosition().x - getWidth()/2, b2dBody.getPosition().y - getHeight()/2);
+
     }
 
     public void draw(Batch batch) {

@@ -3,6 +3,16 @@ package no.pag6.states;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
+
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -10,11 +20,20 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+
+
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+
 import com.badlogic.gdx.input.GestureDetector;
+
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -22,7 +41,19 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.sun.prism.image.ViewPort;
+
 import com.badlogic.gdx.utils.Array;
+
 
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.MyContactListener;
@@ -37,6 +68,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PlayState extends State {
+
+    //Input-handling
+    private InputMultiplexer inputMultiplexer;
 
     private float playTime = 0.0f;
     private float countdownTime = 3.5f;
@@ -65,19 +99,35 @@ public class PlayState extends State {
     // Renderers
     private TweenManager tweener;
 
+
     // Tween assets
     private Value opacityLayer1 = new Value();
     private Value opacityLayer2 = new Value();
     private Value cameraZoom = new Value();
 
     //Game assets
+
     private GlyphLayout gl = new GlyphLayout();
     private BitmapFont countDownNameFont;
     private BitmapFont playerStatsFont;
 
     // Game UI
-    private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
-    private SimpleButton pauseButton;
+
+
+    private Label[] scoreLabels;
+    private Label[] playerNameLabels;
+    private Label scoreLabel;
+    private Label playerNameLabel;
+    private Label numberOfLives;
+    private Table UItable;
+    private Stage uiStage;
+
+    float tempUIScale = .2f/PPM;
+
+    private Button pauseButton;
+
+
+
 
     public PlayState(PAG6Game game, int nofPlayers, List<String> playerNames, String mapFileName) {
         super(game);
@@ -89,7 +139,6 @@ public class PlayState extends State {
         activePlayerIdx = 0;
 
         viewport.setWorldSize(A_WIDTH, A_HEIGHT);
-
         // load the map
         loadMap(mapFileName);
 
@@ -108,6 +157,9 @@ public class PlayState extends State {
         initGameObjects();
         initGameAssets();
 
+        //UI view-stage
+        FitViewport uiViewPort = new FitViewport(V_WIDTH, V_HEIGHT, new OrthographicCamera());
+        uiStage = new Stage(uiViewPort, super.game.spriteBatch);
         initUI();
 
         // Set in game music
@@ -119,9 +171,12 @@ public class PlayState extends State {
     @Override
     public void show() {
         // Add gesture listener
+
         InputProcessor inputProcessorOne = new GestureDetector(new MyGestureListener(this));
         InputProcessor inputProcessorTwo = this;
-        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer = new InputMultiplexer();
+        //UI-stage receives input first when its added first to the multiplexer
+        inputMultiplexer.addProcessor(uiStage);
         inputMultiplexer.addProcessor(inputProcessorOne);
         inputMultiplexer.addProcessor(inputProcessorTwo);
 
@@ -143,7 +198,6 @@ public class PlayState extends State {
         game.spriteBatch.begin();
         game.spriteBatch.enableBlending();
 
-        drawUI();
         for (Player player : players) {
             if (player != players[activePlayerIdx]) {
                 game.spriteBatch.setColor(1, 1, 1, .2f);
@@ -174,8 +228,16 @@ public class PlayState extends State {
         }
 
         game.spriteBatch.end();
+
+
+        game.spriteBatch.setProjectionMatrix(uiStage.getCamera().combined);
+        uiStage.draw();
+
+
         // TODO: Remove before release
+
         b2dr.render(world, cam.combined);
+
     }
 
     @Override
@@ -209,9 +271,17 @@ public class PlayState extends State {
             player.update(delta);
         }
 
+
+
+
+        scoreLabel.setText(""+players[activePlayerIdx].getScore());
+        playerNameLabel.setText(players[activePlayerIdx].getName());
+
+
+
+
         // Update UI
-        pauseButton.setX(cam.position.x - A_WIDTH / 2 + 8 / PPM);
-        pauseButton.setY(cam.position.y + A_HEIGHT / 2 - 8 / PPM);
+
 
         // Layer-change
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
@@ -244,6 +314,7 @@ public class PlayState extends State {
             players[activePlayerIdx].setMap();
             setActivePlayer();
         }
+
     }
 
     @Override
@@ -251,7 +322,7 @@ public class PlayState extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        pauseButton.isTouchDown(projected.x, projected.y);
+        //pauseButton.isTouchDown(projected.x, projected.y);
 
         return true;
     }
@@ -261,20 +332,6 @@ public class PlayState extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        if (pauseButton.isTouchUp(projected.x, projected.y)) {
-            activeInGameMusic.pause();
-            inGameMusicPlaying = false;
-            al.countdownSound.pause();
-            if (al.getMusicOn()) {
-                al.backgroundMusic.play();
-            }
-            game.getGameStateManager().pushScreen(new PauseState(game));
-        } else {
-            // Jump
-            if (playTime > countdownTime) {
-                players[activePlayerIdx].jump();
-            }
-        }
 
         return true;
     }
@@ -470,53 +527,63 @@ public class PlayState extends State {
         float regionWidth, regionHeight;
 
         // Buttons
+
         region = al.pauseButtonUp;
-        regionWidth = region.getRegionWidth() * .22f * UI_SCALE / PPM;
 
-        regionHeight = region.getRegionHeight() * .22f * UI_SCALE / PPM;
+        regionWidth = region.getRegionWidth() * UI_SCALE;
+        regionHeight = region.getRegionHeight() * UI_SCALE;
+        pauseButton = new Button(new TextureRegionDrawable(al.pauseButtonUp), new TextureRegionDrawable(al.pauseButtonDown));
+        //Detect input on pause-button
+        pauseButton.addListener(new InputListener() {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                game.getGameStateManager().pushScreen(new PauseState(game));
+                return true;
+            }
 
-        pauseButton = new SimpleButton(
-                0, 500 / PPM + A_HEIGHT / 2 - 8 / PPM,
-                regionWidth, regionHeight,
-                al.pauseButtonUp, al.pauseButtonDown
-        );
-        playButtons.add(pauseButton);
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+
+            }
+        });
 
         // Font
-        // TODO: Set correct font-size
-        FreeTypeFontGenerator countDownNameGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter countdownNameParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        countdownNameParameter.size = 64;
-        countdownNameParameter.color = Color.BLACK;
-        countDownNameFont = countDownNameGenerator.generateFont(countdownNameParameter);
-        countDownNameGenerator.dispose();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 38;
+        parameter.color = Color.BLACK;
+        countDownNameFont = generator.generateFont(parameter);
+        generator.dispose();
 
-        // TODO: Set correct font-size
-        FreeTypeFontGenerator playerStatsGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter playerStatsParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        playerStatsParameter.size = 6;
-        playerStatsParameter.color = Color.BLACK;
-        playerStatsFont = playerStatsGenerator.generateFont(playerStatsParameter);
-        playerStatsGenerator.dispose();
+
+
+        // Player score
+
+
+        playerNameLabel = new Label(playerNames.get(activePlayerIdx) , new Label.LabelStyle(new BitmapFont(), Color.RED));
+        scoreLabel = new Label("" + players[activePlayerIdx].getScore(), new Label.LabelStyle(new BitmapFont(), Color.RED));
+
+        playerNameLabel.setFontScale(FONT_SCALE);
+        scoreLabel.setFontScale(FONT_SCALE);
+
+        UItable = new Table();
+        UItable.top();
+        UItable.setFillParent(true);
+        UItable.add(playerNameLabel, scoreLabel);
+                //.height(regionHeight).width(regionWidth).expandX().padTop(10);
+        //UItable.add(scoreLabel).left().height(regionHeight).width(regionWidth).expandX().top();
+        UItable.add(pauseButton).right().height(regionWidth/2).width(regionWidth/2).expandX().padTop(10);
+        UItable.setDebug(true);
+        uiStage.addActor(UItable);
+
 
 
     }
+
+
 
     private void drawTiled() {
         mapRenderer.render();
     }
 
-    private void drawUI() {
-        for (SimpleButton button : playButtons) {
-            button.draw(game.spriteBatch);
-        }
-
-        // TODO: Draw player name, score and lives left on screen (what is correct x- and y-value?)
-        Player activePlayer = players[activePlayerIdx];
-        String playerStats = activePlayer.getName().toUpperCase() + " | " + Integer.toString(activePlayer.getScore()) + " | LIVES: " + Integer.toString(activePlayer.getNofLives()); // DANIEL | 29238 | LIVES: 2
-        gl.setText(playerStatsFont, playerStats);
-        playerStatsFont.draw(game.spriteBatch, gl, cam.position.x - A_WIDTH / 2 + 8 / PPM, cam.position.y + A_HEIGHT / 2 - 8 / PPM); // This position is not correct, but should be updated with the camera
-    }
 
     private void addMapBodies() {
         BodyDef bodyDef = new BodyDef();

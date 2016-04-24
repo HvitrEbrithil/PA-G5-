@@ -3,8 +3,12 @@ package no.pag6.ui;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
-public class SimpleButton {
+import sun.java2d.pipe.SpanShapeRenderer;
+
+public class SimpleButton extends Actor{
 
     private float x, y, width, height;
 
@@ -24,6 +28,13 @@ public class SimpleButton {
         this.buttonDown = buttonDown;
 
         bounds = new Rectangle(x, y, width, height);
+    }
+
+    public SimpleButton(float width, float height, TextureRegion buttonUp, TextureRegion buttonDown){
+        this.width = width;
+        this.height = height;
+        this.buttonUp = buttonUp;
+        this.buttonDown = buttonDown;
     }
 
     public boolean isClicked(int screenX, int screenY) {
