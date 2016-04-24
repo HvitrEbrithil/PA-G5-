@@ -53,7 +53,7 @@ public class PlayState extends State {
     private int nofPlayers;
     private Player[] players;
     private List<String> playerNames;
-    private int activePlayerIdx;
+    private int activePlayerIndex;
 
     // Map
     private String mapFileName;
@@ -86,7 +86,7 @@ public class PlayState extends State {
         this.mapFileName = mapFileName;
 
         players = new Player[nofPlayers];
-        activePlayerIdx = 0;
+        activePlayerIndex = 0;
 
         viewport.setWorldSize(A_WIDTH, A_HEIGHT);
         // load the map
@@ -99,8 +99,8 @@ public class PlayState extends State {
         addMapBodies();
         addPlayerBodies();
 
-        players[activePlayerIdx].setActive(true);
-        cl.setPlayer(players[activePlayerIdx]);
+        players[activePlayerIndex].setActive(true);
+        cl.setPlayer(players[activePlayerIndex]);
 
         initTweenAssets();
 
@@ -146,7 +146,7 @@ public class PlayState extends State {
         game.spriteBatch.enableBlending();
 
         for (Player player : players) {
-            if (player != players[activePlayerIdx]) {
+            if (player != players[activePlayerIndex]) {
                 game.spriteBatch.setColor(1, 1, 1, .2f);
                 player.draw(game.spriteBatch);
                 game.spriteBatch.setColor(1, 1, 1, 1);
@@ -191,7 +191,7 @@ public class PlayState extends State {
         }
 
         // Update camera
-        Vector2 playerPos = players[activePlayerIdx].getB2dBody().getPosition();
+        Vector2 playerPos = players[activePlayerIndex].getB2dBody().getPosition();
         if (playerPos.x < A_WIDTH/2) {
             cam.position.x = A_WIDTH/2;
         } else {
@@ -209,9 +209,9 @@ public class PlayState extends State {
             player.update(delta);
         }
 
-        playerNameLabel.setText(" " + players[activePlayerIdx].getName());
-        livesLabel.setText(" LIVES: " + players[activePlayerIdx].getNofLives());
-        scoreLabel.setText(" SCORE: " + players[activePlayerIdx].getScore());
+        playerNameLabel.setText(" " + players[activePlayerIndex].getName());
+        livesLabel.setText(" LIVES: " + players[activePlayerIndex].getNofLives());
+        scoreLabel.setText(" SCORE: " + players[activePlayerIndex].getScore());
 
         // Layer-change
         map.getLayers().get(FIRST_FIRST_GFX_LAYER_NAME).setOpacity(opacityLayer1.getValue());
@@ -227,14 +227,15 @@ public class PlayState extends State {
 
         // Increment score
         if (playTime > countdownTime && scoreTime > 1f) {
-            players[activePlayerIdx].incrementScore(10*mapDifficulty);
+            players[activePlayerIndex].incrementScore(10*mapDifficulty);
             scoreTime = 0f;
         }
 
         // Check death
-        if (players[activePlayerIdx].getB2dBody().getPosition().y < 0 && !players[activePlayerIdx].isFinished()) {
-            players[activePlayerIdx].kill();
-            setActivePlayer();
+        if (players[activePlayerIndex].getB2dBody().getPosition().y < 0 && !players[activePlayerIndex].isFinished()) {
+            Gdx.app.log("PS", "death");
+            players[activePlayerIndex].kill();
+            updateActivePlayer();
 
             // Tween values
             opacityLayer1.setValue(1f);
@@ -243,10 +244,10 @@ public class PlayState extends State {
         }
 
         // Check finish
-        if (players[activePlayerIdx].isFinished()) {
-            players[activePlayerIdx].setMap();
-            setActivePlayer();
-            players[activePlayerIdx].setFinished(false);
+        if (players[activePlayerIndex].isFinished()) {
+            Gdx.app.log("PS", "finished");
+            players[activePlayerIndex].setMap();
+            updateActivePlayer();
         }
     }
 
@@ -255,7 +256,7 @@ public class PlayState extends State {
         touchPoint.set(screenX, screenY, 0);
         projected = viewport.unproject(touchPoint);
 
-        players[activePlayerIdx].jump();
+        players[activePlayerIndex].jump();
 
         return true;
     }
@@ -264,15 +265,15 @@ public class PlayState extends State {
     public boolean keyDown(int keycode) {
         // Jump
         if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
-            players[activePlayerIdx].jump();
+            players[activePlayerIndex].jump();
         }
 
         // Switch lanes
-        if (keycode == Input.Keys.UP && players[activePlayerIdx].isOnFirstLane() && playTime > countdownTime) {
-            players[activePlayerIdx].switchLanes();
+        if (keycode == Input.Keys.UP && players[activePlayerIndex].isOnFirstLane() && playTime > countdownTime) {
+            players[activePlayerIndex].switchLanes();
             tweenLayers();
-        } else if (keycode == Input.Keys.DOWN && !players[activePlayerIdx].isOnFirstLane() && playTime > countdownTime) {
-            players[activePlayerIdx].switchLanes();
+        } else if (keycode == Input.Keys.DOWN && !players[activePlayerIndex].isOnFirstLane() && playTime > countdownTime) {
+            players[activePlayerIndex].switchLanes();
             tweenLayers();
         }
 
@@ -280,7 +281,7 @@ public class PlayState extends State {
     }
 
     public void tweenLayers() {
-        boolean playerIsOnFirstLane = players[activePlayerIdx].isOnFirstLane();
+        boolean playerIsOnFirstLane = players[activePlayerIndex].isOnFirstLane();
         if (!playerIsOnFirstLane) {
             Tween.to(opacityLayer1, -1, .5f)
                     .target(.5f)
@@ -320,12 +321,12 @@ public class PlayState extends State {
     }
 
     public Player getActivePlayer() {
-        return players[activePlayerIdx];
+        return players[activePlayerIndex];
     }
-    private void setActivePlayer() {
-        playTime = 0.0f;
+    private void updateActivePlayer() {
+        playTime = 0f;
 
-        players[activePlayerIdx].setActive(false);
+        players[activePlayerIndex].setActive(false);
 
         // Check if there are more players alive
         Boolean playersLeft = false;
@@ -336,9 +337,10 @@ public class PlayState extends State {
             }
         }
         if (playersLeft) {
-            activePlayerIdx = (activePlayerIdx + 1)%nofPlayers;
-            Player activePlayer = players[activePlayerIdx];
+            activePlayerIndex = (activePlayerIndex + 1)%nofPlayers;
+            Player activePlayer = players[activePlayerIndex];
             activePlayer.setActive(true);
+            activePlayer.setFinished(false);
             mapFileName = activePlayer.getMap();
             mapDifficulty = activePlayer.getMapDifficulty();
             map = new TmxMapLoader().load("maps/" + mapFileName);
@@ -352,7 +354,7 @@ public class PlayState extends State {
             }
 
             // Body
-            world.destroyBody(players[activePlayerIdx].getB2dBody());
+            world.destroyBody(players[activePlayerIndex].getB2dBody());
             BodyDef bodyDef = new BodyDef();
             bodyDef.position.set(INIT_PLAYER_POS_X/PPM, INIT_PLAYER_POS_Y/PPM);
             bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -374,15 +376,15 @@ public class PlayState extends State {
             fixtureDef.shape = polygonShape;
             fixtureDef.isSensor = true;
             fixtureDef.filter.maskBits = FIRST_LAYER_BITS;
-            playerBody.createFixture(fixtureDef).setUserData("player" + players[activePlayerIdx].getId() + "foot");
+            playerBody.createFixture(fixtureDef).setUserData("player" + players[activePlayerIndex].getId() + "foot");
             polygonShape.dispose();
 
-            playerBody.setUserData(players[activePlayerIdx]);
-            players[activePlayerIdx].setB2dBody(playerBody);
+            playerBody.setUserData(players[activePlayerIndex]);
+            players[activePlayerIndex].setB2dBody(playerBody);
 
             addMapBodies();
 
-            cl.setPlayer(players[activePlayerIdx]);
+            cl.setPlayer(players[activePlayerIndex]);
 
             if (al.getMusicOn()) {
                 setInGameMusic(mapFileName);
@@ -392,7 +394,7 @@ public class PlayState extends State {
                 al.countdownSound.play();
             }
 
-            activePlayer.footContactCount = 0;
+            activePlayer.nulifyFootContactCount();
         } else {
             activeInGameMusic.stop();
             game.getGameStateManager().setScreen(new GameOverState(game, players));
@@ -460,9 +462,9 @@ public class PlayState extends State {
         generator.dispose();
 
         // Player score
-        playerNameLabel = new Label(playerNames.get(activePlayerIdx), new Label.LabelStyle(playerStatsFont, Color.BLACK));
-        livesLabel = new Label(" LIVES: " + players[activePlayerIdx].getNofLives(), new Label.LabelStyle(playerStatsFont, Color.BLACK));
-        scoreLabel = new Label(" SCORE: " + players[activePlayerIdx].getScore(), new Label.LabelStyle(playerStatsFont, Color.BLACK));
+        playerNameLabel = new Label(playerNames.get(activePlayerIndex), new Label.LabelStyle(playerStatsFont, Color.BLACK));
+        livesLabel = new Label(" LIVES: " + players[activePlayerIndex].getNofLives(), new Label.LabelStyle(playerStatsFont, Color.BLACK));
+        scoreLabel = new Label(" SCORE: " + players[activePlayerIndex].getScore(), new Label.LabelStyle(playerStatsFont, Color.BLACK));
 
         playerNameLabel.setFontScale(FONT_SCALE);
         livesLabel.setFontScale(FONT_SCALE);

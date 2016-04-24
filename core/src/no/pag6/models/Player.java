@@ -28,7 +28,7 @@ public class Player extends Sprite implements Constants {
     private int score;
     private Body b2dBody;
     private Animation playerAnimation;
-    public int footContactCount;
+    private int footContactCount;
     private int nofLives;
     private boolean finished;
 
@@ -82,12 +82,11 @@ public class Player extends Sprite implements Constants {
         this.b2dBody = b2dBody;
     }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-
     public boolean isFinished() {
         return finished;
+    }
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public int getId() {
@@ -104,6 +103,9 @@ public class Player extends Sprite implements Constants {
     public void decrementFootContactCount() {
         footContactCount--;
     }
+    public void nulifyFootContactCount() {
+        footContactCount = 0;
+    }
 
     public void kill() {
         if (score > getHighscore()) {
@@ -112,7 +114,7 @@ public class Player extends Sprite implements Constants {
 
         nofLives -= 1;
 
-        // reset filter bits
+        // Reset filter bits
         Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
         filter.maskBits = FIRST_LAYER_BITS;
         b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
