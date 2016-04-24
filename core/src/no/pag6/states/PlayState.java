@@ -72,7 +72,8 @@ public class PlayState extends State {
 
     //Game assets
     private GlyphLayout gl = new GlyphLayout();
-    private BitmapFont font;
+    private BitmapFont countDownNameFont;
+    private BitmapFont playerStatsFont;
 
     // Game UI
     private List<SimpleButton> playButtons = new ArrayList<SimpleButton>();
@@ -165,11 +166,11 @@ public class PlayState extends State {
         }
 
         if (playTime < countdownTime) {
-            game.spriteBatch.draw(al.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH / 2, cam.position.y - A_HEIGHT / 2, A_WIDTH, A_HEIGHT);
+            game.spriteBatch.draw(al.countAnimation.getKeyFrame(playTime), cam.position.x - A_WIDTH/2, cam.position.y - A_HEIGHT/2, A_WIDTH, A_HEIGHT);
 
-            // TODO: Set playername of the active player on Countdown screen
-            //gl.setText(font, players[activePlayerIdx].getName());
-            //font.draw(game.spriteBatch, gl, x, y);
+            // TODO: Set playername of the active player on Countdown screen (what is correct x- and y-value?)
+            gl.setText(countDownNameFont, players[activePlayerIdx].getName().toUpperCase());
+            countDownNameFont.draw(game.spriteBatch, gl, 0, 0);
         }
 
         game.spriteBatch.end();
@@ -480,6 +481,25 @@ public class PlayState extends State {
                 al.pauseButtonUp, al.pauseButtonDown
         );
         playButtons.add(pauseButton);
+
+        // Font
+        // TODO: Set correct font-size
+        FreeTypeFontGenerator countDownNameGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter countdownNameParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        countdownNameParameter.size = 64;
+        countdownNameParameter.color = Color.BLACK;
+        countDownNameFont = countDownNameGenerator.generateFont(countdownNameParameter);
+        countDownNameGenerator.dispose();
+
+        // TODO: Set correct font-size
+        FreeTypeFontGenerator playerStatsGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arialbd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter playerStatsParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        playerStatsParameter.size = 6;
+        playerStatsParameter.color = Color.BLACK;
+        playerStatsFont = playerStatsGenerator.generateFont(playerStatsParameter);
+        playerStatsGenerator.dispose();
+
+
     }
 
     private void drawTiled() {
@@ -490,6 +510,12 @@ public class PlayState extends State {
         for (SimpleButton button : playButtons) {
             button.draw(game.spriteBatch);
         }
+
+        // TODO: Draw player name, score and lives left on screen (what is correct x- and y-value?)
+        Player activePlayer = players[activePlayerIdx];
+        String playerStats = activePlayer.getName().toUpperCase() + " | " + Integer.toString(activePlayer.getScore()) + " | LIVES: " + Integer.toString(activePlayer.getNofLives()); // DANIEL | 29238 | LIVES: 2
+        gl.setText(playerStatsFont, playerStats);
+        playerStatsFont.draw(game.spriteBatch, gl, cam.position.x - A_WIDTH / 2 + 8 / PPM, cam.position.y + A_HEIGHT / 2 - 8 / PPM); // This position is not correct, but should be updated with the camera
     }
 
     private void addMapBodies() {
