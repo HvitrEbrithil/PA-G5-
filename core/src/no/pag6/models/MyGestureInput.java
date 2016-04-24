@@ -1,4 +1,4 @@
-package no.pag6.helpers;
+package no.pag6.models;
 
 public class MyGestureInput {
 

@@ -2,6 +2,7 @@ package no.pag6.helpers;
 
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
+import no.pag6.models.MyGestureInput;
 import no.pag6.states.PlayState;
 
 public class MyGestureListener implements GestureListener {

@@ -3,431 +3,97 @@
   <ID>JAVA</ID>
   <OriginalElement>no.pag6</OriginalElement>
   <nodes>
-    <node x="765.8333333333334" y="1062.0">no.pag6.game.PAG6Game</node>
-    <node x="561.0833333333334" y="1140.0">no.pag6.game.AndroidLauncher</node>
-    <node x="115.00000000000011" y="266.0">no.pag6.models.PlayerCharacter</node>
-    <node x="696.0833333333334" y="1140.0">no.pag6.game.client.HtmlLauncher</node>
-    <node x="990.797619047619" y="266.0">no.pag6.states.State</node>
-    <node x="655.4642857142858" y="552.0">no.pag6.states.PauseState</node>
-    <node x="382.747685185185" y="758.0">no.pag6.states.CharacterMenu</node>
-    <node x="10.5" y="266.0">no.pag6.tweenaccessors.Value</node>
-    <node x="298.33101851851836" y="266.0">no.pag6.tweenaccessors.ValueAccessor</node>
-    <node x="195.2500000000001" y="670.0">no.pag6.states.PlayState</node>
-    <node x="510.37804026124303" y="266.0">no.pag6.ui.SimpleButton</node>
-    <node x="765.4642857142858" y="454.0">no.pag6.states.OptionsMenu</node>
-    <node x="952.0833333333334" y="1140.0">no.pag6.game.IOSLauncher</node>
-    <node x="815.0833333333334" y="1140.0">no.pag6.game.desktop.DesktopLauncher</node>
-    <node x="118.74708788029068" y="454.0">no.pag6.models.Player</node>
-    <node x="1008.0777343749995" y="78.0">com.badlogic.gdx.Screen</node>
-    <node x="225.0000000000001" y="552.0">no.pag6.helpers.MyGestureListener</node>
-    <node x="446.6253534226186" y="552.0">no.pag6.states.GameOverState</node>
-    <node x="882.4642857142858" y="454.0">no.pag6.states.HighscoreMenu</node>
-    <node x="70.7887545469573" y="0.0">no.pag6.helpers.AssetLoader</node>
-    <node x="534.7857142857142" y="906.0">no.pag6.states.MainMenu</node>
-    <node x="67.75000000000011" y="552.0">no.pag6.helpers.MyContactListener</node>
-    <node x="76.2887545469573" y="78.0">no.pag6.helpers.Constants</node>
-    <node x="799.6110677083328" y="78.0">com.badlogic.gdx.graphics.g2d.Sprite</node>
-    <node x="231.0000000000001" y="454.0">no.pag6.helpers.MyGestureInput</node>
-    <node x="760.3333333333334" y="984.0">no.pag6.states.SplashScreen</node>
+    <node x="825.0" y="651.0">no.pag6.game.PAG6Game</node>
+    <node x="845.0" y="1581.0">no.pag6.game.AndroidLauncher</node>
+    <node x="562.0" y="579.0">no.pag6.models.PlayerCharacter</node>
+    <node x="1263.0" y="1348.0">no.pag6.game.client.HtmlLauncher</node>
+    <node x="325.0" y="774.0">no.pag6.states.State</node>
+    <node x="170.0" y="1171.0">no.pag6.states.PauseState</node>
+    <node x="632.0" y="1189.0">no.pag6.states.CharacterMenu</node>
+    <node x="272.0" y="1581.0">no.pag6.tweenaccessors.Value</node>
+    <node x="0.0" y="1581.0">no.pag6.tweenaccessors.ValueAccessor</node>
+    <node x="1008.0" y="1348.0">no.pag6.helpers.GameStateManager</node>
+    <node x="0.0" y="794.0">no.pag6.states.PlayState</node>
+    <node x="432.0" y="1348.0">no.pag6.ui.SimpleButton</node>
+    <node x="411.0" y="1215.0">no.pag6.states.OptionsMenu</node>
+    <node x="1046.0" y="644.0">com.badlogic.gdx.Game</node>
+    <node x="467.0" y="1581.0">no.pag6.game.IOSLauncher</node>
+    <node x="656.0" y="1581.0">no.pag6.game.desktop.DesktopLauncher</node>
+    <node x="561.0" y="0.0">no.pag6.models.Player</node>
+    <node x="0.0" y="1348.0">no.pag6.helpers.MyGestureListener</node>
+    <node x="289.0" y="436.0">com.badlogic.gdx.Screen</node>
+    <node x="777.0" y="1040.0">no.pag6.states.GameOverState</node>
+    <node x="188.0" y="645.0">no.pag6.states.HighscoreMenu</node>
+    <node x="1333.0" y="0.0">no.pag6.helpers.AssetLoader</node>
+    <node x="795.0" y="844.0">no.pag6.states.MainMenu</node>
+    <node x="722.0" y="1348.0">no.pag6.helpers.MyContactListener</node>
+    <node x="701.0" y="688.0">no.pag6.helpers.Constants</node>
+    <node x="144.0" y="1027.0">no.pag6.states.SplashScreen</node>
   </nodes>
   <notes />
   <edges>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.tweenaccessors.Value">
-      <point x="-36.666666666666686" y="-14.0" />
-      <point x="198.58333333333343" y="650.0" />
-      <point x="35.095238095238074" y="650.0" />
-      <point x="-5.0" y="14.0" />
+    <edge source="no.pag6.states.MainMenu" target="no.pag6.states.State">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
     <edge source="no.pag6.states.SplashScreen" target="no.pag6.states.State">
-      <point x="24.5" y="-14.0" />
-      <point x="833.8333333333334" y="959.0" />
-      <point x="1035.1167328042325" y="959.0" />
-      <point x="1035.1167328042325" y="434.0" />
-      <point x="1040.797619047619" y="434.0" />
-      <point x="20.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PauseState" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="5.5625" y="-14.0" />
-      <point x="705.4642857142858" y="226.0" />
-      <point x="822.3444010416662" y="226.0" />
-      <point x="-8.266666666666652" y="14.0" />
-    </edge>
-    <edge source="no.pag6.game.PAG6Game" target="no.pag6.states.SplashScreen">
-      <point x="0.0" y="-14.0" />
-      <point x="0.0" y="14.0" />
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
     <edge source="no.pag6.states.PauseState" target="no.pag6.states.State">
-      <point x="38.9375" y="-14.0" />
-      <point x="738.9017857142858" y="532.0" />
-      <point x="999.9642857142858" y="532.0" />
-      <point x="999.9642857142858" y="394.0" />
-      <point x="1014.1309523809523" y="394.0" />
-      <point x="-6.6666666666667425" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.helpers.MyContactListener">
-      <point x="-10.0" y="-14.0" />
-      <point x="225.2500000000001" y="610.0" />
-      <point x="160.7500000000001" y="610.0" />
-      <point x="31.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.GameOverState" target="no.pag6.models.Player">
-      <point x="-47.571428571428555" y="-14.0" />
-      <point x="454.55392485119006" y="522.0" />
-      <point x="174.74708788029068" y="522.0" />
-      <point x="24.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.game.AndroidLauncher" target="no.pag6.game.PAG6Game">
-      <point x="0.0" y="-14.0" />
-      <point x="618.5833333333334" y="1110.0" />
-      <point x="776.7083333333334" y="1110.0" />
-      <point x="-32.625" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PauseState" target="no.pag6.states.MainMenu">
-      <point x="22.25" y="14.0" />
-      <point x="722.2142857142858" y="836.0" />
-      <point x="584.5714285714287" y="836.0" />
-      <point x="8.785714285714334" y="-14.0" />
-    </edge>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.tweenaccessors.ValueAccessor">
-      <point x="16.666666666666686" y="-14.0" />
-      <point x="251.9166666666668" y="620.0" />
-      <point x="359.5000000000001" y="620.0" />
-      <point x="359.5000000000001" y="434.0" />
-      <point x="349.83101851851836" y="434.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.State" target="com.badlogic.gdx.Screen">
-      <point x="22.5" y="-14.0" />
-      <point x="1043.297619047619" y="246.0" />
-      <point x="1041.5777343749996" y="246.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PauseState" target="no.pag6.ui.SimpleButton">
-      <point x="-27.8125" y="-14.0" />
-      <point x="672.1517857142858" y="502.0" />
-      <point x="610.5896391369042" y="502.0" />
-      <point x="610.5896391369042" y="394.0" />
-      <point x="573.3780402612431" y="394.0" />
-      <point x="15.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.game.PAG6Game" target="no.pag6.helpers.Constants">
-      <point x="-29.0" y="-14.0" />
-      <point x="780.3333333333334" y="1037.0" />
-      <point x="0.0" y="1037.0" />
-      <point x="0.0" y="246.0" />
-      <point x="86.6637545469573" y="246.0" />
-      <point x="-31.125" y="14.0" />
-    </edge>
-    <edge source="no.pag6.models.Player" target="no.pag6.models.PlayerCharacter">
-      <point x="5.333333333333343" y="-14.0" />
-      <point x="156.08042121362405" y="414.0" />
-      <point x="171.0000000000001" y="414.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.states.CharacterMenu">
-      <point x="-20.5" y="-14.0" />
-      <point x="555.2857142857142" y="856.0" />
-      <point x="436.747685185185" y="856.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.State" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="7.5" y="-14.0" />
-      <point x="1028.297619047619" y="146.0" />
-      <point x="851.2777343749995" y="146.0" />
-      <point x="20.66666666666663" y="14.0" />
-    </edge>
-    <edge source="no.pag6.helpers.MyContactListener" target="no.pag6.models.Player">
-      <point x="0.0" y="-14.0" />
-      <point x="129.7500000000001" y="532.0" />
-      <point x="142.74708788029068" y="532.0" />
-      <point x="-8.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.states.GameOverState">
-      <point x="23.333333333333314" y="-14.0" />
-      <point x="258.5833333333334" y="630.0" />
-      <point x="474.3753534226186" y="630.0" />
-      <point x="-27.75" y="14.0" />
-    </edge>
-    <edge source="no.pag6.game.client.HtmlLauncher" target="no.pag6.game.PAG6Game">
-      <point x="0.0" y="-14.0" />
-      <point x="745.5833333333334" y="1120.0" />
-      <point x="798.4583333333334" y="1120.0" />
-      <point x="-10.875" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.HighscoreMenu" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="0.0" y="-14.0" />
-      <point x="935.9642857142858" y="354.0" />
-      <point x="940.4119708994706" y="354.0" />
-      <point x="940.4119708994706" y="226.0" />
-      <point x="838.8777343749995" y="226.0" />
-      <point x="8.266666666666652" y="14.0" />
-    </edge>
-    <edge source="no.pag6.models.Player" target="no.pag6.tweenaccessors.Value">
-      <point x="-26.666666666666657" y="-14.0" />
-      <point x="124.08042121362405" y="434.0" />
-      <point x="55.5" y="434.0" />
-      <point x="15.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.helpers.MyGestureListener">
-      <point x="3.3333333333333144" y="-14.0" />
-      <point x="238.58333333333343" y="600.0" />
-      <point x="256.0000000000001" y="600.0" />
-      <point x="-31.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.states.HighscoreMenu">
-      <point x="20.5" y="-14.0" />
-      <point x="596.2857142857142" y="856.0" />
-      <point x="962.7142857142858" y="856.0" />
-      <point x="26.75" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.states.OptionsMenu">
-      <point x="14.64285714285711" y="-14.0" />
-      <point x="590.4285714285713" y="846.0" />
-      <point x="838.2142857142858" y="846.0" />
-      <point x="24.25" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PauseState" target="no.pag6.states.OptionsMenu">
-      <point x="16.6875" y="-14.0" />
-      <point x="716.6517857142858" y="512.0" />
-      <point x="789.7142857142858" y="512.0" />
-      <point x="-24.25" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.OptionsMenu" target="no.pag6.states.State">
-      <point x="38.799999999999955" y="-14.0" />
-      <point x="852.7642857142857" y="374.0" />
-      <point x="1000.797619047619" y="374.0" />
-      <point x="-20.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.OptionsMenu" target="no.pag6.ui.SimpleButton">
-      <point x="-19.399999999999977" y="-14.0" />
-      <point x="794.5642857142857" y="334.0" />
-      <point x="591.3780402612431" y="334.0" />
-      <point x="33.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.states.State">
-      <point x="26.35714285714289" y="-14.0" />
-      <point x="602.1428571428571" y="866.0" />
-      <point x="1019.9642857142858" y="866.0" />
-      <point x="1019.9642857142858" y="424.0" />
-      <point x="1034.1309523809523" y="424.0" />
-      <point x="13.333333333333258" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="38.071428571428555" y="-14.0" />
-      <point x="613.8571428571429" y="886.0" />
-      <point x="1080.353858713624" y="886.0" />
-      <point x="1080.353858713624" y="126.0" />
-      <point x="859.5444010416661" y="126.0" />
-      <point x="28.93333333333328" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.CharacterMenu" target="no.pag6.ui.SimpleButton">
-      <point x="0.0" y="-14.0" />
-      <point x="436.1253534226186" y="404.0" />
-      <point x="525.3780402612431" y="404.0" />
-      <point x="-33.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.HighscoreMenu" target="no.pag6.ui.SimpleButton">
-      <point x="-21.399999999999977" y="-14.0" />
-      <point x="914.5642857142857" y="314.0" />
-      <point x="603.3780402612431" y="314.0" />
-      <point x="45.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.game.IOSLauncher" target="no.pag6.game.PAG6Game">
-      <point x="0.0" y="-14.0" />
-      <point x="1000.0833333333334" y="1110.0" />
-      <point x="841.9583333333334" y="1110.0" />
-      <point x="32.625" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PauseState" target="no.pag6.states.HighscoreMenu">
-      <point x="27.8125" y="-14.0" />
-      <point x="727.7767857142858" y="522.0" />
-      <point x="909.2142857142858" y="522.0" />
-      <point x="-26.75" y="14.0" />
-    </edge>
-    <edge source="no.pag6.helpers.MyGestureListener" target="no.pag6.helpers.MyGestureInput">
-      <point x="31.0" y="-14.0" />
-      <point x="318.0000000000001" y="532.0" />
-      <point x="315.0000000000001" y="532.0" />
-      <point x="28.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.models.Player" target="no.pag6.helpers.Constants">
-      <point x="-5.333333333333314" y="-14.0" />
-      <point x="145.41375454695736" y="414.0" />
-      <point x="104.50000000000006" y="414.0" />
-      <point x="104.50000000000006" y="246.0" />
-      <point x="107.4137545469573" y="246.0" />
-      <point x="-10.375" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.tweenaccessors.ValueAccessor">
-      <point x="-26.35714285714289" y="-14.0" />
-      <point x="549.4285714285713" y="866.0" />
-      <point x="372.247685185185" y="866.0" />
-      <point x="372.247685185185" y="434.0" />
-      <point x="384.1643518518517" y="434.0" />
-      <point x="34.333333333333314" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.GameOverState" target="no.pag6.states.MainMenu">
-      <point x="27.75" y="14.0" />
-      <point x="529.8753534226187" y="846.0" />
-      <point x="561.1428571428571" y="846.0" />
-      <point x="-14.64285714285711" y="-14.0" />
-    </edge>
-    <edge source="no.pag6.states.HighscoreMenu" target="no.pag6.states.State">
-      <point x="42.799999999999955" y="-14.0" />
-      <point x="978.7642857142857" y="384.0" />
-      <point x="1007.4642857142858" y="384.0" />
-      <point x="-13.333333333333258" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.GameOverState" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="31.714285714285666" y="-14.0" />
-      <point x="533.8396391369042" y="522.0" />
-      <point x="622.9642857142858" y="522.0" />
-      <point x="622.9642857142858" y="196.0" />
-      <point x="809.9444010416662" y="196.0" />
-      <point x="-20.66666666666663" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.State" target="no.pag6.helpers.Constants">
-      <point x="-22.5" y="-14.0" />
-      <point x="998.297619047619" y="166.0" />
-      <point x="148.9137545469573" y="166.0" />
-      <point x="31.125" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.tweenaccessors.Value">
-      <point x="-32.214285714285666" y="-14.0" />
-      <point x="543.5714285714287" y="876.0" />
-      <point x="25.095238095238074" y="876.0" />
-      <point x="-15.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.states.PauseState">
-      <point x="30.0" y="-14.0" />
-      <point x="265.2500000000001" y="640.0" />
-      <point x="677.7142857142858" y="640.0" />
-      <point x="-22.25" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.CharacterMenu" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="15.428571428571445" y="-14.0" />
-      <point x="452.17625661375644" y="718.0" />
-      <point x="644.9642857142858" y="718.0" />
-      <point x="644.9642857142858" y="206.0" />
-      <point x="814.0777343749995" y="206.0" />
-      <point x="-16.533333333333303" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.MainMenu" target="no.pag6.ui.SimpleButton">
-      <point x="-8.78571428571422" y="-14.0" />
-      <point x="567.0" y="806.0" />
-      <point x="568.1253534226187" y="806.0" />
-      <point x="568.1253534226187" y="434.0" />
-      <point x="549.3780402612431" y="434.0" />
-      <point x="-9.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.models.Player" target="no.pag6.tweenaccessors.ValueAccessor">
-      <point x="26.666666666666657" y="-14.0" />
-      <point x="177.4137545469573" y="434.0" />
-      <point x="315.49768518518505" y="434.0" />
-      <point x="-34.333333333333314" y="14.0" />
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
     <edge source="no.pag6.states.GameOverState" target="no.pag6.states.State">
-      <point x="47.571428571428555" y="-14.0" />
-      <point x="549.6967819940471" y="532.0" />
-      <point x="633.9642857142858" y="532.0" />
-      <point x="633.9642857142858" y="364.0" />
-      <point x="994.1309523809523" y="364.0" />
-      <point x="-26.666666666666742" y="14.0" />
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
     <edge source="no.pag6.states.CharacterMenu" target="no.pag6.states.State">
-      <point x="46.28571428571428" y="-14.0" />
-      <point x="483.0333994708993" y="738.0" />
-      <point x="1013.2976190476193" y="738.0" />
-      <point x="1013.2976190476193" y="414.0" />
-      <point x="1027.4642857142858" y="414.0" />
-      <point x="6.6666666666667425" y="14.0" />
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
     <edge source="no.pag6.states.PlayState" target="no.pag6.states.State">
-      <point x="36.666666666666686" y="-14.0" />
-      <point x="271.9166666666668" y="650.0" />
-      <point x="1006.6309523809525" y="650.0" />
-      <point x="1006.6309523809525" y="404.0" />
-      <point x="1020.797619047619" y="404.0" />
-      <point x="0.0" y="14.0" />
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
     <edge source="no.pag6.models.PlayerCharacter" target="no.pag6.helpers.Constants">
-      <point x="0.0" y="-14.0" />
-      <point x="171.0000000000001" y="246.0" />
-      <point x="128.1637545469573" y="246.0" />
-      <point x="10.375" y="14.0" />
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.models.Player" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="16.0" y="-14.0" />
-      <point x="166.74708788029068" y="424.0" />
-      <point x="247.6666666666668" y="424.0" />
-      <point x="247.6666666666668" y="176.0" />
-      <point x="801.6777343749994" y="176.0" />
-      <point x="-28.933333333333394" y="14.0" />
+    <edge source="no.pag6.states.State" target="com.badlogic.gdx.Screen">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.states.OptionsMenu" target="com.badlogic.gdx.graphics.g2d.Sprite">
-      <point x="19.399999999999977" y="-14.0" />
-      <point x="833.3642857142856" y="354.0" />
-      <point x="843.4973131613756" y="354.0" />
-      <point x="843.4973131613756" y="236.0" />
-      <point x="834.7444010416662" y="236.0" />
-      <point x="4.133333333333326" y="14.0" />
+    <edge source="no.pag6.models.Player" target="no.pag6.helpers.Constants">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.game.desktop.DesktopLauncher" target="no.pag6.game.PAG6Game">
-      <point x="0.0" y="-14.0" />
-      <point x="873.5833333333334" y="1120.0" />
-      <point x="820.2083333333334" y="1120.0" />
-      <point x="10.875" y="14.0" />
+    <edge source="no.pag6.game.PAG6Game" target="no.pag6.helpers.Constants">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.helpers.MyGestureListener" target="no.pag6.states.PlayState">
-      <point x="31.0" y="14.0" />
-      <point x="318.0000000000001" y="610.0" />
-      <point x="245.2500000000001" y="610.0" />
-      <point x="10.0" y="-14.0" />
+    <edge source="no.pag6.states.HighscoreMenu" target="no.pag6.states.State">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.states.State" target="no.pag6.game.PAG6Game">
-      <point x="26.666666666666742" y="14.0" />
-      <point x="1047.4642857142858" y="434.0" />
-      <point x="1060.663382523148" y="434.0" />
-      <point x="1060.663382523148" y="1037.0" />
-      <point x="838.3333333333334" y="1037.0" />
-      <point x="29.0" y="-14.0" />
+    <edge source="no.pag6.game.PAG6Game" target="com.badlogic.gdx.Game">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.states.PlayState" target="no.pag6.models.Player">
-      <point x="-3.3333333333333712" y="-14.0" />
-      <point x="231.91666666666674" y="600.0" />
-      <point x="202.2500000000001" y="600.0" />
-      <point x="202.2500000000001" y="532.0" />
-      <point x="158.74708788029068" y="532.0" />
-      <point x="8.0" y="14.0" />
+    <edge source="no.pag6.states.State" target="no.pag6.helpers.Constants">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
-    <edge source="no.pag6.helpers.Constants" target="no.pag6.helpers.AssetLoader">
-      <point x="0.0" y="-14.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.SplashScreen" target="no.pag6.states.MainMenu">
-      <point x="-24.5" y="-14.0" />
-      <point x="784.8333333333334" y="959.0" />
-      <point x="575.7857142857142" y="959.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.CharacterMenu" target="no.pag6.states.PlayState">
-      <point x="-46.28571428571428" y="-14.0" />
-      <point x="390.46197089947077" y="738.0" />
-      <point x="235.2500000000001" y="738.0" />
-      <point x="0.0" y="14.0" />
-    </edge>
-    <edge source="no.pag6.states.GameOverState" target="no.pag6.ui.SimpleButton">
-      <point x="0.0" y="-14.0" />
-      <point x="502.1253534226186" y="532.0" />
-      <point x="499.69678199404717" y="532.0" />
-      <point x="499.69678199404717" y="424.0" />
-      <point x="537.3780402612431" y="424.0" />
-      <point x="-21.0" y="14.0" />
+    <edge source="no.pag6.states.OptionsMenu" target="no.pag6.states.State">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="1.0" x="550.5" y="584.0" />
+  <settings layout="Hierarchic Group" zoom="1.0" x="858.5" y="824.5000000000001" />
   <SelectedNodes />
-  <Categories />
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
   <SCOPE>All</SCOPE>
   <VISIBILITY>public</VISIBILITY>
 </Diagram>
