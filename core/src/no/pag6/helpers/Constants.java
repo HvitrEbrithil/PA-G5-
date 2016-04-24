@@ -13,14 +13,14 @@ public interface Constants {
     float TIME_STEP = 1/60f;
 
     // UI
+    float FONT_SCALE = 3.4f;
     float UI_SCALE = 0.9f;
 
     // Play state
-    Vector2 GRAVITY = new Vector2(0, -10),
-            MOVEMENT_IMPULSE = new Vector2(0.1f, 0),
-            JUMP_IMPULSE = new Vector2(0, 6f);
+    Vector2 GRAVITY = new Vector2(0, -10);
 
-    String FIRST_LAYER_NAME = "lane1_collision", SECOND_LAYER_NAME = "lane2_collision",
+    String FIRST_LAYER_NAME = "lane1_collision",
+            SECOND_LAYER_NAME = "lane2_collision",
             FIRST_FIRST_GFX_LAYER_NAME = "lane1_ground1",
             FIRST_SECOND_GFX_LAYER_NAME = "lane1_ground2",
             SECOND_FIRST_GFX_LAYER_NAME = "lane2_ground1",

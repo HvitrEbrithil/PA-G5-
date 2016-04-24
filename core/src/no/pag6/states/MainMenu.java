@@ -173,7 +173,7 @@ public class MainMenu extends State {
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = ((int) ((12.0f * UI_SCALE)));
+        parameter.size = ((int) ((22.0f*UI_SCALE)));
         parameter.color = Color.BLACK;
         font = generator.generateFont(parameter);
         generator.dispose();
@@ -185,7 +185,7 @@ public class MainMenu extends State {
         }
 
         logo.draw(game.spriteBatch);
-        font.draw(game.spriteBatch, "PAG6 © 2016", V_WIDTH/50, V_HEIGHT/26);
+        font.draw(game.spriteBatch, "© PAG6 2016", V_WIDTH/50, V_HEIGHT/26);
     }
 
     private void drawTransition(float delta) {
