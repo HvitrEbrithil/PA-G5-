@@ -1,71 +1,33 @@
-﻿# TDT4240 Programvarearkitekturer
-## Prosjektoppgave - Gruppe 6
+﻿# Lane Runner
+Group 6 (PAG6) project assignment in TDT4240 Software Architecture at Norwegian University of Science and Technology.
 
-### Sette opp prosjektet med LibGDX
-Med forbehold om at det er andre dependencies som må være på plass for at det skal fungere. Si ifra så skal jeg legge de til her.
+Lane Runner is a sidescrolling endless runner, with a twist. At all times, two different layers are available, and the player may jump between them by swiping up or down. This is necessary to avoid hindrances and obstacles on one lane.
 
-1. Last ned og installer Java JDK: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-* Last ned og installer Android SDK: http://developer.android.com/sdk/index.html#Other
-* Mulig du må laste ned og installere gradle også: http://gradle.org/gradle-download/
-* Last ned og installer en IDE, hvis du ikke har: F.eks. IntelliJ/Android Studio eller Eclipse
-* Installer Android plugin til IDE-en
-* Klon kildekoden til prosjektet med git (forklart under)
-* Åpen opp prosjektet med IDE-en du vil bruke
-* Importer Gradle-prosjektet
-* Kod i vei!
+## Devices
+Primarily:
+* Android
 
-### Git-kommandoer
-Skrevet med tanke på en linux-konsoll (bash).
+This application is developed using the libGDX framework, and because of that it can easily be ported to other platforms:
+* Desktop (already supported)
+* iOS (unsupported)
+* HTML5 (unsupported)
 
-* Klone repository:
-	* Finn et directory der du vil opprette din lokale klone av prosjektet
-	* `git clone <adressen til repoen>`
-* Oppdatere repository:
-	* **Pass på at du er i master!**
-	* `git pull origin`
-	* *Husk å oppdatere regelmessig*
-* **Liste branches:**
-	* **`git branch` for lokale branches**
-	* `git branch -r` for å vise remote branches
-	* `git branch -a` for å også vise remote branches i repoen
-* **Sjekke status på branchen/commiten du jobber i:**
-	* **`git status`**
-* **Sjekke commit-loggen på branchen du er i:**
-	* **`git log`**
-* Lage ny branch:
-	* `git branch <ny_branch_navn>`
-* Bytte branch:
-	* `git checkout <branch_navn>`
-* Commite til repoen:
-	1. **Sjekk at du er på rett branch!**
-	* `git add -A` eller `git add --all` legger til alle filene du har laget/modifisert i commiten din. Ofte fungerer og `git add .`, men noen ganger er ikke det tilstrekkelig.
-	* `git commit -m "<commit-message>"` commiter (dvs. lager et checkpoint) med alle filene du added til commiten på denne branchen
-	* `git push --set-upstream origin <branch_navn>` pusher branchen med commiten din opp til GitHub
-	* Gå til GitHub, og så vil du se at branchen din er blitt lagt til. Trykk så på "Compare & pull request" for å forespør at branchen din skal merges inn i master
-* Rebase en branch (få alle de siste endringer fra master, men behold dine egne fra din branch):
-	1. Commit alt til branchen din, se punktet over for det, bare minus "push"-delen.
-	* `git checkout master` bytter til master-branchen
-	* `git pull origin` for å oppdatere master til den siste i repoen
-	* `git checkout <din-branch>` for å bytte tilbake til din branch
-	* `git rebase master` for å legge til de siste endringer i master "under" dine endringer
+## Contributors
+* [CaptainNorway](https://github.com/CaptainNorway)
+* [jakobdg](https://github.com/jakobdg)
+* [daniegr](https://github.com/daniegr)
+* [TobiasAsk](https://github.com/TobiasAsk)
+* [dagerikhl](https://github.com/dagerikhl)
 
-### Konvensjoner
+## Setup project
+A simplistic guide to set up the project with Gradle. A full-fledged IDE like IntelliJ IDEA or Eclipse is recommended.
 
-* Git:
-	* Branch ALLTID fra master
-	* Aldri push direkte på master, push din egen branch til GitHub og lag et pull-request som forklart over
-	* Commit så mye du vil (checkpoints), men vær sikker på at det du har gjort er funksjonelt før du pusher det
-	* Commit-messages:
-		* Skal helst skrives på norsk
-		* Du kan enten skrive `git commit -m "<melding>"`, eller du kan skrive `git commit` og skrive meldingen din i en teksteditor. Meldingene du skriver etter "-m" i commitsa bør uansett være på en av disse to formene:
-			1. En linje med kort beskrivelse av hva du har endret/lagt til, ex `git commit -m "Endret readme-en"`
-			* En linje med kort beskrivelse, så dobbelt linjeskift (SHIFT+ENTER i bash) etterfulgt av en mer in-depth beskrivelse, ex:
-				* `git commit -m "Endret readme-en`
-				* `<tom linje>`
-				* `Har endret readme-en for å reflektere de endringer vi har gjort i prosjektet."`
-* Java:
-	* Skriv klasser med stor forbokstav, ex "MyClass.java"
-	* Skriv funksjoner med liten forbokstav, og stor bokstav for hvert nytt ord (camelCase), ex "myFunction()"
-	* Skriv variabelnavn i camelCase, ex. "myVariable"
-	* Alltid mellomrom og ikke linjeskift før { i klasser, metoder og kontrollsekvenser
-	* Allid else og else if på samme linje som } i tilhørende if-løkke, ex "} else {"
+1. Download and install Java JDK (7 or 8):
+   * http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+   * http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+2. Download and install the Android SDK:
+   * http://developer.android.com/sdk/index.html
+3. Install Android-plugin for your IDE.
+4. Clone the project from GitHub.
+5. Open up the project with your IDE.
+6. Import the Gradle-project.
