@@ -233,7 +233,6 @@ public class PlayState extends State {
 
         // Check death
         if (players[activePlayerIndex].getB2dBody().getPosition().y < 0 && !players[activePlayerIndex].isFinished()) {
-            Gdx.app.log("PS", "death");
             players[activePlayerIndex].kill();
             updateActivePlayer();
 
@@ -245,9 +244,9 @@ public class PlayState extends State {
 
         // Check finish
         if (players[activePlayerIndex].isFinished()) {
-            Gdx.app.log("PS", "finished");
             players[activePlayerIndex].setMap();
             updateActivePlayer();
+            players[activePlayerIndex].setFinished(false);
         }
     }
 
@@ -340,7 +339,6 @@ public class PlayState extends State {
             activePlayerIndex = (activePlayerIndex + 1)%nofPlayers;
             Player activePlayer = players[activePlayerIndex];
             activePlayer.setActive(true);
-            activePlayer.setFinished(false);
             mapFileName = activePlayer.getMap();
             mapDifficulty = activePlayer.getMapDifficulty();
             map = new TmxMapLoader().load("maps/" + mapFileName);
