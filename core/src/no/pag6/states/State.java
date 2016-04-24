@@ -15,9 +15,7 @@ import no.pag6.helpers.Constants;
 
 public abstract class State implements Screen, InputProcessor, Constants {
 
-    public static final String TAG = "State";
-
-    protected float runTime = 0.0f;
+    protected float runTime;
 
     protected PAG6Game game;
     protected OrthographicCamera cam;
@@ -67,22 +65,18 @@ public abstract class State implements Screen, InputProcessor, Constants {
 
     @Override
     public void pause() {
-        Gdx.app.log(TAG, "pause called");
     }
 
     @Override
     public void resume() {
-        Gdx.app.log(TAG, "resume called");
     }
 
     @Override
     public void hide() {
-        Gdx.app.log(TAG, "hide called");
     }
 
     @Override
     public void dispose() {
-        Gdx.app.log(TAG, "dispose called");
     }
 
     @Override

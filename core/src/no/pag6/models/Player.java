@@ -3,7 +3,6 @@ package no.pag6.models;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -21,36 +20,35 @@ import java.util.List;
 
 public class Player extends Sprite implements Constants {
 
-    private OrthographicCamera cam;
-    private String name;
     private float playtime = 0.0f;
+
+    // Player data
+    private int id;
+    private String name;
     private int score;
+    private Body b2dBody;
+    private Animation playerAnimation;
+    private int footContactCount;
+    private int nofLives;
+    private boolean finished;
+
+    // Position and movement
+    private float originWidth = 75/PPM;
+    private float originHeight = 100/PPM;
+    private final static Vector2 MOVEMENT_IMPULSE = new Vector2(0, 0);
+
+    // Map and lane
     private String map;
     private int mapDifficulty = 1;
     private boolean onFirstLane;
-    private PlayerCharacter playerCharacter;
-    private Texture playerTexture;
-    private Animation playerAnimation;
-    private Body b2dBody;
-    public boolean active = false;
-    private int footContactCount;
-    private int id;
-    // TODO
-    private int nofLives;
     private boolean shouldSwitchFilterBits;
-
-    private float originWidth = 75/PPM;
-    private float originHeight = 100/PPM;
+    private boolean active = false;
 
     // Tween
     private TweenManager tweener;
     private Value playerScale = new Value();
 
-    private boolean finished;
-    private final static Vector2 MOVEMENT_IMPULSE = new Vector2(0, 0);
-
-    public Player(OrthographicCamera cam, Body b2dBody, int id, String name, int characterType) {
-        this.cam = cam;
+    public Player(Body b2dBody, int id, String name, int characterType) {
         this.b2dBody = b2dBody;
         this.id = id;
         this.name = name;
@@ -61,8 +59,8 @@ public class Player extends Sprite implements Constants {
         onFirstLane = true;
         shouldSwitchFilterBits = false;
 
-        playerCharacter = new PlayerCharacter(characterType);
-        playerTexture = playerCharacter.getTexture();
+        PlayerCharacter playerCharacter = new PlayerCharacter(characterType);
+        Texture playerTexture = playerCharacter.getTexture();
         playerAnimation = playerCharacter.getAnimation();
 
         setBounds(0, 0, originWidth, originHeight);
@@ -84,12 +82,11 @@ public class Player extends Sprite implements Constants {
         this.b2dBody = b2dBody;
     }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-
     public boolean isFinished() {
         return finished;
+    }
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public int getId() {
@@ -103,13 +100,11 @@ public class Player extends Sprite implements Constants {
     public void incrementFootContactCount() {
         footContactCount++;
     }
-
     public void decrementFootContactCount() {
         footContactCount--;
     }
-
-    public int getFootContactCount() {
-        return footContactCount;
+    public void nulifyFootContactCount() {
+        footContactCount = 0;
     }
 
     public void kill() {
@@ -119,7 +114,7 @@ public class Player extends Sprite implements Constants {
 
         nofLives -= 1;
 
-        // reset filter bits
+        // Reset filter bits
         Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
         filter.maskBits = FIRST_LAYER_BITS;
         b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
@@ -184,8 +179,12 @@ public class Player extends Sprite implements Constants {
     public void incrementScore(int points) {
         score += points;
     }
-    public void setScore(int score){
-        this.score = score;
+
+    public boolean isActive() {
+        return active;
+    }
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public int getNofLives() {
@@ -207,14 +206,12 @@ public class Player extends Sprite implements Constants {
 
         if (active) {
             float velChange = (PLAYER_MAX_VELOCITY - b2dBody.getLinearVelocity().x)*(0.9f + ((float)(mapDifficulty)*0.1f));
-            MOVEMENT_IMPULSE.x = b2dBody.getMass() * velChange;
+            MOVEMENT_IMPULSE.x = b2dBody.getMass()*velChange;
             b2dBody.applyLinearImpulse(MOVEMENT_IMPULSE, b2dBody.getWorldCenter(), true);
-
-
         }
 
         if (shouldSwitchFilterBits && b2dBody.getLinearVelocity().y <= 0) {
-            // set filter bits
+            // Set filter bits
             Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
             boolean wasFirst = filter.maskBits == FIRST_LAYER_BITS;
             filter.maskBits = wasFirst ? SECOND_LAYER_BITS : FIRST_LAYER_BITS;
@@ -224,23 +221,15 @@ public class Player extends Sprite implements Constants {
             shouldSwitchFilterBits = false;
         }
 
-
-
-
-        setScore(score + (- (int) 1155/100 + (int)b2dBody.getPosition().x)*10);
-
         // Scale player
         float scaledWidth = originWidth*playerScale.getValue();
         float scaledHeight = originHeight*playerScale.getValue();
 
         // Scale sprite
         setScale(playerScale.getValue());
-//        setSize(scaledWidth, scaledHeight);
 
         // Update position
         setPosition(b2dBody.getPosition().x - scaledWidth/2, b2dBody.getPosition().y - scaledHeight/2);
-//        setPosition(b2dBody.getPosition().x - getWidth()/2, b2dBody.getPosition().y - getHeight()/2);
-
     }
 
     public void draw(Batch batch) {
@@ -248,17 +237,11 @@ public class Player extends Sprite implements Constants {
     }
 
     public void switchLanes() {
-        // jump and switch
-        if (footContactCount > 0) {
-            b2dBody.setLinearVelocity(PLAYER_MAX_VELOCITY, 6);
-        }
+        jump();
 
-        shouldSwitchFilterBits = !shouldSwitchFilterBits;
-
-        // Sprite
-//        scaleFixtures(onFirstLane ? .7f : 1f);
         tweenPlayer(onFirstLane ? .7f : 1f);
 
+        shouldSwitchFilterBits = !shouldSwitchFilterBits;
         onFirstLane = !onFirstLane;
 
         if (al.getSoundOn()) {
@@ -267,59 +250,30 @@ public class Player extends Sprite implements Constants {
     }
 
     public void jump() {
-        // jump
         if (footContactCount > 0) {
             b2dBody.setLinearVelocity(PLAYER_MAX_VELOCITY, 6);
         }
     }
 
     public void setMap() {
-        if (this.map == MAP_EASY_1_NAME) {
-            this.map = MAP_MED_1_NAME;
-        } else if (this.map == MAP_MED_1_NAME) {
-            this.map = MAP_HARD_1_NAME;
-        } else if (this.map == MAP_HARD_1_NAME) {
-            this.map = MAP_EASY_1_NAME;
+        if (map.equals(MAP_EASY_1_NAME)) {
+            map = MAP_MED_1_NAME;
+        } else if (map.equals(MAP_MED_1_NAME)) {
+            map = MAP_HARD_1_NAME;
+        } else if (map.equals(MAP_HARD_1_NAME)) {
+            map = MAP_EASY_1_NAME;
         }
-        this.mapDifficulty += 2;
+
+        mapDifficulty += 2;
     }
 
     public String getMap() {
         return map;
     }
 
-    public float getMapDifficulty() {
+    public int getMapDifficulty() {
         return mapDifficulty;
     }
-
-    //    // TODO: Fix this function if we have the time
-//    // Current bug: Switching two times fast with this function messes with the maskBits
-//    private void scaleFixtures(float scale) {
-//        // Remove old fixtures
-//        Fixture bodyFixture = b2dBody.getFixtureList().first();
-//        Fixture footFixture = b2dBody.getFixtureList().get(1);
-//        b2dBody.destroyFixture(bodyFixture);
-//        b2dBody.destroyFixture(footFixture);
-//
-//        // Create new body fixture
-//        CircleShape newBodyShape = new CircleShape();
-//        newBodyShape.setRadius((PLAYER_BODY_RADIUS/PPM)*scale);
-//
-//        FixtureDef fixtureDef = new FixtureDef();
-//        fixtureDef.shape = newBodyShape;
-//        fixtureDef.filter.maskBits = onFirstLane ? FIRST_LAYER_BITS : SECOND_LAYER_BITS;
-//        b2dBody.createFixture(fixtureDef);
-//        newBodyShape.dispose();
-//
-//        // Create new foot fixture
-//        PolygonShape newFootShape = new PolygonShape();
-//        newFootShape.setAsBox((13/PPM)*scale, (3/PPM)*scale, new Vector2(0, (-13/PPM)*scale), 0);
-//
-//        fixtureDef.shape = newFootShape;
-//        fixtureDef.isSensor = true;
-//        b2dBody.createFixture(fixtureDef).setUserData("player" + id + "foot");
-//        newFootShape.dispose();
-//    }
 
     private void tweenPlayer(float scale) {
         if (onFirstLane) {

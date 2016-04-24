@@ -43,7 +43,7 @@ public class AssetLoader {
     public Sound splashSound, countdownSound, swooshSound;
 
     // Music
-    public static Music backgroundMusic, inGameEasyMusic, inGameMediumMusic, inGameHardMusic;
+    public Music backgroundMusic, inGameEasyMusic, inGameMediumMusic, inGameHardMusic;
 
 
     public void load() {

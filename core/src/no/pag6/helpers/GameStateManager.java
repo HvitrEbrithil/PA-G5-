@@ -1,15 +1,10 @@
 package no.pag6.helpers;
 
 import com.badlogic.gdx.Screen;
+import no.pag6.game.PAG6Game;
 
 import java.util.Stack;
 
-import no.pag6.game.PAG6Game;
-import no.pag6.states.State;
-
-/**
- * Created by Tobias on 18.04.2016.
- */
 public class GameStateManager {
 
     private PAG6Game game;

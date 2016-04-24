@@ -14,23 +14,27 @@ public class SplashScreen extends State {
 
     @Override
     public void render(float delta) {
-        update(delta);
+        super.update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.spriteBatch.setProjectionMatrix(cam.combined);
         game.spriteBatch.begin();
-        game.spriteBatch.draw(al.splashAnimation.getKeyFrame(runTime), 0, 0, V_WIDTH, V_HEIGHT);
+
+        game.spriteBatch.draw(al.splashAnimation.getKeyFrame((runTime - 1) < 0 ? 0 : (runTime - 1)), 0, 0, V_WIDTH, V_HEIGHT);
+
         game.spriteBatch.end();
 
-        if (runTime > 2.0f) {
-            game.getGameStateManager().setScreen(new MainMenu(game));
-        }
-
-        if (runTime > 1.0f && !splashSoundPlayed && al.getSoundOn()) {
+        // Play sound
+        if (runTime > 2.0f && !splashSoundPlayed && al.getSoundOn()) {
             al.splashSound.play(0.8f);
             splashSoundPlayed = true;
+        }
+
+        // Show main menu
+        if (al.splashAnimation.isAnimationFinished(runTime - 1)) {
+            game.getGameStateManager().setScreen(new MainMenu(game));
         }
     }
 

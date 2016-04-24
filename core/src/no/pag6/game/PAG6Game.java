@@ -1,7 +1,6 @@
 package no.pag6.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import no.pag6.helpers.Constants;
@@ -9,8 +8,6 @@ import no.pag6.helpers.GameStateManager;
 import no.pag6.states.SplashScreen;
 
 public class PAG6Game extends Game implements Constants {
-
-    public static final String TAG = "PAG6Game";
 
     public ShapeRenderer drawer;
     public SpriteBatch spriteBatch;
@@ -22,12 +19,8 @@ public class PAG6Game extends Game implements Constants {
         spriteBatch = new SpriteBatch();
         gameStateManager = new GameStateManager(this);
 
-        Gdx.app.log(TAG, "created");
-
         al.load();
 
-//        gameStateManager.pushScreen(new PlayState(this, 3, Arrays.asList("SPILLER EN", "SPILLER TO", "SPILLER TRE"), MAP_EASY_1_NAME)); // TODO: Set to SS when done debugging
-//        gameStateManager.pushScreen(new MainMenu(this)); // TODO: Set to SS when done debugging
         gameStateManager.pushScreen(new SplashScreen(this));
     }
 
