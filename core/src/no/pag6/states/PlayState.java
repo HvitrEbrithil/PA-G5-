@@ -70,7 +70,7 @@ public class PlayState extends State {
     private Value opacityLayer2 = new Value();
     private Value cameraZoom = new Value();
 
-    //Game assets
+    // Game assets
     private GlyphLayout gl = new GlyphLayout();
     private BitmapFont countDownNameFont;
     private BitmapFont playerStatsFont;
@@ -472,9 +472,7 @@ public class PlayState extends State {
         // Buttons
         region = al.pauseButtonUp;
         regionWidth = region.getRegionWidth() * .22f * UI_SCALE / PPM;
-
         regionHeight = region.getRegionHeight() * .22f * UI_SCALE / PPM;
-
         pauseButton = new SimpleButton(
                 0, 500 / PPM + A_HEIGHT / 2 - 8 / PPM,
                 regionWidth, regionHeight,
@@ -513,7 +511,7 @@ public class PlayState extends State {
 
         // TODO: Draw player name, score and lives left on screen (what is correct x- and y-value?)
         Player activePlayer = players[activePlayerIdx];
-        String playerStats = activePlayer.getName().toUpperCase() + " | " + Integer.toString(activePlayer.getScore()) + " | LIVES: " + Integer.toString(activePlayer.getNofLives()); // DANIEL | 29238 | LIVES: 2
+        String playerStats = activePlayer.getName() + " | " + Integer.toString(activePlayer.getScore()) + " | LIVES: " + Integer.toString(activePlayer.getNofLives()); // DANIEL | 29238 | LIVES: 2
         gl.setText(playerStatsFont, playerStats);
         playerStatsFont.draw(game.spriteBatch, gl, cam.position.x - A_WIDTH / 2 + 8 / PPM, cam.position.y + A_HEIGHT / 2 - 8 / PPM); // This position is not correct, but should be updated with the camera
     }
