@@ -37,7 +37,6 @@ public class Player extends Sprite implements Constants {
     private int id;
     // TODO
     private int nofLives;
-    private boolean isKilled = false;
     private boolean shouldSwitchFilterBits;
 
     private float originWidth = 75/PPM;
@@ -48,6 +47,7 @@ public class Player extends Sprite implements Constants {
     private Value playerScale = new Value();
 
     private boolean finished;
+    private final static Vector2 MOVEMENT_IMPULSE = new Vector2(0, 0);
 
     public Player(OrthographicCamera cam, Body b2dBody, int id, String name, int characterType) {
         this.cam = cam;
@@ -80,10 +80,12 @@ public class Player extends Sprite implements Constants {
         playerScale.setValue(1f);
     }
 
+    public void setB2dBody(Body b2dBody) {
+        this.b2dBody = b2dBody;
+    }
+
     public void setFinished(boolean finished) {
         this.finished = finished;
-        setMap();
-        setPosition(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
     }
 
     public boolean isFinished() {
@@ -117,14 +119,13 @@ public class Player extends Sprite implements Constants {
 
         nofLives -= 1;
 
-        // Set position to intial position
-        setPosition(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
-
-        isKilled = true;
-    }
-
-    public boolean isKilled() {
-        return isKilled;
+        // reset filter bits
+        Filter filter = b2dBody.getFixtureList().get(1).getFilterData();
+        filter.maskBits = FIRST_LAYER_BITS;
+        b2dBody.getFixtureList().get(1).setFilterData(filter); // foot
+        filter.maskBits |= GOAL_LAYER_BITS; // make sure the player can collide with goal layer
+        b2dBody.getFixtureList().get(0).setFilterData(filter);
+        onFirstLane = true;
     }
 
     public int getHighscore() {
@@ -205,11 +206,9 @@ public class Player extends Sprite implements Constants {
         tweener.update(delta);
 
         if (active) {
-            Vector2 vel = b2dBody.getLinearVelocity();
-            float desiredVel = PLAYER_MAX_VELOCITY;
-            float velChange = (desiredVel - vel.x)*(0.9f + ((float)(mapDifficulty)*0.1f));
-            float impulse = b2dBody.getMass() * velChange;
-            b2dBody.applyLinearImpulse(new Vector2(impulse, 0), b2dBody.getWorldCenter(), true);
+            float velChange = (PLAYER_MAX_VELOCITY - b2dBody.getLinearVelocity().x)*(0.9f + ((float)(mapDifficulty)*0.1f));
+            MOVEMENT_IMPULSE.x = b2dBody.getMass() * velChange;
+            b2dBody.applyLinearImpulse(MOVEMENT_IMPULSE, b2dBody.getWorldCenter(), true);
 
             // TODO: Move to wherever when score-system is implemented
             incrementScore(1*mapDifficulty);

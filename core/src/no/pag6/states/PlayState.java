@@ -22,6 +22,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
+
 import no.pag6.game.PAG6Game;
 import no.pag6.helpers.MyContactListener;
 import no.pag6.helpers.MyGestureListener;
@@ -184,8 +186,6 @@ public class PlayState extends State {
 
         tweener.update(delta);
 
-
-
         if (playTime > countdownTime) {
             world.step(TIME_STEP, 6, 2); // update physics
         }
@@ -203,11 +203,11 @@ public class PlayState extends State {
             cam.position.y = playerPos.y; // center the camera around the activePlayer
         }
         cam.update();
+
         // update the players
         for (Player player : players) {
             player.update(delta);
         }
-
 
         // Update UI
         pauseButton.setX(cam.position.x - A_WIDTH / 2 + 8 / PPM);
@@ -228,9 +228,7 @@ public class PlayState extends State {
         // check death
         if (players[activePlayerIdx].getB2dBody().getPosition().y < 0 && ! players[activePlayerIdx].isFinished()) {
             // TODO: Move this if-loop to where the real final death of a player occurs
-            if (!players[activePlayerIdx].isKilled()) {
-                players[activePlayerIdx].kill();
-            }
+            players[activePlayerIdx].kill();
             setActivePlayer();
 
             // Tween values
@@ -243,6 +241,7 @@ public class PlayState extends State {
         if (players[activePlayerIdx].isFinished()) {
             System.out.println("finish");
             players[activePlayerIdx].setFinished(false);
+            players[activePlayerIdx].setMap();
             setActivePlayer();
         }
     }
@@ -389,13 +388,50 @@ public class PlayState extends State {
             activePlayerIdx = (activePlayerIdx + 1) % nofPlayers;
             Player activePlayer = players[activePlayerIdx];
             activePlayer.active = true;
+            // check if needed??
             this.mapFileName = activePlayer.getMap();
             this.mapDifficulty = activePlayer.getMapDifficulty();
-            cl.setPlayer(players[activePlayerIdx]);
+            map = new TmxMapLoader().load("maps/"+mapFileName);
+            mapRenderer.setMap(map);
+            Array<Body> bodies = new Array<Body>(world.getBodyCount());
+            world.getBodies(bodies);
+            for (Body body : bodies) {
+                if (!(body.getUserData() instanceof Player)) {
+                    world.destroyBody(body);
+                }
+            }
 
-            map.dispose();
-            mapRenderer.dispose();
-            loadMap(mapFileName);
+            world.destroyBody(players[activePlayerIdx].getB2dBody());
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.position.set(INIT_PLAYER_POS_X / PPM, INIT_PLAYER_POS_Y / PPM);
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            Body playerBody = world.createBody(bodyDef);
+
+            // body fixture
+            CircleShape shape = new CircleShape();
+            shape.setRadius(PLAYER_BODY_RADIUS / PPM);
+
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS | GOAL_LAYER_BITS; // the activePlayer starts in lane 1
+            playerBody.createFixture(fixtureDef);
+            shape.dispose();
+
+            // add foot fixture
+            PolygonShape polygonShape = new PolygonShape();
+            polygonShape.setAsBox(13 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
+            fixtureDef.shape = polygonShape;
+            fixtureDef.isSensor = true;
+            fixtureDef.filter.maskBits = FIRST_LAYER_BITS;
+            playerBody.createFixture(fixtureDef).setUserData("player" + players[activePlayerIdx].getId() + "foot");
+            polygonShape.dispose();
+
+            playerBody.setUserData(players[activePlayerIdx]);
+            players[activePlayerIdx].setB2dBody(playerBody);
+
+            addMapBodies();
+
+            cl.setPlayer(players[activePlayerIdx]);
 
             if (al.getMusicOn()) {
                 setInGameMusic(mapFileName);
@@ -553,6 +589,7 @@ public class PlayState extends State {
             polygonShape.dispose();
 
             players[i] = new Player(cam, playerBody, i, playerNames.get(i), i + 1);
+            playerBody.setUserData(players[i]);
         }
     }
 }
