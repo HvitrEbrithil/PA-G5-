@@ -251,6 +251,16 @@ public class PlayState extends State {
     }
 
     @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        touchPoint.set(screenX, screenY, 0);
+        projected = viewport.unproject(touchPoint);
+
+        players[activePlayerIdx].jump();
+
+        return true;
+    }
+
+    @Override
     public boolean keyDown(int keycode) {
         // Jump
         if (keycode == Input.Keys.SPACE && playTime > countdownTime) {
@@ -382,9 +392,7 @@ public class PlayState extends State {
                 al.countdownSound.play();
             }
 
-            if (nofPlayers > 1) {
-                players[activePlayerIdx].incrementFootContactCount();
-            }
+            activePlayer.footContactCount = 0;
         } else {
             activeInGameMusic.stop();
             game.getGameStateManager().setScreen(new GameOverState(game, players));
