@@ -274,8 +274,9 @@ public class PlayState extends State {
 
 
 
-        scoreLabel.setText(""+players[activePlayerIdx].getScore());
-        playerNameLabel.setText(players[activePlayerIdx].getName());
+        scoreLabel.setText("   " + players[activePlayerIdx].getScore());
+        numberOfLives.setText("   " + players[activePlayerIdx].getNofLives());
+        playerNameLabel.setText("   " + players[activePlayerIdx].getName());
 
 
 
@@ -536,12 +537,17 @@ public class PlayState extends State {
         //Detect input on pause-button
         pauseButton.addListener(new InputListener() {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                game.getGameStateManager().pushScreen(new PauseState(game));
                 return true;
             }
 
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-
+                game.getGameStateManager().pushScreen(new PauseState(game));
+                al.countdownSound.pause();
+                activeInGameMusic.pause();
+                inGameMusicPlaying = false;
+                if(al.getMusicOn()){
+                    al.backgroundMusic.play();
+                }
             }
         });
 
@@ -558,19 +564,19 @@ public class PlayState extends State {
         // Player score
 
 
-        playerNameLabel = new Label(playerNames.get(activePlayerIdx) , new Label.LabelStyle(new BitmapFont(), Color.RED));
-        scoreLabel = new Label("" + players[activePlayerIdx].getScore(), new Label.LabelStyle(new BitmapFont(), Color.RED));
+        playerNameLabel = new Label("   " + playerNames.get(activePlayerIdx), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        scoreLabel = new Label("    " + players[activePlayerIdx].getScore(), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        numberOfLives = new Label("   " + players[activePlayerIdx].getNofLives(), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
         playerNameLabel.setFontScale(FONT_SCALE);
         scoreLabel.setFontScale(FONT_SCALE);
+        numberOfLives.setFontScale(FONT_SCALE);
 
         UItable = new Table();
         UItable.top();
         UItable.setFillParent(true);
-        UItable.add(playerNameLabel, scoreLabel);
-                //.height(regionHeight).width(regionWidth).expandX().padTop(10);
-        //UItable.add(scoreLabel).left().height(regionHeight).width(regionWidth).expandX().top();
-        UItable.add(pauseButton).right().height(regionWidth/2).width(regionWidth/2).expandX().padTop(10);
+        UItable.add(playerNameLabel, scoreLabel, numberOfLives );
+        UItable.add(pauseButton).right().height(regionWidth/2).width(regionWidth/2).expandX().padTop(10).padRight(50);
         UItable.setDebug(true);
         uiStage.addActor(UItable);
 
