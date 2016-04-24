@@ -227,7 +227,7 @@ public class Player extends Sprite implements Constants {
 
 
 
-        setScore((- (int) 1155/100 + (int)b2dBody.getPosition().x)*10);
+        setScore(score + (- (int) 1155/100 + (int)b2dBody.getPosition().x)*10);
 
         // Scale player
         float scaledWidth = originWidth*playerScale.getValue();
